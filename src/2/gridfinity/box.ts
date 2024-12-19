@@ -12,8 +12,13 @@ import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 import { roundedCuboid } from "@jscad/modeling/src/primitives";
 import { baseHeight } from "./constants.ts";
 
-export function box({ width = 1, depth = 1, height = 1, size = 42 } = {}) {
-  const wallThickness = 1;
+export function box({
+  width = 1,
+  depth = 1,
+  height = 1,
+  size = 42,
+  wallThickness = 1,
+} = {}) {
   const innerFillet = 3; // TODO: Calculate
   const outerFillet = 3.25; // TODO: Calculate
   const items: RecursiveArray<Geom3> = [];
