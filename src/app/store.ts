@@ -1,12 +1,17 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type Box = {
+type Label = {
+  text: string;
+};
+
+export type Box = {
   type: "box";
   width: number;
   height: number;
   depth: number;
   wallThickness: number;
+  labels?: Label[];
 };
 
 type Item = Box;
