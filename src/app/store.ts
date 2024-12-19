@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type Label = {
+export type Label = {
   text: string;
 };
 

@@ -1,6 +1,7 @@
 import { FC, useCallback } from "react";
-import { Box } from "./store.ts";
+import { Box, Label } from "./store.ts";
 import { NumberInput } from "./NumberInput.tsx";
+import { TextInput } from "./TextInput.tsx";
 
 export const BoxEdit: FC<{ box: Box; onChange: (value: Box) => void }> = ({
   box,
@@ -12,6 +13,17 @@ export const BoxEdit: FC<{ box: Box; onChange: (value: Box) => void }> = ({
     },
     [box, onChange],
   );
+  const handleChangeLabel = useCallback(
+    (index: number, field: keyof Label) => (value: string) => {
+      const labels = box.labels ? [...box.labels] : [];
+      labels[index] = { ...labels[index], [field]: value };
+      onChange({ ...box, labels });
+    },
+    [box, onChange],
+  );
+  const handleAddLabel = useCallback(() => {
+    onChange({ ...box, labels: [...(box.labels || []), { text: "" }] });
+  }, []);
   return (
     <>
       <NumberInput
@@ -32,6 +44,23 @@ export const BoxEdit: FC<{ box: Box; onChange: (value: Box) => void }> = ({
         onChange={handleChange("depth")}
         min={1}
       />
+      <NumberInput
+        label="wallThickness"
+        value={box.wallThickness}
+        onChange={handleChange("wallThickness")}
+        min={1}
+      />
+      {box.labels?.map((label, index) => (
+        <TextInput
+          key={index}
+          label={"text"}
+          value={label.text}
+          onChange={handleChangeLabel(index, "text")}
+        />
+      ))}
+      <button type="button" onClick={handleAddLabel}>
+        Add label
+      </button>
       <button type="submit">Submit</button>
     </>
   );
