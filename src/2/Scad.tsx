@@ -9,11 +9,11 @@ import {
   createComplexGeometry,
   createComplexMaterial,
 } from "./render/geom3.ts";
-import { baseplate } from "./gridfinity/baseplate.ts";
+import { box } from "./gridfinity/box.ts";
 
 export const Scad = () => {
   const mesh = useMemo(() => {
-    return toMesh(baseplate());
+    return toMesh(box({ width: 2, height: 3 }));
   }, []);
 
   return <primitive object={mesh}></primitive>;
