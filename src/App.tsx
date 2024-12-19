@@ -1,7 +1,7 @@
 import "./App.css";
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
-import { World } from "./2/app/World.tsx";
+import { World } from "./app/World.tsx";
 
 function App() {
   return (
