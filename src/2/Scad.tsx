@@ -13,7 +13,7 @@ import { box } from "./gridfinity/box.ts";
 
 export const Scad = () => {
   const mesh = useMemo(() => {
-    return toMesh(box({ width: 2, depth: 3, height: 4 }));
+    return toMesh(box({ width: 2, depth: 3, height: 1 }));
   }, []);
 
   return <primitive object={mesh}></primitive>;

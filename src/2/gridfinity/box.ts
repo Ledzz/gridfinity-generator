@@ -19,8 +19,9 @@ export function box({
   size = 42,
   wallThickness = 1,
 } = {}) {
-  const innerFillet = 3; // TODO: Calculate
   const outerFillet = 3.25; // TODO: Calculate
+  const innerFillet = outerFillet - wallThickness; // TODO: Calculate
+
   const items: RecursiveArray<Geom3> = [];
 
   for (let i = 0; i < width; i++) {

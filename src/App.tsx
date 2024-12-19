@@ -12,7 +12,7 @@ function App() {
         position: [100, 60, 100],
       }}
     >
-      <Environment preset={"studio"} />
+      <Environment preset={"studio"} environmentIntensity={0.7} />
       <OrbitControls />
       <axesHelper scale={100} />
       <Scad />
