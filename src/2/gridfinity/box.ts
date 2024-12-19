@@ -9,8 +9,8 @@ import RecursiveArray from "@jscad/modeling/src/utils/recursiveArray";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
-import { baseHeight } from "./constants.ts";
 import { roundedCuboid } from "@jscad/modeling/src/primitives";
+import { baseHeight } from "./constants.ts";
 
 export function box({ width = 1, depth = 1, height = 1, size = 42 } = {}) {
   const wallThickness = 1;
@@ -30,9 +30,9 @@ export function box({ width = 1, depth = 1, height = 1, size = 42 } = {}) {
   }
   return union(
     ...items,
-    subtract(
-      translateY(
-        baseHeight,
+    translateY(
+      baseHeight,
+      subtract(
         rotateX(
           -Math.PI / 2,
           extrudeLinear(
@@ -43,16 +43,16 @@ export function box({ width = 1, depth = 1, height = 1, size = 42 } = {}) {
             }),
           ),
         ),
+        roundedCuboid({
+          size: [
+            width * size - wallThickness * 2,
+            height * 7 - wallThickness + innerFillet * 2,
+            depth * size - wallThickness * 2,
+          ],
+          center: [0, (height * 7) / 2 + innerFillet + wallThickness, 0],
+          roundRadius: innerFillet,
+        }),
       ),
-      roundedCuboid({
-        size: [
-          width * size - wallThickness * 2,
-          height * 7 - wallThickness + innerFillet * 2,
-          depth * size - wallThickness * 2,
-        ],
-        center: [0, height * 7 + wallThickness, 0],
-        roundRadius: innerFillet,
-      }),
     ),
   );
 }
