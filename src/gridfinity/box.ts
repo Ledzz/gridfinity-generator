@@ -9,8 +9,11 @@ import RecursiveArray from "@jscad/modeling/src/utils/recursiveArray";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
-import { roundedCuboid } from "@jscad/modeling/src/primitives";
+import { circle, roundedCuboid } from "@jscad/modeling/src/primitives";
 import { baseHeight } from "./constants.ts";
+import { vectorText } from "@jscad/modeling/src/text";
+import { hullChain } from "@jscad/modeling/src/operations/hulls";
+import { Label } from "../app/store.ts";
 
 export function box({
   width = 1,
@@ -18,10 +21,10 @@ export function box({
   height = 1,
   size = 42,
   wallThickness = 1,
+  labels = [],
 } = {}) {
   const outerFillet = 3.25; // TODO: Calculate
   const innerFillet = outerFillet - wallThickness; // TODO: Calculate
-
   const items: RecursiveArray<Geom3> = [];
 
   for (let i = 0; i < width; i++) {
@@ -34,8 +37,33 @@ export function box({
       );
     }
   }
+
+  const processedLabels = labels.map((label: Label) => {
+    const lineRadius = 2 / 2;
+    const lineCorner = circle({ radius: lineRadius });
+    const lineSegmentPointArrays = vectorText({
+      x: 0,
+      y: 0,
+      input: label.text,
+      height: label.fontSize ?? 20,
+    }); // line segments for each character
+    const lineSegments = [];
+    lineSegmentPointArrays.forEach((segmentPoints) => {
+      // process the line segment
+      const corners = segmentPoints.map((point) =>
+        translate(point, lineCorner),
+      );
+      lineSegments.push(hullChain(corners));
+    });
+    const message2D = union(lineSegments);
+    const message3D = extrudeLinear({ height: 2 }, message2D);
+
+    return message3D;
+  });
+
   return union(
     ...items,
+    ...processedLabels,
     translateY(
       baseHeight,
       subtract(

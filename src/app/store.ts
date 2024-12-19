@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 
 export type Label = {
   text: string;
+  fontSize?: number;
 };
 
 export type Box = {
