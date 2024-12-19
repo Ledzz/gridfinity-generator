@@ -1,7 +1,7 @@
 import "./App.css";
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
-import { Scad } from "./2/Scad.tsx";
+import { World } from "./2/app/World.tsx";
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
       <Environment preset={"studio"} environmentIntensity={0.7} />
       <OrbitControls />
       <axesHelper scale={100} />
-      <Scad />
+      <World />
     </Canvas>
   );
 }
