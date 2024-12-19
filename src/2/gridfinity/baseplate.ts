@@ -1,11 +1,10 @@
 import Vec2 from "@jscad/modeling/src/maths/vec2/type";
-import { colorize } from "@jscad/modeling/src/colors";
 import { union } from "@jscad/modeling/src/operations/booleans";
 import { translate } from "@jscad/modeling/src/operations/transforms";
 import { cuboid, polygon } from "@jscad/modeling/src/primitives";
 import { sweepRounded } from "../sweepRounded.ts";
 
-export function baseplate() {
+export function baseplate({ size = 42, fillet = 0.8 } = {}) {
   const basePoly = [
     [0, 0], // Innermost bottom point
     [0.8, 0.8], // Up and out at a 45 degree angle
@@ -15,17 +14,14 @@ export function baseplate() {
   ] satisfies Vec2[];
   const height = Math.max(...basePoly.map((point) => point[1]));
 
-  return colorize(
-    [0.8, 0.8, 0.8],
-    union(
-      translate([0, height / 2, 0], cuboid({ size: [42, height, 42] })),
-      sweepRounded(
-        polygon({
-          points: basePoly,
-        }),
-        42,
-        0.8,
-      ),
+  return union(
+    translate([0, height / 2, 0], cuboid({ size: [size, height, size] })),
+    sweepRounded(
+      polygon({
+        points: basePoly,
+      }),
+      size,
+      fillet,
     ),
   );
 }
