@@ -15,6 +15,8 @@ import { vectorText } from "@jscad/modeling/src/text";
 import { hullChain } from "@jscad/modeling/src/operations/hulls";
 import { Label } from "../app/store.ts";
 
+const DEFAULT_FONT_SIZE = 20;
+
 export function box({
   width = 1,
   depth = 1,
@@ -45,20 +47,12 @@ export function box({
       x: 0,
       y: 0,
       input: label.text,
-      height: label.fontSize ?? 20,
-    }); // line segments for each character
-    const lineSegments = [];
-    lineSegmentPointArrays.forEach((segmentPoints) => {
-      // process the line segment
-      const corners = segmentPoints.map((point) =>
-        translate(point, lineCorner),
-      );
-      lineSegments.push(hullChain(corners));
+      height: label.fontSize ?? DEFAULT_FONT_SIZE,
     });
-    const message2D = union(lineSegments);
-    const message3D = extrudeLinear({ height: 2 }, message2D);
-
-    return message3D;
+    const lineSegments = lineSegmentPointArrays.map((segmentPoints) =>
+      hullChain(segmentPoints.map((point) => translate(point, lineCorner))),
+    );
+    return extrudeLinear({ height: 2 }, union(lineSegments));
   });
 
   return union(
