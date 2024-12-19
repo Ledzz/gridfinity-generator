@@ -1,27 +1,75 @@
-import { Label } from "../app/store.ts";
-import { circle } from "@jscad/modeling/src/primitives";
+import { Box, Label } from "../app/store.ts";
+import { circle, polygon } from "@jscad/modeling/src/primitives";
 import { vectorText } from "@jscad/modeling/src/text";
 import { hullChain } from "@jscad/modeling/src/operations/hulls";
-import { translate } from "@jscad/modeling/src/operations/transforms";
+import { rotate, translate } from "@jscad/modeling/src/operations/transforms";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { union } from "@jscad/modeling/src/operations/booleans";
 
-export const DEFAULT_FONT_SIZE = 20;
-const TEXT_HEIGHT = 2;
-export const label = (label: Label) => {
-  if (!label.text) {
-    return;
+export const DEFAULT_FONT_SIZE = 8;
+const TEXT_HEIGHT = 1;
+export const label = ({ text, fontSize = DEFAULT_FONT_SIZE }: Label) => {
+  if (!text) {
+    return [];
   }
-  const lineRadius = 2 / 2;
+  const lineRadius = 0.5;
   const lineCorner = circle({ radius: lineRadius });
   const lineSegmentPointArrays = vectorText({
-    x: 0,
-    y: 0,
-    input: label.text,
-    height: label.fontSize ?? DEFAULT_FONT_SIZE,
+    input: text,
+    height: fontSize / 2,
   });
   const lineSegments = lineSegmentPointArrays.map((segmentPoints) =>
     hullChain(segmentPoints.map((point) => translate(point, lineCorner))),
   );
-  return extrudeLinear({ height: TEXT_HEIGHT }, union(lineSegments));
+  const width = 32;
+  const depth = 10;
+  const textWidth = lineSegmentPointArrays.reduce(
+    (max, points) => Math.max(max, ...points.map((p) => p[0])),
+    0,
+  );
+  return union(
+    translate(
+      [-textWidth / 2, depth, depth - (depth - fontSize / 2) / 2],
+      rotate(
+        [-Math.PI / 2, 0, 0],
+        extrudeLinear({ height: TEXT_HEIGHT }, union(lineSegments)),
+      ),
+    ),
+    translate(
+      [0, 0, 0],
+      rotate(
+        [0, -Math.PI / 2, 0],
+        translate(
+          [0, 0, -width / 2],
+          extrudeLinear(
+            { height: width },
+            polygon({
+              points: [
+                [0, 0],
+                [depth, depth],
+                [0, depth],
+                [0, 0],
+              ],
+            }),
+          ),
+        ),
+      ),
+    ),
+  );
 };
+
+export const positionedLabel = (
+  { position = "top-center", ...props }: Label,
+  box: Box,
+) => {
+  return translate(getPosition(position, box), label(props));
+};
+
+function getPosition(position: string, box: Box) {
+  switch (position) {
+    case "top-center":
+      return [0, 0, (-box.size * box.depth) / 2];
+    default:
+      return [0, 0, 0];
+  }
+}

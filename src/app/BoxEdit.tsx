@@ -26,6 +26,14 @@ export const BoxEdit: FC<{ box: Box; onChange: (value: Box) => void }> = ({
   const handleAddLabel = useCallback(() => {
     onChange({ ...box, labels: [...(box.labels || []), { text: "" }] });
   }, []);
+  const handleRemoveLabel = useCallback(
+    (index: number) => () => {
+      const labels = box.labels ? [...box.labels] : [];
+      labels.splice(index, 1);
+      onChange({ ...box, labels });
+    },
+    [box, onChange],
+  );
   return (
     <>
       <NumberInput
@@ -65,6 +73,7 @@ export const BoxEdit: FC<{ box: Box; onChange: (value: Box) => void }> = ({
             onChange={handleChangeLabel(index, "fontSize")}
             min={1}
           />
+          <button onClick={handleRemoveLabel(index)}>Remove label</button>
         </Fragment>
       ))}
       <button type="button" onClick={handleAddLabel}>

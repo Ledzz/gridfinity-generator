@@ -11,7 +11,7 @@ import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 import { roundedCuboid } from "@jscad/modeling/src/primitives";
 import { baseHeight } from "./constants.ts";
-import { label } from "./label.ts";
+import { positionedLabel } from "./label.ts";
 
 export function box({
   width = 1,
@@ -36,7 +36,9 @@ export function box({
     }
   }
 
-  const processedLabels = labels.map(label).filter(Boolean);
+  const processedLabels = labels
+    .map((l) => positionedLabel(l, { width, depth, height, size }))
+    .filter(Boolean);
 
   return union(
     ...items,
