@@ -9,13 +9,9 @@ import RecursiveArray from "@jscad/modeling/src/utils/recursiveArray";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
-import { circle, roundedCuboid } from "@jscad/modeling/src/primitives";
+import { roundedCuboid } from "@jscad/modeling/src/primitives";
 import { baseHeight } from "./constants.ts";
-import { vectorText } from "@jscad/modeling/src/text";
-import { hullChain } from "@jscad/modeling/src/operations/hulls";
-import { Label } from "../app/store.ts";
-
-const DEFAULT_FONT_SIZE = 20;
+import { label } from "./label.ts";
 
 export function box({
   width = 1,
@@ -40,20 +36,7 @@ export function box({
     }
   }
 
-  const processedLabels = labels.map((label: Label) => {
-    const lineRadius = 2 / 2;
-    const lineCorner = circle({ radius: lineRadius });
-    const lineSegmentPointArrays = vectorText({
-      x: 0,
-      y: 0,
-      input: label.text,
-      height: label.fontSize ?? DEFAULT_FONT_SIZE,
-    });
-    const lineSegments = lineSegmentPointArrays.map((segmentPoints) =>
-      hullChain(segmentPoints.map((point) => translate(point, lineCorner))),
-    );
-    return extrudeLinear({ height: 2 }, union(lineSegments));
-  });
+  const processedLabels = labels.map(label).filter(Boolean);
 
   return union(
     ...items,
