@@ -9,6 +9,7 @@ import {
 } from "@jscad/modeling/src/operations/transforms";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { union } from "@jscad/modeling/src/operations/booleans";
+import { baseHeight } from "./constants.ts";
 
 export const DEFAULT_FONT_SIZE = 8;
 const TEXT_HEIGHT = 1;
@@ -71,7 +72,7 @@ export const positionedLabel = (
 function getPosition(position: string, box: Box) {
   switch (position) {
     case "top-center":
-      return [0, 20, (-box.size * box.depth) / 2];
+      return [0, box.height * 7 + baseHeight, (-box.size * box.depth) / 2];
     default:
       return [0, 0, 0];
   }
