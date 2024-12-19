@@ -33,6 +33,7 @@ export const sweepRounded = (
             {
               startAngle: 0,
               angle: Math.PI / 2,
+              segments: 32,
             },
             translate([fillet, 0, 0], baseShape),
           ),

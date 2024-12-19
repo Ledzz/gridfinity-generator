@@ -5,7 +5,12 @@ import { Scad } from "./2/Scad.tsx";
 
 function App() {
   return (
-    <Canvas>
+    <Canvas
+      camera={{
+        near: 0.1,
+        far: 10000,
+      }}
+    >
       <ambientLight intensity={Math.PI / 2} />
       <spotLight
         position={[100, 100, 100]}
