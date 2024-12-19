@@ -64,7 +64,7 @@ export class MyExtrudeGeometry extends BufferGeometry {
             // options
 
             const curveSegments = options.curveSegments !== undefined ? options.curveSegments : 12;
-            const steps = options.steps !== undefined ? options.steps : 1;
+            // const steps = options.steps !== undefined ? options.steps : 1;
             const depth = options.depth !== undefined ? options.depth : 1;
 
             let bevelEnabled = options.bevelEnabled !== undefined ? options.bevelEnabled : true;
@@ -74,6 +74,8 @@ export class MyExtrudeGeometry extends BufferGeometry {
             let bevelSegments = options.bevelSegments !== undefined ? options.bevelSegments : 3;
 
             const extrudePath = options.extrudePath;
+
+            const steps = options.extrudePath ? 36:options.steps !== undefined ? options.steps : 1 ;
 
             const uvgen = options.UVGenerator !== undefined ? options.UVGenerator : WorldUVGenerator;
 

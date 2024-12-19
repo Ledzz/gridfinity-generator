@@ -39,9 +39,10 @@ export class Path3D extends CurvePath<Vector3> {
 
     }
 
-    lineTo( x:number, y:number,z:number ) {
+    lineTo( x:number, y:number,z:number, steps = 1 ) {
 
         const curve = new LineCurve3( this.currentPoint.clone(), new Vector3( x, y ,z) );
+        curve.steps = steps;
         this.curves.push( curve );
 
         this.currentPoint.set( x, y,z );
@@ -50,14 +51,46 @@ export class Path3D extends CurvePath<Vector3> {
 
     }
 
-   quadraticBezierCurveTo(ex: number, ey: number, ez: number, x: number, y: number, z: number) {
+   quadraticBezierCurveTo(ex: number, ey: number, ez: number, x: number, y: number, z: number, steps = 8) {
             const curve = new QuadraticBezierCurve3( this.currentPoint.clone(), new Vector3( x,y,z ), new Vector3( ex,ey, ez ) );
+       curve.steps = steps;
+
             this.curves.push( curve );
 
             this.currentPoint.set( ex, ey, ez );
 
             return this;
-   }
+   }getSpacedPoints(divisions?: number) {
+        const points: Vector3[] = [];
+        for (const curve of this.curves) {
+            const curveSteps = (curve as Curve3WithSteps).steps || divisions || 12;
+            const curvePoints = curve.getPoints(curveSteps);
 
+            // Don't add the first point except for the first curve
+            // to avoid duplicates at the joints
+            points.push(...(points.length ? curvePoints.slice(1) : curvePoints));
+        }
+        return points;
+    }
+    // getSpacedPoints( _divisions = 40 ) {
+    //
+    //     const divisions=20;
+    //     const points = [];
+    //
+    //     for ( let i = 0; i <= divisions; i ++ ) {
+    //
+    //         points.push( this.getPoint( i / divisions ) );
+    //
+    //     }
+    //
+    //     if ( this.autoClose ) {
+    //
+    //         points.push( points[ 0 ] );
+    //
+    //     }
+    //
+    //     return points;
+    //
+    // }
 
 }

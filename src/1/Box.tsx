@@ -60,7 +60,7 @@ function BaseGeometry() {
         return s;
     }, []);
 
-    return <myExtrudeGeometry ref={geometry} args={[shape, {extrudePath, steps: 512}]}/>
+    return <myExtrudeGeometry ref={geometry} args={[shape, {extrudePath}]}/>
 }
 
 
