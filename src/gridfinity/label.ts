@@ -2,7 +2,11 @@ import { Box, Label } from "../app/store.ts";
 import { circle, polygon } from "@jscad/modeling/src/primitives";
 import { vectorText } from "@jscad/modeling/src/text";
 import { hullChain } from "@jscad/modeling/src/operations/hulls";
-import { rotate, translate } from "@jscad/modeling/src/operations/transforms";
+import {
+  center,
+  rotate,
+  translate,
+} from "@jscad/modeling/src/operations/transforms";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { union } from "@jscad/modeling/src/operations/booleans";
 
@@ -23,20 +27,19 @@ export const label = ({ text, fontSize = DEFAULT_FONT_SIZE }: Label) => {
   );
   const width = 32;
   const depth = 10;
-  const textWidth = lineSegmentPointArrays.reduce(
-    (max, points) => Math.max(max, ...points.map((p) => p[0])),
-    0,
-  );
   return union(
     translate(
-      [-textWidth / 2, depth, depth - (depth - fontSize / 2) / 2],
-      rotate(
-        [-Math.PI / 2, 0, 0],
-        extrudeLinear({ height: TEXT_HEIGHT }, union(lineSegments)),
+      [0, 0, depth / 2],
+      center(
+        {},
+        rotate(
+          [-Math.PI / 2, 0, 0],
+          extrudeLinear({ height: TEXT_HEIGHT }, union(lineSegments)),
+        ),
       ),
     ),
     translate(
-      [0, 0, 0],
+      [0, -depth, 0],
       rotate(
         [0, -Math.PI / 2, 0],
         translate(
@@ -68,7 +71,7 @@ export const positionedLabel = (
 function getPosition(position: string, box: Box) {
   switch (position) {
     case "top-center":
-      return [0, 0, (-box.size * box.depth) / 2];
+      return [0, 20, (-box.size * box.depth) / 2];
     default:
       return [0, 0, 0];
   }
