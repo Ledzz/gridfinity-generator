@@ -2,10 +2,9 @@ import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 import {
   BufferGeometry,
   Color,
-  DoubleSide,
   Float32BufferAttribute,
   Matrix4,
-  MeshPhongMaterial,
+  MeshStandardMaterial,
 } from "three";
 
 export function createComplexGeometry(jsonData: Geom3) {
@@ -56,15 +55,10 @@ export function createComplexMaterial(jsonData: Geom3) {
   const [r, g, b, a] = jsonData.color ?? [0.5, 0.5, 0.5, 1];
 
   // Create material with proper transparency handling
-  const material = new MeshPhongMaterial({
+  const material = new MeshStandardMaterial({
     color: new Color(r, g, b),
     opacity: a,
     transparent: a < 1,
-    side: DoubleSide,
-    flatShading: false,
-    // Enable depth testing but handle transparency correctly
-    depthWrite: a >= 1,
-    depthTest: true,
   });
 
   return material;

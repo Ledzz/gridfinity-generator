@@ -1,6 +1,6 @@
 import "./App.css";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { Environment, OrbitControls } from "@react-three/drei";
 import { Scad } from "./2/Scad.tsx";
 
 function App() {
@@ -9,19 +9,12 @@ function App() {
       camera={{
         near: 0.1,
         far: 10000,
+        position: [100, 60, 100],
       }}
     >
-      <ambientLight intensity={Math.PI / 2} />
-      <spotLight
-        position={[100, 100, 100]}
-        angle={0.15}
-        penumbra={1}
-        decay={0}
-        intensity={Math.PI}
-      />
-      <pointLight position={[-100, -100, -100]} decay={0} intensity={Math.PI} />
+      <Environment preset={"studio"} />
       <OrbitControls />
-      <axesHelper />
+      <axesHelper scale={100} />
       <Scad />
     </Canvas>
   );
