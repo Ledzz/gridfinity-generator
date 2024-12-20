@@ -58,7 +58,8 @@ export const BoxEdit: FC<{ box: Box; onChange: (value: Box) => void }> = ({
         label="wallThickness"
         value={box.wallThickness}
         onChange={handleChange("wallThickness")}
-        min={1}
+        step={0.1}
+        min={0.1}
       />
       {box.labels?.map((label, index) => (
         <Fragment key={index}>
