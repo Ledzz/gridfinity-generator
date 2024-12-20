@@ -12,6 +12,7 @@
   "dependencies": {
     "@jscad/modeling": "^2.12.4",
     "@jscad/regl-renderer": "^2.6.11",
+    "@jscad/stl-serializer": "^2.1.19",
     "@react-three/csg": "^3.2.0",
     "@react-three/drei": "^9.120.4",
     "@react-three/fiber": "^8.17.10",
