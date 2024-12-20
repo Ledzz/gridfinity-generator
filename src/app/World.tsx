@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Box } from "./Box.tsx";
+import { Box } from "./adapters.tsx";
 import { useStore } from "./store.ts";
 
 export const World: FC = () => {

@@ -1,13 +1,16 @@
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 import geom2, { Geom2 } from "@jscad/modeling/src/geometries/geom2";
-import path2 from "@jscad/modeling/src/geometries/path2";
+import path2, { Path2 } from "@jscad/modeling/src/geometries/path2";
 import { create2DLineObject } from "./geom2.ts";
 import { createClosedPolygonObject } from "./path2.ts";
-import { Mesh } from "three";
+import { LineSegments, Mesh } from "three";
 import { createComplexGeometry, createComplexMaterial } from "./geom3.ts";
 import { geom3 } from "@jscad/modeling/src/geometries/index";
 
-export function toMesh(geom: Geom3 | Geom2) {
+export function toMesh(geom: Geom3): Mesh;
+export function toMesh(geom: Geom2): LineSegments;
+export function toMesh(geom: Path2): Mesh;
+export function toMesh(geom: Geom3 | Geom2 | Path2): Mesh | LineSegments {
   if (geom2.isA(geom)) {
     return create2DLineObject(geom);
   }

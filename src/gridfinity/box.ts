@@ -1,5 +1,5 @@
 import { subtract, union } from "@jscad/modeling/src/operations/booleans";
-import { baseplate } from "./baseplate.ts";
+import { floor } from "./floor.ts";
 import {
   rotateX,
   translate,
@@ -30,7 +30,7 @@ export function box({
       items.push(
         translate(
           [(i + 0.5 - width / 2) * size, 0, (j + 0.5 - depth / 2) * size],
-          baseplate({ size }),
+          floor({ size }),
         ),
       );
     }
