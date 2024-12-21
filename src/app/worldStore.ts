@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { World } from "./types/world.ts";
 
-export const useStore = create<World>()(
+export const useWorldStore = create<World>()(
   persist(
     () =>
       ({

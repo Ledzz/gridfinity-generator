@@ -1,17 +1,35 @@
-import { FC } from "react";
+import { FC, useCallback } from "react";
 import { Baseplate, Box } from "./adapters.tsx";
-import { useStore } from "./store.ts";
+import { useWorldStore } from "./worldStore.ts";
+import { useAppStore } from "./appStore.ts";
 
 export const World: FC = () => {
-  const items = useStore((state) => state.items);
+  const items = useWorldStore((state) => state.items);
+
+  const handleSelectItem = useCallback(
+    (id: string) => () => {
+      useAppStore.setState((s) =>
+        s.selectedItemId === id
+          ? { selectedItemId: null }
+          : { selectedItemId: id },
+      );
+    },
+    [],
+  );
   return (
     <>
       {items.map((item) => {
         switch (item.type) {
           case "box":
-            return <Box {...item} />;
+            return (
+              <Box
+                key={item.id}
+                onClick={handleSelectItem(item.id)}
+                {...item}
+              />
+            );
           case "baseplate":
-            return <Baseplate {...item} />;
+            return <Baseplate key={item.id} {...item} />;
         }
       })}
     </>
