@@ -2,11 +2,13 @@ import "./App.css";
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
 import { BoxEdit } from "./app/BoxEdit.tsx";
-import { createNewBaseplate, createNewBox, useStore } from "./app/store.ts";
+import { useStore } from "./app/store.ts";
 import { useCallback } from "react";
 import { serialize } from "@jscad/stl-serializer";
 import { box } from "./gridfinity/box.ts";
 import { World } from "./app/World.tsx";
+import { createBox } from "./app/utils/createBox.ts";
+import { createBaseplate } from "./app/utils/createBaseplate.ts";
 
 function App() {
   const boxJson = useStore((state) => state.items[0]);
@@ -21,12 +23,12 @@ function App() {
   }, [boxJson]);
   const addBox = useCallback(() => {
     useStore.setState((s) => ({
-      items: [...s.items, createNewBox()],
+      items: [...s.items, createBox()],
     }));
   }, []);
   const addBaseplate = useCallback(() => {
     useStore.setState((s) => ({
-      items: [...s.items, createNewBaseplate()],
+      items: [...s.items, createBaseplate()],
     }));
   }, []);
   return (

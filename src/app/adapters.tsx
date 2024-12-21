@@ -6,7 +6,7 @@ import { baseplate } from "../gridfinity/baseplate.ts";
 function create<Props>(render: (props: Props) => Parameters<typeof toMesh>[0]) {
   return (props: Props) => {
     const obj = useMemo(() => toMesh(render(props)), [props]);
-    return <primitive object={obj}></primitive>;
+    return obj ? <primitive object={obj}></primitive> : null;
   };
 }
 

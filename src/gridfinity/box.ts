@@ -13,6 +13,18 @@ import { roundedCuboid } from "@jscad/modeling/src/primitives";
 import { baseHeight } from "./constants.ts";
 import { positionedLabel } from "./label.ts";
 
+import { Label } from "../app/types/label.ts";
+
+export type BoxGeomProps = {
+  width?: number;
+  depth?: number;
+  height?: number;
+  size?: number;
+  wallThickness?: number;
+  labels?: Label[];
+  profileFillet?: number;
+};
+
 export function box({
   width = 1,
   depth = 1,
@@ -20,9 +32,10 @@ export function box({
   size = 42,
   wallThickness = 1,
   labels = [],
-} = {}) {
-  const outerFillet = 3.25; // TODO: Calculate
-  const innerFillet = outerFillet - wallThickness; // TODO: Calculate
+  profileFillet = 7.5 / 2,
+}: BoxGeomProps = {}) {
+  const innerFillet =
+    profileFillet > wallThickness ? profileFillet - wallThickness : 0;
   const items: RecursiveArray<Geom3> = [];
 
   for (let i = 0; i < width; i++) {
@@ -52,10 +65,11 @@ export function box({
             { height: height * 7 },
             roundedRectangle({
               size: [width * size, depth * size],
-              roundRadius: outerFillet,
+              roundRadius: profileFillet,
             }),
           ),
         ),
+        // TODO: Floor fillet should not be equal wall fillet
         roundedCuboid({
           size: [
             width * size - wallThickness * 2,

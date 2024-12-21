@@ -1,8 +1,9 @@
 import { FC, Fragment, useCallback } from "react";
-import { Box, Label } from "./store.ts";
 import { NumberInput } from "./NumberInput.tsx";
 import { TextInput } from "./TextInput.tsx";
 import { DEFAULT_FONT_SIZE } from "../gridfinity/label.ts";
+import { Label } from "./types/label.ts";
+import { Box } from "./types/box.ts";
 
 export const BoxEdit: FC<{
   box: Box;

@@ -10,7 +10,13 @@ import { geom3 } from "@jscad/modeling/src/geometries/index";
 export function toMesh(geom: Geom3): Mesh;
 export function toMesh(geom: Geom2): LineSegments;
 export function toMesh(geom: Path2): Mesh;
-export function toMesh(geom: Geom3 | Geom2 | Path2): Mesh | LineSegments {
+export function toMesh(geom: null): null;
+export function toMesh(
+  geom: Geom3 | Geom2 | Path2 | null,
+): Mesh | LineSegments | null {
+  if (!geom) {
+    return null;
+  }
   if (geom2.isA(geom)) {
     return create2DLineObject(geom);
   }
@@ -23,5 +29,5 @@ export function toMesh(geom: Geom3 | Geom2 | Path2): Mesh | LineSegments {
 
   console.error("unknown geometry type");
 
-  return;
+  return null;
 }

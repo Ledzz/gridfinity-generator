@@ -1,4 +1,3 @@
-import { Box, Label } from "../app/store.ts";
 import { circle, polygon } from "@jscad/modeling/src/primitives";
 import { vectorText } from "@jscad/modeling/src/text";
 import { hullChain } from "@jscad/modeling/src/operations/hulls";
@@ -10,6 +9,8 @@ import {
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { union } from "@jscad/modeling/src/operations/booleans";
 import { baseHeight } from "./constants.ts";
+import { Label } from "../app/types/label.ts";
+import { Box } from "../app/types/box.ts";
 
 export const DEFAULT_FONT_SIZE = 8;
 const TEXT_HEIGHT = 1;
