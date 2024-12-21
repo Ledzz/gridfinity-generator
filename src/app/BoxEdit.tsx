@@ -4,10 +4,10 @@ import { NumberInput } from "./NumberInput.tsx";
 import { TextInput } from "./TextInput.tsx";
 import { DEFAULT_FONT_SIZE } from "../gridfinity/label.ts";
 
-export const BoxEdit: FC<{ box: Box; onChange: (value: Box) => void }> = ({
-  box,
-  onChange,
-}) => {
+export const BoxEdit: FC<{
+  box: Box;
+  onChange: (value: Box | null) => void;
+}> = ({ box, onChange }) => {
   const handleChange = useCallback(
     (field: keyof Box) => (value: number) => {
       onChange({ ...box, [field]: value });
@@ -34,8 +34,12 @@ export const BoxEdit: FC<{ box: Box; onChange: (value: Box) => void }> = ({
     },
     [box, onChange],
   );
+  const handleDeleteBox = useCallback(() => {
+    onChange(null);
+  }, [onChange]);
   return (
     <>
+      <button onClick={handleDeleteBox}>delete box</button>
       <NumberInput
         label="width"
         value={box.width}

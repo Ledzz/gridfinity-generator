@@ -1,12 +1,12 @@
 import "./App.css";
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
-import { World } from "./app/World.tsx";
 import { BoxEdit } from "./app/BoxEdit.tsx";
-import { useStore } from "./app/store.ts";
+import { createNewBaseplate, createNewBox, useStore } from "./app/store.ts";
 import { useCallback } from "react";
 import { serialize } from "@jscad/stl-serializer";
 import { box } from "./gridfinity/box.ts";
+import { World } from "./app/World.tsx";
 
 function App() {
   const boxJson = useStore((state) => state.items[0]);
@@ -19,13 +19,33 @@ function App() {
     a.download = "model.stl";
     a.click();
   }, [boxJson]);
+  const addBox = useCallback(() => {
+    useStore.setState((s) => ({
+      items: [...s.items, createNewBox()],
+    }));
+  }, []);
+  const addBaseplate = useCallback(() => {
+    useStore.setState((s) => ({
+      items: [...s.items, createNewBaseplate()],
+    }));
+  }, []);
   return (
     <>
-      <BoxEdit
-        box={boxJson}
-        onChange={(box) => useStore.setState({ items: [box] })}
-      />
+      {boxJson ? (
+        <BoxEdit
+          box={boxJson}
+          onChange={(box) =>
+            useStore.setState((s) => ({
+              items: s.items
+                .map((item) => (item.id === boxJson.id ? box : item))
+                .filter(Boolean),
+            }))
+          }
+        />
+      ) : null}
       <button onClick={saveStl}>export</button>
+      <button onClick={addBox}>add box</button>
+      <button onClick={addBaseplate}>add baseplate</button>
       <Canvas
         camera={{
           near: 0.1,
@@ -33,7 +53,10 @@ function App() {
           position: [100, 60, 100],
         }}
       >
-        <Environment preset={"studio"} environmentIntensity={0.7} />
+        <Environment
+          files={"/studio_small_03_1k.exr"}
+          environmentIntensity={0.7}
+        />
         <OrbitControls />
         <axesHelper scale={100} />
         <World />
