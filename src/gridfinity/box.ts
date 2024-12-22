@@ -48,6 +48,14 @@ export function box({
     }
   }
 
+  /**
+   * TODO:
+   * - [ ] Magnet holes
+   * - [ ] Screw hole
+   * - [ ] Fix floor fillet size
+   * - [ ] Lip
+   */
+
   const processedLabels = labels
     .map((l) => positionedLabel(l, { width, depth, height, size }))
     .filter(Boolean);
