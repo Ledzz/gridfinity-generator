@@ -9,15 +9,17 @@ import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 interface BaseplateGeomProps {
   style: "refined-lite";
   fillet: number;
+  size: number;
+  height: number;
 }
 
 const baseplatePoly = [
   [3, 0],
   [3, 3],
-  [7, 8],
-  [7, 11],
-  [-7, 11],
-  [-7, 8],
+  [8, 7],
+  [8, 10],
+  [-8, 10],
+  [-8, 7],
   [-3, 3],
   [-3, 0],
 ];
@@ -25,10 +27,9 @@ const baseplatePoly = [
 export const baseplate = ({
   style = "refined-lite",
   fillet = 0.8,
+  size = 42,
+  height = 3,
 }: Partial<BaseplateGeomProps> = {}) => {
-  const size = 42;
-  const height = 3;
-
   /**
    * TODO:
    * - [ ] Fillet on bottom
@@ -98,6 +99,10 @@ export const baseplate = ({
             size: [size, height, size],
           }),
           ...lips,
+          cuboid({
+            center: [0, height / 2, 0],
+            size: [17.4, height, 17.4],
+          }),
         ),
       );
   }
