@@ -25,8 +25,11 @@ export const BoxEdit: FC<{
     [box, onChange],
   );
   const handleAddLabel = useCallback(() => {
-    onChange({ ...box, labels: [...(box.labels || []), { text: "" }] });
-  }, []);
+    onChange({
+      ...box,
+      labels: [...(box.labels || []), { text: "", position: "top-center" }],
+    });
+  }, [box, onChange]);
   const handleRemoveLabel = useCallback(
     (index: number) => () => {
       const labels = box.labels ? [...box.labels] : [];

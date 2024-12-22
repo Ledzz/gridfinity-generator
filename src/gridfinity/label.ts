@@ -30,33 +30,24 @@ export const label = ({ text, fontSize = DEFAULT_FONT_SIZE }: Label) => {
   const width = 32;
   const depth = 10;
   return union(
-    translate(
-      [0, 0, depth / 2],
-      center(
-        {},
-        rotate(
-          [-Math.PI / 2, 0, 0],
-          extrudeLinear({ height: TEXT_HEIGHT }, union(lineSegments)),
-        ),
-      ),
+    center(
+      { relativeTo: [0, depth / 2, TEXT_HEIGHT / 2] },
+      extrudeLinear({ height: TEXT_HEIGHT }, union(lineSegments)),
     ),
     translate(
-      [0, -depth, 0],
+      [-width / 2, 0, 0],
       rotate(
-        [0, -Math.PI / 2, 0],
-        translate(
-          [0, 0, -width / 2],
-          extrudeLinear(
-            { height: width },
-            polygon({
-              points: [
-                [0, 0],
-                [depth, depth],
-                [0, depth],
-                [0, 0],
-              ],
-            }),
-          ),
+        [0, Math.PI / 2, 0],
+        extrudeLinear(
+          { height: width },
+          polygon({
+            points: [
+              [0, 0],
+              [depth, depth],
+              [0, depth],
+              [0, 0],
+            ],
+          }),
         ),
       ),
     ),
@@ -67,13 +58,16 @@ export const positionedLabel = (
   { position = "top-center", ...props }: Label,
   box: Box,
 ) => {
+  if (!props.text) {
+    return null;
+  }
   return translate(getPosition(position, box), label(props));
 };
 
 function getPosition(position: string, box: Box) {
   switch (position) {
     case "top-center":
-      return [0, box.height * 7 + baseHeight, (-box.size * box.depth) / 2];
+      return [0, (box.size * box.depth) / 2 - 10, box.height * 7 + baseHeight];
     default:
       return [0, 0, 0];
   }
