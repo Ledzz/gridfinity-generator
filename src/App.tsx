@@ -10,8 +10,15 @@ import { World } from "./app/World.tsx";
 import { createBox } from "./app/utils/createBox.ts";
 import { createBaseplate } from "./app/utils/createBaseplate.ts";
 import { useAppStore } from "./app/appStore.ts";
+import { Layout, theme } from "antd";
+import Sider from "antd/es/layout/Sider";
+import { Content } from "antd/es/layout/layout";
 
 function App() {
+  const {
+    token: { colorBgContainer, borderRadiusLG, colorSplit, lineType },
+  } = theme.useToken();
+
   const selectedItemId = useAppStore((state) => state.selectedItemId);
   const selectedItem = useWorldStore((state) =>
     state.items.find((i) => i.id === selectedItemId),
@@ -38,43 +45,63 @@ function App() {
 
   return (
     <>
-      {selectedItem ? (
-        <BoxEdit
-          box={selectedItem}
-          onChange={(box) =>
-            useWorldStore.setState((s) => ({
-              items: s.items
-                .map((item) => (item.id === selectedItem.id ? box : item))
-                .filter(Boolean),
-            }))
-          }
-        />
-      ) : null}
-      <button onClick={saveStl}>export</button>
-      <button onClick={addBox}>add box</button>
-      <button onClick={addBaseplate}>add baseplate</button>
-      <Canvas
-        camera={{
-          near: 0.1,
-          far: 10000,
-          position: [100, 60, 100],
+      <Layout
+        style={{
+          background: colorBgContainer,
+          borderRadius: borderRadiusLG,
         }}
       >
-        <Environment
-          files={"/studio_small_03_1k.exr"}
-          environmentIntensity={0.7}
-        />
-        <OrbitControls />
+        <Sider
+          className={"css-var-rgb ant-menu-css-var"}
+          style={{
+            background: colorBgContainer,
+            minHeight: "100vh",
+            borderInlineEnd: `1px ${lineType} ${colorSplit}`,
+            padding: "16px",
+          }}
+          width={300}
+        >
+          {selectedItem ? (
+            <BoxEdit
+              box={selectedItem}
+              onChange={(box) =>
+                useWorldStore.setState((s) => ({
+                  items: s.items
+                    .map((item) => (item.id === selectedItem.id ? box : item))
+                    .filter(Boolean),
+                }))
+              }
+            />
+          ) : null}
+          <button onClick={saveStl}>export</button>
+          <button onClick={addBox}>add box</button>
+          <button onClick={addBaseplate}>add baseplate</button>
+        </Sider>
+        <Content>
+          <Canvas
+            camera={{
+              near: 0.1,
+              far: 10000,
+              position: [100, 60, 100],
+            }}
+          >
+            <Environment
+              files={"/studio_small_03_1k.exr"}
+              environmentIntensity={0.7}
+            />
+            <OrbitControls />
 
-        {/*<arrowHelper args={[{ x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, 60]} />*/}
-        {/*<arrowHelper args={[{ x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, 60]} />*/}
-        <axesHelper scale={60} />
-        {/*<gridHelper args={[100, 100, 0x444444, 0xdddddd]} />*/}
-        {/*<gridHelper args={[100, 10]} />*/}
-        <group rotation-x={-Math.PI / 2}>
-          <World />
-        </group>
-      </Canvas>
+            {/*<arrowHelper args={[{ x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, 60]} />*/}
+            {/*<arrowHelper args={[{ x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, 60]} />*/}
+            <axesHelper scale={60} />
+            {/*<gridHelper args={[100, 100, 0x444444, 0xdddddd]} />*/}
+            {/*<gridHelper args={[100, 10]} />*/}
+            <group rotation-x={-Math.PI / 2}>
+              <World />
+            </group>
+          </Canvas>
+        </Content>
+      </Layout>
     </>
   );
 }
