@@ -27,6 +27,9 @@ export const label = ({ text, fontSize = DEFAULT_FONT_SIZE }: Label) => {
   const lineSegments = lineSegmentPointArrays.map((segmentPoints) =>
     hullChain(segmentPoints.map((point) => translate(point, lineCorner))),
   );
+  if (!lineSegments.length) {
+    return null;
+  }
   const width = 32;
   const depth = 10;
   return union(

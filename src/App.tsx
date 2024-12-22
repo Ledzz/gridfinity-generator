@@ -10,9 +10,10 @@ import { World } from "./app/World.tsx";
 import { createBox } from "./app/utils/createBox.ts";
 import { createBaseplate } from "./app/utils/createBaseplate.ts";
 import { useAppStore } from "./app/appStore.ts";
-import { Layout, theme } from "antd";
+import { Button, Flex, Layout, theme } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
+import { DownloadOutlined } from "@ant-design/icons";
 
 function App() {
   const {
@@ -52,7 +53,6 @@ function App() {
         }}
       >
         <Sider
-          className={"css-var-rgb ant-menu-css-var"}
           style={{
             background: colorBgContainer,
             minHeight: "100vh",
@@ -73,9 +73,14 @@ function App() {
               }
             />
           ) : null}
-          <button onClick={saveStl}>export</button>
-          <button onClick={addBox}>add box</button>
-          <button onClick={addBaseplate}>add baseplate</button>
+          <Flex wrap gap={"middle"}>
+            <Button type="primary" icon={<DownloadOutlined />}>
+              Save STL
+            </Button>
+
+            <Button onClick={addBox}>add box</Button>
+            <Button onClick={addBaseplate}>add baseplate</Button>
+          </Flex>
         </Sider>
         <Content>
           <Canvas
