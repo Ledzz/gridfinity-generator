@@ -65,7 +65,9 @@ function App() {
           environmentIntensity={0.7}
         />
         <OrbitControls />
-        <axesHelper scale={100} />
+        <axesHelper scale={40} />
+        <gridHelper args={[100, 100, 0x444444, 0xdddddd]} />
+        <gridHelper args={[100, 10]} />
         <World />
       </Canvas>
     </>
