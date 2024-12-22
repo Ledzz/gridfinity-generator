@@ -3,7 +3,8 @@ import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { rotate, translate } from "@jscad/modeling/src/operations/transforms";
 import { subtract, union } from "@jscad/modeling/src/operations/booleans";
 import { sweepRounded } from "./sweepRounded.ts";
-import { basePoly } from "./constants.ts";
+import { baseHeight, basePolyProfile, baseWidth } from "./constants.ts";
+import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 
 interface BaseplateGeomProps {
   style: "refined-lite";
@@ -25,8 +26,7 @@ export const baseplate = ({
   style = "refined-lite",
   fillet = 0.8,
 }: Partial<BaseplateGeomProps> = {}) => {
-  const width = 42;
-  const depth = 42;
+  const size = 42;
   const height = 3;
 
   switch (style) {
@@ -35,7 +35,7 @@ export const baseplate = ({
         rotate(
           [0, (i * Math.PI) / 2, 0],
           translate(
-            [0, 0, width / 2],
+            [0, 0, size / 2],
             rotate(
               [-Math.PI / 2, 0, 0],
               extrudeLinear(
@@ -48,19 +48,47 @@ export const baseplate = ({
           ),
         ),
       );
+      const points = [
+        ...basePolyProfile,
+        [baseWidth, 0.8 + 1.8 + 2.15],
+        [baseWidth, 0],
+      ];
+      points.reverse();
 
       return union(
-        sweepRounded(
-          polygon({
-            points: basePoly,
+        subtract(
+          cuboid({
+            center: [0, baseHeight / 2 + height, 0],
+            size: [size, baseHeight, size],
           }),
-          width,
-          fillet,
+          translate(
+            [0, height, 0],
+            rotate(
+              [-Math.PI / 2, 0, 0],
+              extrudeLinear(
+                { height: baseHeight },
+                roundedRectangle({
+                  size: [size, size],
+                  roundRadius: fillet + baseWidth,
+                }),
+              ),
+            ),
+          ),
+        ),
+        translate(
+          [0, height, 0],
+          sweepRounded(
+            polygon({
+              points,
+            }),
+            size - baseWidth * 2,
+            fillet,
+          ),
         ),
         subtract(
           cuboid({
             center: [0, height / 2, 0],
-            size: [width, height, depth],
+            size: [size, height, size],
           }),
           ...lips,
         ),
