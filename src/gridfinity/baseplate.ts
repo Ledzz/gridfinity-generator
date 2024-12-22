@@ -29,6 +29,13 @@ export const baseplate = ({
   const size = 42;
   const height = 3;
 
+  /**
+   * TODO:
+   * - [ ] Fillet on bottom
+   * - [ ] Magnet holes
+   * - [ ] Screw hole
+   */
+
   switch (style) {
     case "refined-lite":
       const lips = [0, 1, 2, 3].map((i) =>
