@@ -1,9 +1,8 @@
 import { subtract, union } from "@jscad/modeling/src/operations/booleans";
 import { floor } from "./floor.ts";
 import {
-  rotateX,
   translate,
-  translateY,
+  translateZ,
 } from "@jscad/modeling/src/operations/transforms";
 import RecursiveArray from "@jscad/modeling/src/utils/recursiveArray";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
@@ -56,27 +55,24 @@ export function box({
   return union(
     ...items,
     ...processedLabels,
-    translateY(
+    translateZ(
       baseHeight,
       subtract(
-        rotateX(
-          -Math.PI / 2,
-          extrudeLinear(
-            { height: height * 7 },
-            roundedRectangle({
-              size: [width * size, depth * size],
-              roundRadius: profileFillet,
-            }),
-          ),
+        extrudeLinear(
+          { height: height * 7 },
+          roundedRectangle({
+            size: [width * size, depth * size],
+            roundRadius: profileFillet,
+          }),
         ),
         // TODO: Floor fillet should not be equal wall fillet
         roundedCuboid({
           size: [
             width * size - wallThickness * 2,
-            height * 7 - wallThickness + innerFillet * 2,
             depth * size - wallThickness * 2,
+            height * 7 - wallThickness + innerFillet * 2,
           ],
-          center: [0, (height * 7) / 2 + innerFillet + wallThickness, 0],
+          center: [0, 0, (height * 7) / 2 + innerFillet + wallThickness],
           roundRadius: innerFillet,
         }),
       ),
