@@ -5,12 +5,12 @@ import {
 } from "@jscad/modeling/src/operations/extrusions";
 import { rotate, translate } from "@jscad/modeling/src/operations/transforms";
 import { subtract, union } from "@jscad/modeling/src/operations/booleans";
-import { sweepRounded } from "./sweepRounded.ts";
 import { baseHeight, basePolyProfile, baseWidth } from "./constants.ts";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 import slice from "@jscad/modeling/src/operations/extrusions/slice/index";
-import { mat4 } from "@jscad/modeling/src/maths/index";
 import geom2 from "@jscad/modeling/src/geometries/geom2";
+import { mat4 } from "@jscad/modeling/src/maths/index";
+import { sweepRounded } from "./sweepRounded.ts";
 
 interface BaseplateGeomProps {
   style: "refined-lite";
@@ -38,23 +38,22 @@ export const baseplate = ({
 }: Partial<BaseplateGeomProps> = {}) => {
   /**
    * TODO:
-   * - [ ] Fillet on bottom
    * - [ ] Magnet holes
    * - [ ] Screw hole
    */
 
   switch (style) {
-    case "refined-lite":
+    case "refined-lite": {
       const bottomFilletHeight = 0.6;
-      const numberOfSlices = height / bottomFilletHeight;
+      const squareSize = 17.4;
 
       const lips = [0, 1, 2, 3].map((i) =>
         rotate(
-          [0, (i * Math.PI) / 2, 0],
+          [0, 0, (i * Math.PI) / 2],
           translate(
-            [0, 0, size / 2],
+            [size / 2, 0, 0],
             rotate(
-              [-Math.PI / 2, 0, 0],
+              [0, 0, Math.PI / 2],
               extrudeLinear(
                 { height },
                 polygon({
@@ -67,33 +66,67 @@ export const baseplate = ({
       );
       const points = [
         ...basePolyProfile,
-        [baseWidth, 0.8 + 1.8 + 2.15],
+        [baseWidth, baseHeight],
         [baseWidth, 0],
       ];
+
       points.reverse();
 
       return union(
         subtract(
-          cuboid({
-            center: [0, baseHeight / 2 + height, 0],
-            size: [size, baseHeight, size],
-          }),
+          extrudeFromSlices(
+            {
+              numberOfSlices: 3,
+              callback: (progress) => {
+                const heights = [0, bottomFilletHeight, height + baseHeight];
+                let newSlice = slice.fromSides(
+                  geom2.toSides(
+                    rectangle({
+                      size:
+                        progress < 0.5
+                          ? [
+                              size - bottomFilletHeight,
+                              size - bottomFilletHeight,
+                            ]
+                          : [size, size],
+                    }),
+                  ),
+                );
+
+                newSlice = slice.transform(
+                  mat4.fromTranslation(mat4.create(), [
+                    0,
+                    0,
+                    heights[progress * 2],
+                  ]),
+                  newSlice,
+                );
+
+                return newSlice;
+              },
+            },
+            rectangle({
+              size: [size, size],
+            }),
+          ),
           translate(
-            [0, height, 0],
-            rotate(
-              [-Math.PI / 2, 0, 0],
-              extrudeLinear(
-                { height: baseHeight },
-                roundedRectangle({
-                  size: [size, size],
-                  roundRadius: fillet + baseWidth,
-                }),
-              ),
+            [0, 0, height],
+            extrudeLinear(
+              { height: baseHeight },
+              roundedRectangle({
+                size: [size, size],
+                roundRadius: fillet + baseWidth,
+              }),
             ),
           ),
+          cuboid({
+            center: [0, 0, height / 2],
+            size: [squareSize, squareSize, height],
+          }),
+          ...lips,
         ),
         translate(
-          [0, height, 0],
+          [0, 0, height],
           sweepRounded(
             polygon({
               points,
@@ -102,46 +135,8 @@ export const baseplate = ({
             fillet,
           ),
         ),
-        // subtract(
-        // Base square
-        // cuboid({
-        //   center: [0, height / 2, 0],
-        //   size: [size, height, size],
-        // }),
-        extrudeFromSlices(
-          {
-            numberOfSlices,
-            callback: (progress) => {
-              let newSlice = slice.fromSides(
-                geom2.toSides(
-                  rectangle({
-                    size:
-                      progress * height < bottomFilletHeight
-                        ? [size - bottomFilletHeight, size - bottomFilletHeight]
-                        : [size, size],
-                  }),
-                ),
-              );
-
-              newSlice = slice.transform(
-                mat4.fromTranslation(mat4.create(), [0, 0, progress * height]),
-                newSlice,
-              );
-
-              return newSlice;
-            },
-          },
-          rectangle({
-            size: [size, size],
-          }),
-        ),
-        //   ...lips,
-        //   cuboid({
-        //     center: [0, height / 2, 0],
-        //     size: [17.4, height, 17.4],
-        //   }),
-        // ),
       );
+    }
   }
 
   console.warn("Unknown baseplate style:", style);

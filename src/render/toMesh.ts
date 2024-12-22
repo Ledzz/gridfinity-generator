@@ -17,6 +17,7 @@ export function toMesh(
   if (!geom) {
     return null;
   }
+  // TODO: Fix orientation of geom2 and path2
   if (geom2.isA(geom)) {
     return create2DLineObject(geom);
   }

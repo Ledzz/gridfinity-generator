@@ -17,14 +17,13 @@ export const sweepRounded = (
 
   const walls = [0, 1, 2, 3].map((i) =>
     rotate(
-      [0, (i * Math.PI) / 2, 0],
+      [Math.PI / 2, 0, (i * Math.PI) / 2],
       translate([hs, 0, -inhs], extrudeLinear({ height: ins }, baseShape)),
     ),
   );
-
   const rounded = [0, 1, 2, 3].map((i) =>
     rotate(
-      [0, (i * Math.PI) / 2, 0],
+      [Math.PI / 2, 0, (i * Math.PI) / 2],
       translate(
         [hs - fillet, 0, -hs + fillet],
         rotate(

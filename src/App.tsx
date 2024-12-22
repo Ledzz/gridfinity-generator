@@ -65,10 +65,15 @@ function App() {
           environmentIntensity={0.7}
         />
         <OrbitControls />
-        <axesHelper scale={40} />
-        <gridHelper args={[100, 100, 0x444444, 0xdddddd]} />
-        <gridHelper args={[100, 10]} />
-        <World />
+
+        {/*<arrowHelper args={[{ x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, 60]} />*/}
+        {/*<arrowHelper args={[{ x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, 60]} />*/}
+        <axesHelper scale={60} />
+        {/*<gridHelper args={[100, 100, 0x444444, 0xdddddd]} />*/}
+        {/*<gridHelper args={[100, 10]} />*/}
+        <group rotation-x={-Math.PI / 2}>
+          <World />
+        </group>
       </Canvas>
     </>
   );

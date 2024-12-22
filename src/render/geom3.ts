@@ -19,6 +19,7 @@ export function createComplexGeometry(jsonData: Geom3) {
   // Process each polygon
   jsonData.polygons.forEach((polygon) => {
     // Add vertices for this polygon
+    // Swap y and z axes to match Three.js coordinate system
     polygon.vertices.forEach((vertex) => {
       positions.push(vertex[0], vertex[1], vertex[2]);
     });
