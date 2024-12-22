@@ -4,6 +4,7 @@ import { TextInput } from "./TextInput.tsx";
 import { DEFAULT_FONT_SIZE } from "../gridfinity/label.ts";
 import { Label } from "./types/label.ts";
 import { Box } from "./types/box.ts";
+import { Button } from "antd";
 
 export const BoxEdit: FC<{
   box: Box;
@@ -43,7 +44,9 @@ export const BoxEdit: FC<{
   }, [onChange]);
   return (
     <>
-      <button onClick={handleDeleteBox}>delete box</button>
+      <Button type={"primary"} danger onClick={handleDeleteBox}>
+        delete box
+      </Button>
       <NumberInput
         label="width"
         value={box.width}
