@@ -1,4 +1,4 @@
-import { FC, Fragment, useCallback } from "react";
+import { FC, useCallback } from "react";
 import { Button, Flex, Form, InputNumber } from "antd";
 import { Baseplate } from "./types/baseplate.ts";
 

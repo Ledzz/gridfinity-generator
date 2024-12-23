@@ -7,8 +7,6 @@ export const useWorldStore = create<World>()(
     () =>
       ({
         items: [],
-        tolerance: 0.5,
-        profileFillet: 7.5 / 2,
       }) satisfies World,
     { name: "structure" },
   ),

@@ -48,9 +48,15 @@
 - [ ] Stack connector
 - [ ] Thumb screw
 - [ ] Cutout generator
+- [ ] Move items
 
 ## Other TODO
 - [ ] Deploy
 - [ ] Enable eslint
 - [ ] Fix types
 - [ ] Write tests
+- [ ] Credits
+- [ ] License
+- [ ] Copy / paste
+- [ ] Save / load
+- [ ] Versioning / what's new
