@@ -116,7 +116,7 @@ function App() {
                 environmentIntensity={0.7}
               />
             </Suspense>
-            <OrbitControls />
+            <OrbitControls target={[0, 0, 0]} />
             {/*<gridHelper args={[100, 10]} position={[0, 3, -21]} />*/}
             {/*<arrowHelper args={[[0, 0, 1], [21, 21, 21], 60]} />*/}
             {/*<arrowHelper args={[{ x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, 60]} />*/}
@@ -127,12 +127,12 @@ function App() {
               <World />
               <Stl
                 rednderOrder={100}
-                position={[21, -21, 5]}
-                url={"/Blank 1x1.stl"}
+                position={[-21, -21, 5]}
+                url={"/Tray 1x1x3.stl"}
               >
                 <meshStandardMaterial
                   color={0xff0000}
-                  // wireframe
+                  wireframe
                   // transparent
                   // opacity={0.8}
                 />
