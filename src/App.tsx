@@ -74,7 +74,11 @@ function App() {
             />
           ) : null}
           <Flex wrap gap={"middle"}>
-            <Button type="primary" icon={<DownloadOutlined />}>
+            <Button
+              type="primary"
+              icon={<DownloadOutlined />}
+              onClick={saveStl}
+            >
               Save STL
             </Button>
 
