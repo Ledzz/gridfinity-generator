@@ -29,7 +29,13 @@ export const World: FC = () => {
               />
             );
           case "baseplate":
-            return <Baseplate key={item.id} {...item} />;
+            return (
+              <Baseplate
+                key={item.id}
+                onClick={handleSelectItem(item.id)}
+                {...item}
+              />
+            );
         }
       })}
     </>

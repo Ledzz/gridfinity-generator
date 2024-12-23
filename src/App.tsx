@@ -3,7 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
 import { BoxEdit } from "./app/BoxEdit.tsx";
 import { useWorldStore } from "./app/worldStore.ts";
-import { Suspense, useCallback } from "react";
+import { ReactElement, Suspense, useCallback } from "react";
 import { serialize } from "@jscad/stl-serializer";
 import { World } from "./app/World.tsx";
 import { createBox } from "./app/utils/createBox.ts";
@@ -14,6 +14,13 @@ import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
 import { DownloadOutlined } from "@ant-design/icons";
 import { baseplate } from "./gridfinity/baseplate.ts";
+import { Item } from "./app/types/item.ts";
+import { BaseplateEdit } from "./app/BaseplateEdit.tsx";
+
+const EDIT_FORMS: Record<Item["type"], ReactElement> = {
+  box: BoxEdit,
+  baseplate: BaseplateEdit,
+};
 
 function App() {
   const {
@@ -43,6 +50,7 @@ function App() {
       items: [...s.items, createBaseplate()],
     }));
   }, []);
+  const Edit = selectedItem ? EDIT_FORMS[selectedItem.type] : null;
 
   return (
     <>
@@ -61,13 +69,13 @@ function App() {
           }}
           width={300}
         >
-          {selectedItem ? (
-            <BoxEdit
-              box={selectedItem}
-              onChange={(box) =>
+          {Edit ? (
+            <Edit
+              value={selectedItem}
+              onChange={(value) =>
                 useWorldStore.setState((s) => ({
                   items: s.items
-                    .map((item) => (item.id === selectedItem.id ? box : item))
+                    .map((item) => (item.id === selectedItem.id ? value : item))
                     .filter(Boolean),
                 }))
               }

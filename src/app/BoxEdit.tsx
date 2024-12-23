@@ -5,9 +5,9 @@ import { MinusCircleOutlined } from "@ant-design/icons";
 import { createLabel } from "./utils/createLabel.ts";
 
 export const BoxEdit: FC<{
-  box: Box;
+  value: Box;
   onChange: (value: Box | null) => void;
-}> = ({ box, onChange }) => {
+}> = ({ value, onChange }) => {
   const handleDeleteBox = useCallback(() => {
     onChange(null);
   }, [onChange]);
@@ -16,9 +16,9 @@ export const BoxEdit: FC<{
     <>
       <Form
         layout={"vertical"}
-        initialValues={box}
+        initialValues={value}
         onValuesChange={(_, v) => {
-          onChange({ ...box, ...v });
+          onChange({ ...value, ...v });
         }}
       >
         <Form.Item label="Width" name={"width"}>
