@@ -6,18 +6,13 @@ import {
 } from "@jscad/modeling/src/operations/transforms";
 import RecursiveArray from "@jscad/modeling/src/utils/recursiveArray";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
-import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
-import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
-import { roundedCuboid } from "@jscad/modeling/src/primitives";
-import {
-  baseHeight,
-  PROFILE_FILLET,
-  SIZE,
-  WALL_THICKNESS,
-} from "./constants.ts";
+import { PROFILE_FILLET, SIZE, WALL_THICKNESS } from "./constants.ts";
 import { positionedLabel } from "./label.ts";
 
 import { Label } from "../app/types/label.ts";
+import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
+import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
+import { roundedCuboid } from "@jscad/modeling/src/primitives";
 
 export type BoxGeomProps = {
   width?: number;
@@ -60,6 +55,8 @@ export function box({
   const processedLabels = labels
     .map((l) => positionedLabel(l, { width, depth, height }))
     .filter(Boolean);
+
+  const baseHeight = 6;
 
   return union(
     ...items,

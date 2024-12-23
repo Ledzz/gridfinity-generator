@@ -133,6 +133,7 @@ function App() {
                 <meshStandardMaterial
                   color={0xff0000}
                   wireframe
+                  wireframeLinewidth={2}
                   // transparent
                   // opacity={0.8}
                 />

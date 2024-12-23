@@ -42,6 +42,5 @@ export const sweepRounded = (
     ),
   );
 
-  // return union(...walls);
   return union(...walls, ...rounded);
 };
