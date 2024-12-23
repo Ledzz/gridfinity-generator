@@ -1,5 +1,5 @@
 import { FC, useCallback } from "react";
-import { Baseplate, Box } from "./adapters.tsx";
+import { RenderGeom } from "./adapters.tsx";
 import { useWorldStore } from "./worldStore.ts";
 import { useAppStore } from "./appStore.ts";
 
@@ -18,26 +18,13 @@ export const World: FC = () => {
   );
   return (
     <>
-      {items.map((item) => {
-        switch (item.type) {
-          case "box":
-            return (
-              <Box
-                key={item.id}
-                onClick={handleSelectItem(item.id)}
-                {...item}
-              />
-            );
-          case "baseplate":
-            return (
-              <Baseplate
-                key={item.id}
-                onClick={handleSelectItem(item.id)}
-                {...item}
-              />
-            );
-        }
-      })}
+      {items.map((item) => (
+        <RenderGeom
+          key={item.id}
+          onClick={handleSelectItem(item.id)}
+          {...item}
+        />
+      ))}
     </>
   );
 };

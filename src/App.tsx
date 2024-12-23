@@ -1,9 +1,8 @@
 import "./App.css";
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
-import { BoxEdit } from "./app/BoxEdit.tsx";
 import { useWorldStore } from "./app/worldStore.ts";
-import { ReactElement, Suspense, useCallback } from "react";
+import { Suspense, useCallback } from "react";
 import { serialize } from "@jscad/stl-serializer";
 import { World } from "./app/World.tsx";
 import { createBox } from "./app/utils/createBox.ts";
@@ -13,14 +12,7 @@ import { Button, Flex, Layout, theme } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
 import { DownloadOutlined } from "@ant-design/icons";
-import { baseplate } from "./gridfinity/baseplate.ts";
-import { Item } from "./app/types/item.ts";
-import { BaseplateEdit } from "./app/BaseplateEdit.tsx";
-
-const EDIT_FORMS: Record<Item["type"], ReactElement> = {
-  box: BoxEdit,
-  baseplate: BaseplateEdit,
-};
+import { EDIT_FORMS, GEOMETRY_CREATORS } from "./gridfinity/constants.ts";
 
 function App() {
   const {
@@ -32,7 +24,11 @@ function App() {
     state.items.find((i) => i.id === selectedItemId),
   );
   const saveStl = useCallback(() => {
-    const rawData = serialize({ binary: true }, baseplate(selectedItem));
+    if (!selectedItem) return;
+    const rawData = serialize(
+      { binary: true },
+      GEOMETRY_CREATORS[selectedItem.type](selectedItem),
+    );
     const blob = new Blob(rawData);
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
