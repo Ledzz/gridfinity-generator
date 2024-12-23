@@ -1,5 +1,5 @@
 import { FC, useCallback } from "react";
-import { Button, Flex, Form, InputNumber } from "antd";
+import { Button, Checkbox, Flex, Form, InputNumber } from "antd";
 import { Baseplate } from "./types/baseplate.ts";
 
 export const BaseplateEdit: FC<{
@@ -24,6 +24,13 @@ export const BaseplateEdit: FC<{
         </Form.Item>
         <Form.Item label="Depth" name={"depth"}>
           <InputNumber min={1} />
+        </Form.Item>
+        <Form.Item
+          label="Magnet holes"
+          name={"hasMagnetHoles"}
+          valuePropName={"checked"}
+        >
+          <Checkbox />
         </Form.Item>
 
         <Flex wrap gap={"middle"}>

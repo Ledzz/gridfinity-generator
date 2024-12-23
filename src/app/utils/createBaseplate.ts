@@ -6,4 +6,5 @@ export const createBaseplate = (): Baseplate => ({
   type: "baseplate",
   width: 1,
   depth: 1,
+  hasMagnetHoles: false,
 });

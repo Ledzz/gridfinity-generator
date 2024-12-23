@@ -1,4 +1,9 @@
-import { cuboid, polygon, rectangle } from "@jscad/modeling/src/primitives";
+import {
+  circle,
+  cuboid,
+  polygon,
+  rectangle,
+} from "@jscad/modeling/src/primitives";
 import {
   extrudeFromSlices,
   extrudeLinear,
@@ -17,6 +22,7 @@ interface BaseplateGeomProps {
   fillet: number;
   size: number;
   height: number;
+  hasMagnetHoles: boolean;
 }
 
 const baseplatePoly = [
@@ -33,6 +39,7 @@ const baseplatePoly = [
 export const baseplate = ({
   style = "refined-lite",
   height = 3,
+  hasMagnetHoles = false,
 }: Partial<BaseplateGeomProps> = {}) => {
   /**
    * TODO:
@@ -67,8 +74,8 @@ export const baseplate = ({
         [0.7, 0.7], // Up and out at a 45 degree angle
         [0.7, 2.5], // Straight up
         [2.6, 4.4], // Up and out at a 45 degree angle
-        [2.85, 4.4],
-        [2.85, 0],
+        [2.85, 4.4], // Top shelf
+        [2.85, 0], // Straight down
       ];
 
       points.reverse();
@@ -125,6 +132,31 @@ export const baseplate = ({
             size: [squareSize, squareSize, height],
           }),
           ...lips,
+          ...(hasMagnetHoles
+            ? [0, 1, 2, 3].map((i) =>
+                rotate(
+                  [0, 0, (i * Math.PI) / 2],
+                  translate(
+                    [
+                      SIZE / 2 - baseWidth - 5.05,
+                      SIZE / 2 - baseWidth - 5.05,
+                      0,
+                    ],
+                    extrudeLinear(
+                      { height: 2.4 },
+                      union(
+                        circle({ radius: 6.1 / 2 }),
+                        // TODO: angle should be 80 degrees, not 90
+                        rectangle({
+                          size: [6.1 / 2, 6.1 / 2],
+                          center: [6.1 / 4, 6.1 / 4],
+                        }),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            : []),
         ),
         translate(
           [0, 0, height],

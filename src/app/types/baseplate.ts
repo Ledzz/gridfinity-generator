@@ -3,4 +3,5 @@ export type Baseplate = {
   type: "baseplate";
   width: number;
   depth: number;
+  hasMagnetHoles: boolean;
 };
