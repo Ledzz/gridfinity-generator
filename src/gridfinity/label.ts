@@ -64,6 +64,7 @@ export const positionedLabel = (
   if (!props.text) {
     return null;
   }
+  // TODO: Label should be cut by box inner
   return translate(getPosition(position, box), label(props));
 };
 
