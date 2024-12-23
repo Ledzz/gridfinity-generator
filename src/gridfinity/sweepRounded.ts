@@ -5,6 +5,7 @@ import {
 } from "@jscad/modeling/src/operations/extrusions";
 import { rotate, translate } from "@jscad/modeling/src/operations/transforms";
 import Geom2 from "@jscad/modeling/src/geometries/geom2/type";
+import { QUALITY } from "./constants.ts";
 
 export const sweepRounded = (
   baseShape: Geom2,
@@ -32,7 +33,7 @@ export const sweepRounded = (
             {
               startAngle: 0,
               angle: Math.PI / 2,
-              segments: 32,
+              segments: QUALITY,
             },
             translate([fillet, 0, 0], baseShape),
           ),
@@ -41,5 +42,6 @@ export const sweepRounded = (
     ),
   );
 
+  // return union(...walls);
   return union(...walls, ...rounded);
 };

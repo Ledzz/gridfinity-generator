@@ -9,9 +9,9 @@ import { baseplate } from "./baseplate.ts";
 
 export const basePolyProfile = [
   [0, 0], // Innermost bottom point
-  [0.8, 0.8], // Up and out at a 45 degree angle
-  [0.8, 0.8 + 1.8], // Straight up
-  [0.8 + 2.15, 0.8 + 1.8 + 2.15], // Up and out at a 45 degree angle
+  [0.7, 0.7], // Up and out at a 45 degree angle
+  [0.7, 0.8 + 1.7], // Straight up
+  [0.7 + 2.15, 0.8 + 1.8 + 2.15 + 0], // Up and out at a 45 degree angle
 ] satisfies Vec2[];
 
 export const basePoly = [
@@ -38,3 +38,5 @@ export const GEOMETRY_CREATORS: Record<Item["type"], () => Geom3 | null> = {
   box,
   baseplate,
 };
+
+export const QUALITY = 128; // high

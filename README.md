@@ -4,7 +4,7 @@
 - [ ] Styles
   - [ ] Refined Lite
     - [ ] Height 
-    - [ ] Bottom fillet size
+    - [x] Bottom fillet size
     - [ ] Magnet holes
     - [ ] Fix inner square size
     - [ ] Corners details

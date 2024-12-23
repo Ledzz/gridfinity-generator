@@ -13,6 +13,7 @@ import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
 import { DownloadOutlined } from "@ant-design/icons";
 import { EDIT_FORMS, GEOMETRY_CREATORS } from "./gridfinity/constants.ts";
+import { Stl } from "./app/Stl.tsx";
 
 function App() {
   const {
@@ -116,14 +117,19 @@ function App() {
               />
             </Suspense>
             <OrbitControls />
-
-            {/*<arrowHelper args={[{ x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, 60]} />*/}
+            <gridHelper args={[100, 10]} position={[0, 3, -21]} />
+            {/*<arrowHelper args={[[0, 0, 1], [21, 21, 21], 60]} />*/}
             {/*<arrowHelper args={[{ x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, 60]} />*/}
             <axesHelper scale={60} />
             {/*<gridHelper args={[100, 100, 0x444444, 0xdddddd]} />*/}
             {/*<gridHelper args={[100, 10]} />*/}
             <group rotation-x={-Math.PI / 2}>
               <World />
+              <Stl
+                rednderOrder={100}
+                position={[-21, -21, 0]}
+                url={"/GridLite 1x1.stl"}
+              />
             </group>
           </Canvas>
         </Content>

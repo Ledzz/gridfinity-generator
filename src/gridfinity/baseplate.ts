@@ -5,18 +5,12 @@ import {
 } from "@jscad/modeling/src/operations/extrusions";
 import { rotate, translate } from "@jscad/modeling/src/operations/transforms";
 import { subtract, union } from "@jscad/modeling/src/operations/booleans";
-import {
-  baseHeight,
-  basePolyProfile,
-  baseWidth,
-  FILLET,
-  SIZE,
-} from "./constants.ts";
+import { SIZE } from "./constants.ts";
+import { sweepRounded } from "./sweepRounded.ts";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 import slice from "@jscad/modeling/src/operations/extrusions/slice/index";
-import geom2 from "@jscad/modeling/src/geometries/geom2";
 import { mat4 } from "@jscad/modeling/src/maths/index";
-import { sweepRounded } from "./sweepRounded.ts";
+import geom2 from "@jscad/modeling/src/geometries/geom2/index";
 
 interface BaseplateGeomProps {
   style: "refined-lite";
@@ -28,10 +22,10 @@ interface BaseplateGeomProps {
 const baseplatePoly = [
   [3, 0],
   [3, 3],
-  [8, 7],
-  [8, 10],
-  [-8, 10],
-  [-8, 7],
+  [7, 6],
+  [7, 9],
+  [-7, 9],
+  [-7, 6],
   [-3, 3],
   [-3, 0],
 ];
@@ -48,7 +42,7 @@ export const baseplate = ({
 
   switch (style) {
     case "refined-lite": {
-      const bottomFilletHeight = 0.6;
+      const bottomFillet = 0.6;
       const squareSize = 17.4;
 
       const lips = [0, 1, 2, 3].map((i) =>
@@ -69,12 +63,18 @@ export const baseplate = ({
         ),
       );
       const points = [
-        ...basePolyProfile,
-        [baseWidth, baseHeight],
-        [baseWidth, 0],
+        [0, 0], // Innermost bottom point
+        [0.7, 0.7], // Up and out at a 45 degree angle
+        [0.7, 2.5], // Straight up
+        [2.6, 4.4], // Up and out at a 45 degree angle
+        [2.85, 4.4],
+        [2.85, 0],
       ];
 
       points.reverse();
+
+      const baseWidth = Math.max(...points.map((point) => point[0]));
+      const baseHeight = Math.max(...points.map((point) => point[1]));
 
       return union(
         subtract(
@@ -82,16 +82,13 @@ export const baseplate = ({
             {
               numberOfSlices: 3,
               callback: (progress) => {
-                const heights = [0, bottomFilletHeight, height + baseHeight];
+                const heights = [0, bottomFillet, height + baseHeight];
                 let newSlice = slice.fromSides(
                   geom2.toSides(
                     rectangle({
                       size:
                         progress < 0.5
-                          ? [
-                              SIZE - bottomFilletHeight,
-                              SIZE - bottomFilletHeight,
-                            ]
+                          ? [SIZE - bottomFillet * 2, SIZE - bottomFillet * 2]
                           : [SIZE, SIZE],
                     }),
                   ),
@@ -119,7 +116,7 @@ export const baseplate = ({
               { height: baseHeight },
               roundedRectangle({
                 size: [SIZE, SIZE],
-                roundRadius: FILLET + baseWidth,
+                roundRadius: 1.15 + baseWidth,
               }),
             ),
           ),
@@ -136,7 +133,7 @@ export const baseplate = ({
               points,
             }),
             SIZE - baseWidth * 2,
-            FILLET,
+            1.15,
           ),
         ),
       );
