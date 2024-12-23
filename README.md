@@ -1,50 +1,56 @@
-# React + TypeScript + Vite
+# ROADMAP
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Baseplates
+- [ ] Styles
+  - [ ] Refined Lite
+    - [ ] Height 
+    - [ ] Bottom fillet size
+    - [ ] Magnet holes
+    - [ ] Fix inner square size
+    - [ ] Corners details
+    - [ ] Top margin
+  - [ ] Refined
+  - [ ] Normal
+- [ ] Adjustable features
+  - [ ] Magnet holes
+  - [ ] Stack connector
+  - [ ] Thumb screw
+- [ ] Grid
 
-Currently, two official plugins are available:
+## Box
+- [ ] Styles
+  - [ ] Refined Lite
+  - [ ] Refined
+  - [ ] Normal
+- [ ] Adjustable features
+  - [ ] Magnet holes
+  - [ ] Stack connector
+  - [ ] Thumb screw
+  - [ ] Stackable lip
+  - [ ] Thin lip
+- [ ] Fix inner fillets
+- [ ] Label positions
+  - [ ] top-left
+  - [ ] top-center
+  - [ ] top-right
+  - [ ] bottom-left
+  - [ ] bottom-center
+  - [ ] bottom-right
+- [ ] Label sizes
+  - [ ] Fixed
+  - [ ] Auto
+- [ ] Inner
+  - [ ] Wall
+  - [ ] Ledge
+  - [ ] Scoop
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Other features
+- [ ] Stack connector
+- [ ] Thumb screw
+- [ ] Cutout generator
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Other TODO
+- [ ] Deploy
+- [ ] Enable eslint
+- [ ] Fix types
+- [ ] Write tests
