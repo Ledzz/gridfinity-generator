@@ -3,12 +3,12 @@
 ## Baseplates
 - [ ] Styles
   - [ ] Refined Lite
-    - [ ] Height 
+    - [x] Height 
     - [x] Bottom fillet size
     - [ ] Magnet holes
-    - [ ] Fix inner square size
-    - [ ] Corners details
-    - [ ] Top margin
+    - [x] Fix inner square size
+    - [x] Corners details
+    - [x] Top margin
   - [ ] Refined
   - [ ] Normal
 - [ ] Adjustable features
