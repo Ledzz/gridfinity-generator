@@ -7,6 +7,5 @@ export const createBox = (): Box => ({
   width: 1,
   height: 1,
   depth: 1,
-  wallThickness: 0.8,
   labels: [],
 });

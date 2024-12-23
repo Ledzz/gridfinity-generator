@@ -30,9 +30,6 @@ export const BoxEdit: FC<{
         <Form.Item label="Height" name={"height"}>
           <InputNumber min={1} />
         </Form.Item>
-        <Form.Item label="Wall thickness" name={"wallThickness"}>
-          <InputNumber step={0.1} min={0.1} />
-        </Form.Item>
         <Form.List name="labels">
           {(fields, { add, remove }) => (
             <div>

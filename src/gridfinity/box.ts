@@ -9,7 +9,12 @@ import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 import { roundedCuboid } from "@jscad/modeling/src/primitives";
-import { baseHeight } from "./constants.ts";
+import {
+  baseHeight,
+  PROFILE_FILLET,
+  SIZE,
+  WALL_THICKNESS,
+} from "./constants.ts";
 import { positionedLabel } from "./label.ts";
 
 import { Label } from "../app/types/label.ts";
@@ -19,7 +24,6 @@ export type BoxGeomProps = {
   depth?: number;
   height?: number;
   size?: number;
-  wallThickness?: number;
   labels?: Label[];
   profileFillet?: number;
 };
@@ -28,21 +32,18 @@ export function box({
   width = 1,
   depth = 1,
   height = 1,
-  size = 42,
-  wallThickness = 1,
   labels = [],
-  profileFillet = 7.5 / 2,
 }: BoxGeomProps = {}) {
   const innerFillet =
-    profileFillet > wallThickness ? profileFillet - wallThickness : 0;
+    PROFILE_FILLET > WALL_THICKNESS ? PROFILE_FILLET - WALL_THICKNESS : 0;
   const items: RecursiveArray<Geom3> = [];
 
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < depth; j++) {
       items.push(
         translate(
-          [(i + 0.5 - width / 2) * size, 0, (j + 0.5 - depth / 2) * size],
-          floor({ size }),
+          [(i + 0.5 - width / 2) * SIZE, (j + 0.5 - depth / 2) * SIZE, 0],
+          floor(),
         ),
       );
     }
@@ -57,7 +58,7 @@ export function box({
    */
 
   const processedLabels = labels
-    .map((l) => positionedLabel(l, { width, depth, height, size }))
+    .map((l) => positionedLabel(l, { width, depth, height }))
     .filter(Boolean);
 
   return union(
@@ -69,18 +70,18 @@ export function box({
         extrudeLinear(
           { height: height * 7 },
           roundedRectangle({
-            size: [width * size, depth * size],
-            roundRadius: profileFillet,
+            size: [width * SIZE, depth * SIZE],
+            roundRadius: PROFILE_FILLET,
           }),
         ),
         // TODO: Floor fillet should not be equal wall fillet
         roundedCuboid({
           size: [
-            width * size - wallThickness * 2,
-            depth * size - wallThickness * 2,
-            height * 7 - wallThickness + innerFillet * 2,
+            width * SIZE - WALL_THICKNESS * 2,
+            depth * SIZE - WALL_THICKNESS * 2,
+            height * 7 - WALL_THICKNESS + innerFillet * 2,
           ],
-          center: [0, 0, (height * 7) / 2 + innerFillet + wallThickness],
+          center: [0, 0, (height * 7) / 2 + innerFillet + WALL_THICKNESS],
           roundRadius: innerFillet,
         }),
       ),

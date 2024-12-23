@@ -5,7 +5,13 @@ import {
 } from "@jscad/modeling/src/operations/extrusions";
 import { rotate, translate } from "@jscad/modeling/src/operations/transforms";
 import { subtract, union } from "@jscad/modeling/src/operations/booleans";
-import { baseHeight, basePolyProfile, baseWidth } from "./constants.ts";
+import {
+  baseHeight,
+  basePolyProfile,
+  baseWidth,
+  FILLET,
+  SIZE,
+} from "./constants.ts";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 import slice from "@jscad/modeling/src/operations/extrusions/slice/index";
 import geom2 from "@jscad/modeling/src/geometries/geom2";
@@ -32,8 +38,6 @@ const baseplatePoly = [
 
 export const baseplate = ({
   style = "refined-lite",
-  fillet = 0.8,
-  size = 42,
   height = 3,
 }: Partial<BaseplateGeomProps> = {}) => {
   /**
@@ -51,7 +55,7 @@ export const baseplate = ({
         rotate(
           [0, 0, (i * Math.PI) / 2],
           translate(
-            [size / 2, 0, 0],
+            [SIZE / 2, 0, 0],
             rotate(
               [0, 0, Math.PI / 2],
               extrudeLinear(
@@ -85,10 +89,10 @@ export const baseplate = ({
                       size:
                         progress < 0.5
                           ? [
-                              size - bottomFilletHeight,
-                              size - bottomFilletHeight,
+                              SIZE - bottomFilletHeight,
+                              SIZE - bottomFilletHeight,
                             ]
-                          : [size, size],
+                          : [SIZE, SIZE],
                     }),
                   ),
                 );
@@ -106,7 +110,7 @@ export const baseplate = ({
               },
             },
             rectangle({
-              size: [size, size],
+              size: [SIZE, SIZE],
             }),
           ),
           translate(
@@ -114,8 +118,8 @@ export const baseplate = ({
             extrudeLinear(
               { height: baseHeight },
               roundedRectangle({
-                size: [size, size],
-                roundRadius: fillet + baseWidth,
+                size: [SIZE, SIZE],
+                roundRadius: FILLET + baseWidth,
               }),
             ),
           ),
@@ -131,8 +135,8 @@ export const baseplate = ({
             polygon({
               points,
             }),
-            size - baseWidth * 2,
-            fillet,
+            SIZE - baseWidth * 2,
+            FILLET,
           ),
         ),
       );

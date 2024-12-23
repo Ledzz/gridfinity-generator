@@ -14,3 +14,10 @@ export const basePoly = [
 
 export const baseWidth = Math.max(...basePolyProfile.map((point) => point[0]));
 export const baseHeight = Math.max(...basePolyProfile.map((point) => point[1]));
+
+export const SIZE = 42;
+export const WALL_THICKNESS = 0.8;
+
+export const FILLET = 0.8;
+export const PROFILE_FILLET = FILLET + 2.95;
+export const TOLERANCE = 0.5;

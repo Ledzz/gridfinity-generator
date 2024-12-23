@@ -6,6 +6,5 @@ export type Box = {
   width: number;
   height: number;
   depth: number;
-  wallThickness: number;
   labels?: Label[];
 };
