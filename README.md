@@ -2,17 +2,17 @@
 
 ## Baseplates
 - [ ] Styles
-  - [ ] Refined Lite
+  - [x] Refined Lite
     - [x] Height 
     - [x] Bottom fillet size
-    - [ ] Magnet holes
+    - [x] Magnet holes
     - [x] Fix inner square size
     - [x] Corners details
     - [x] Top margin
   - [ ] Refined
   - [ ] Normal
 - [ ] Adjustable features
-  - [ ] Magnet holes
+  - [x] Magnet holes
   - [ ] Stack connector
   - [ ] Thumb screw
 - [ ] Grid

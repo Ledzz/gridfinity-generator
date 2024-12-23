@@ -4,18 +4,13 @@ import {
   polygon,
   rectangle,
 } from "@jscad/modeling/src/primitives";
-import {
-  extrudeFromSlices,
-  extrudeLinear,
-} from "@jscad/modeling/src/operations/extrusions";
+import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { rotate, translate } from "@jscad/modeling/src/operations/transforms";
 import { subtract, union } from "@jscad/modeling/src/operations/booleans";
 import { SIZE } from "./constants.ts";
-import { sweepRounded } from "./sweepRounded.ts";
+import { sweepRounded } from "./utils/sweepRounded.ts";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
-import slice from "@jscad/modeling/src/operations/extrusions/slice/index";
-import { mat4 } from "@jscad/modeling/src/maths/index";
-import geom2 from "@jscad/modeling/src/geometries/geom2/index";
+import { extrudeWithChamfer } from "./utils/extrudeWithChamfer.ts";
 
 interface BaseplateGeomProps {
   style: "refined-lite";
@@ -85,37 +80,9 @@ export const baseplate = ({
 
       return union(
         subtract(
-          extrudeFromSlices(
-            {
-              numberOfSlices: 3,
-              callback: (progress) => {
-                const heights = [0, bottomFillet, height + baseHeight];
-                let newSlice = slice.fromSides(
-                  geom2.toSides(
-                    rectangle({
-                      size:
-                        progress < 0.5
-                          ? [SIZE - bottomFillet * 2, SIZE - bottomFillet * 2]
-                          : [SIZE, SIZE],
-                    }),
-                  ),
-                );
-
-                newSlice = slice.transform(
-                  mat4.fromTranslation(mat4.create(), [
-                    0,
-                    0,
-                    heights[progress * 2],
-                  ]),
-                  newSlice,
-                );
-
-                return newSlice;
-              },
-            },
-            rectangle({
-              size: [SIZE, SIZE],
-            }),
+          extrudeWithChamfer(
+            { height: height + baseHeight, chamfer: -0.6 },
+            rectangle({ size: [SIZE, SIZE] }),
           ),
           translate(
             [0, 0, height],
@@ -142,8 +109,8 @@ export const baseplate = ({
                       SIZE / 2 - baseWidth - 5.05,
                       0,
                     ],
-                    extrudeLinear(
-                      { height: 2.4 },
+                    extrudeWithChamfer(
+                      { height: 2.4, chamfer: 0.6 },
                       union(
                         circle({ radius: 6.1 / 2 }),
                         // TODO: angle should be 80 degrees, not 90

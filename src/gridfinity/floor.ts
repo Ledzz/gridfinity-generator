@@ -1,6 +1,6 @@
 import { union } from "@jscad/modeling/src/operations/booleans";
 import { polygon } from "@jscad/modeling/src/primitives";
-import { sweepRounded } from "./sweepRounded.ts";
+import { sweepRounded } from "./utils/sweepRounded.ts";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 import {
