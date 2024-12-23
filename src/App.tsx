@@ -3,9 +3,8 @@ import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
 import { BoxEdit } from "./app/BoxEdit.tsx";
 import { useWorldStore } from "./app/worldStore.ts";
-import { useCallback } from "react";
+import { Suspense, useCallback } from "react";
 import { serialize } from "@jscad/stl-serializer";
-import { box } from "./gridfinity/box.ts";
 import { World } from "./app/World.tsx";
 import { createBox } from "./app/utils/createBox.ts";
 import { createBaseplate } from "./app/utils/createBaseplate.ts";
@@ -14,6 +13,7 @@ import { Button, Flex, Layout, theme } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
 import { DownloadOutlined } from "@ant-design/icons";
+import { baseplate } from "./gridfinity/baseplate.ts";
 
 function App() {
   const {
@@ -25,7 +25,7 @@ function App() {
     state.items.find((i) => i.id === selectedItemId),
   );
   const saveStl = useCallback(() => {
-    const rawData = serialize({ binary: true }, box(selectedItem));
+    const rawData = serialize({ binary: true }, baseplate(selectedItem));
     const blob = new Blob(rawData);
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -94,10 +94,23 @@ function App() {
               position: [100, 60, 100],
             }}
           >
-            <Environment
-              files={"/studio_small_03_1k.exr"}
-              environmentIntensity={0.7}
-            />
+            <Suspense
+              fallback={
+                <>
+                  <pointLight position={[70, 100, 70]} intensity={50000 / 2} />
+                  <pointLight
+                    position={[-70, -40, -70]}
+                    intensity={50000 / 2}
+                  />
+                  <ambientLight intensity={1} />
+                </>
+              }
+            >
+              <Environment
+                files={"/studio_small_03_compressed.exr"}
+                environmentIntensity={0.7}
+              />
+            </Suspense>
             <OrbitControls />
 
             {/*<arrowHelper args={[{ x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, 60]} />*/}
