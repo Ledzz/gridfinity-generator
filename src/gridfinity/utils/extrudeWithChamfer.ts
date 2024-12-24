@@ -24,13 +24,3 @@ export const extrudeWithChamfer = ({ height, chamfer }, shape) => {
     shape,
   );
 };
-//
-// extrudeWithChamfer(
-//   {
-//     height: height + baseHeight,
-//     chamfer: 0.6,
-//   },
-//   rectangle({
-//     size: [SIZE, SIZE],
-//   }),
-// );

@@ -125,14 +125,14 @@ function App() {
             <group rotation-x={-Math.PI / 2}>
               <World />
               {/*<Stl*/}
-              {/*  rednderOrder={100}*/}
-              {/*  position={[-21, -21, 5]}*/}
-              {/*  url={"/Tray 1x1x3.stl"}*/}
+              {/*  renderOrder={100}*/}
+              {/*  position={[42, -21, 5]}*/}
+              {/*  url={"/Tray 2x1x3.stl"}*/}
               {/*>*/}
               {/*  <meshStandardMaterial*/}
               {/*    color={0xff0000}*/}
-              {/*    wireframe*/}
-              {/*    wireframeLinewidth={2}*/}
+              {/*    // wireframe*/}
+              {/*    // wireframeLinewidth={2}*/}
               {/*    // transparent*/}
               {/*    // opacity={0.8}*/}
               {/*  />*/}

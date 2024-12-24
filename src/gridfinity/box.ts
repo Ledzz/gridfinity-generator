@@ -1,12 +1,7 @@
 import { union } from "@jscad/modeling/src/operations/booleans";
 import { floor } from "./floor.ts";
-import {
-  translate,
-  translateZ,
-} from "@jscad/modeling/src/operations/transforms";
-import RecursiveArray from "@jscad/modeling/src/utils/recursiveArray";
-import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
-import { PROFILE_FILLET, SIZE, WALL_THICKNESS } from "./constants.ts";
+import { translateZ } from "@jscad/modeling/src/operations/transforms";
+import { PROFILE_FILLET, WALL_THICKNESS } from "./constants.ts";
 import { positionedLabel } from "./label.ts";
 
 import { Label } from "../app/types/label.ts";
@@ -30,18 +25,6 @@ export function box({
 }: BoxGeomProps = {}) {
   const innerFillet =
     PROFILE_FILLET > WALL_THICKNESS ? PROFILE_FILLET - WALL_THICKNESS : 0;
-  const items: RecursiveArray<Geom3> = [];
-
-  for (let i = 0; i < width; i++) {
-    for (let j = 0; j < depth; j++) {
-      items.push(
-        translate(
-          [(i + 0.5 - width / 2) * SIZE, (j + 0.5 - depth / 2) * SIZE, 0],
-          floor(),
-        ),
-      );
-    }
-  }
 
   /**
    * TODO:
@@ -70,7 +53,7 @@ export function box({
   ];
 
   return union(
-    ...items,
+    floor({ width, depth }),
     ...processedLabels,
     translateZ(
       baseHeight,
@@ -82,27 +65,5 @@ export function box({
         3.75,
       ),
     ),
-    // translateZ(
-    //   baseHeight,
-    //   subtract(
-    //     extrudeLinear(
-    //       { height: height * 7 },
-    //       roundedRectangle({
-    //         size: [width * SIZE, depth * SIZE],
-    //         roundRadius: PROFILE_FILLET,
-    //       }),
-    //     ),
-    //     // TODO: Floor fillet should not be equal wall fillet
-    //     roundedCuboid({
-    //       size: [
-    //         width * SIZE - WALL_THICKNESS * 2,
-    //         depth * SIZE - WALL_THICKNESS * 2,
-    //         height * 7 - WALL_THICKNESS + innerFillet * 2,
-    //       ],
-    //       center: [0, 0, (height * 7) / 2 + innerFillet + WALL_THICKNESS],
-    //       roundRadius: innerFillet,
-    //     }),
-    //   ),
-    // ),
   );
 }
