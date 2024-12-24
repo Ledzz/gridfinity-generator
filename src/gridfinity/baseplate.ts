@@ -10,8 +10,8 @@ import { subtract, union } from "@jscad/modeling/src/operations/booleans";
 import { SIZE } from "./constants.ts";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 import { extrudeWithChamfer } from "./utils/extrudeWithChamfer.ts";
-import { sweepRounded } from "./utils/sweepRounded.ts";
 import { range } from "./utils/range.ts";
+import { sweepRounded } from "./utils/sweepRounded.ts";
 
 interface BaseplateGeomProps {
   style: "refined-lite";
@@ -46,8 +46,6 @@ export const baseplate = ({
    * - [ ] Magnet holes
    * - [ ] Screw hole
    */
-
-  console.log(width, depth);
 
   switch (style) {
     case "refined-lite": {
@@ -129,15 +127,46 @@ export const baseplate = ({
       ];
 
       const toSubtract = range(width)
-        .map((i) => {
-          return range(depth).map((j) => {
-            console.log(i, SIZE * (i - width));
-            return translate(
-              [SIZE * (i - width), SIZE * j, 0],
+        .map((i) =>
+          range(depth).map((j) =>
+            translate(
+              [
+                SIZE *
+                  (i - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
+                SIZE *
+                  (j - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
+                0,
+              ],
               ...itemSubtract,
-            );
-          });
-        })
+            ),
+          ),
+        )
+        .flat();
+
+      const toAdd = range(width)
+        .map((i) =>
+          range(depth).map((j) =>
+            translate(
+              [
+                SIZE *
+                  (i - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
+                SIZE *
+                  (j - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
+                0,
+              ],
+              translate(
+                [0, 0, height],
+                sweepRounded(
+                  polygon({
+                    points,
+                  }),
+                  SIZE - baseWidth * 2,
+                  1.15,
+                ),
+              ),
+            ),
+          ),
+        )
         .flat();
 
       return union(
@@ -150,16 +179,7 @@ export const baseplate = ({
           ...toSubtract,
         ),
         // profile
-        translate(
-          [0, 0, height],
-          sweepRounded(
-            polygon({
-              points,
-            }),
-            SIZE - baseWidth * 2,
-            1.15,
-          ),
-        ),
+        ...toAdd,
       );
     }
   }
