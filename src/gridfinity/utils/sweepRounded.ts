@@ -9,24 +9,28 @@ import { QUALITY } from "../constants.ts";
 
 export const sweepRounded = (
   baseShape: Geom2,
-  size: number,
+  size: number | [number, number],
   fillet: number,
 ) => {
-  const hs = size / 2;
-  const ins = size - fillet * 2;
-  const inhs = ins / 2;
+  const width = Array.isArray(size) ? size[0] : size;
+  const depth = Array.isArray(size) ? size[1] : size;
 
-  const walls = [0, 1, 2, 3].map((i) =>
-    rotate(
+  const walls = [0, 1, 2, 3].map((i) => {
+    const x = i % 2 === 0 ? width / 2 : depth / 2;
+    const z = i % 2 === 1 ? -width / 2 + fillet : -depth / 2 + fillet;
+    const extrude = (i % 2 === 1 ? width : depth) - fillet * 2;
+    return rotate(
       [Math.PI / 2, 0, (i * Math.PI) / 2],
-      translate([hs, 0, -inhs], extrudeLinear({ height: ins }, baseShape)),
-    ),
-  );
-  const rounded = [0, 1, 2, 3].map((i) =>
-    rotate(
+      translate([x, 0, z], extrudeLinear({ height: extrude }, baseShape)),
+    );
+  });
+  const rounded = [0, 1, 2, 3].map((i) => {
+    const x = i % 2 === 0 ? width / 2 - fillet : depth / 2 - fillet;
+    const z = i % 2 === 1 ? -width / 2 + fillet : -depth / 2 + fillet;
+    return rotate(
       [Math.PI / 2, 0, (i * Math.PI) / 2],
       translate(
-        [hs - fillet, 0, -hs + fillet],
+        [x, 0, z],
         rotate(
           [-Math.PI / 2, 0, 0],
           extrudeRotate(
@@ -39,8 +43,8 @@ export const sweepRounded = (
           ),
         ),
       ),
-    ),
-  );
+    );
+  });
 
   return union(...walls, ...rounded);
 };

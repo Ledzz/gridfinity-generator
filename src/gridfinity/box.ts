@@ -78,7 +78,7 @@ export function box({
         polygon({
           points,
         }),
-        41.5,
+        [width * 42 - 0.5, depth * 42 - 0.5],
         3.75,
       ),
     ),
