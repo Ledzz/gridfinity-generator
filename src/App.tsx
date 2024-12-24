@@ -13,6 +13,7 @@ import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
 import { DownloadOutlined } from "@ant-design/icons";
 import { EDIT_FORMS, GEOMETRY_CREATORS } from "./gridfinity/constants.ts";
+import { Stl } from "./app/Stl.tsx";
 
 function App() {
   const {
@@ -124,19 +125,19 @@ function App() {
             {/*<gridHelper args={[100, 10]} />*/}
             <group rotation-x={-Math.PI / 2}>
               <World />
-              {/*<Stl*/}
-              {/*  renderOrder={100}*/}
-              {/*  position={[42, -21, 5]}*/}
-              {/*  url={"/Tray 2x1x3.stl"}*/}
-              {/*>*/}
-              {/*  <meshStandardMaterial*/}
-              {/*    color={0xff0000}*/}
-              {/*    // wireframe*/}
-              {/*    // wireframeLinewidth={2}*/}
-              {/*    // transparent*/}
-              {/*    // opacity={0.8}*/}
-              {/*  />*/}
-              {/*</Stl>*/}
+              <Stl
+                renderOrder={100}
+                position={[42, -21, 0]}
+                url={"/GridLite 2x1.stl"}
+              >
+                <meshStandardMaterial
+                  color={0xff0000}
+                  // wireframe
+                  // wireframeLinewidth={2}
+                  // transparent
+                  // opacity={0.8}
+                />
+              </Stl>
             </group>
           </Canvas>
         </Content>
