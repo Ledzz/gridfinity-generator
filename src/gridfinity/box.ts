@@ -1,4 +1,4 @@
-import { subtract, union } from "@jscad/modeling/src/operations/booleans";
+import { union } from "@jscad/modeling/src/operations/booleans";
 import { floor } from "./floor.ts";
 import {
   translate,
@@ -10,9 +10,8 @@ import { PROFILE_FILLET, SIZE, WALL_THICKNESS } from "./constants.ts";
 import { positionedLabel } from "./label.ts";
 
 import { Label } from "../app/types/label.ts";
-import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
-import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
-import { roundedCuboid } from "@jscad/modeling/src/primitives";
+import { sweepRounded } from "./utils/sweepRounded.ts";
+import { polygon } from "@jscad/modeling/src/primitives";
 
 export type BoxGeomProps = {
   width?: number;
@@ -57,31 +56,53 @@ export function box({
     .filter(Boolean);
 
   const baseHeight = 6;
+  const h = height * 7;
+
+  const points = [
+    [0, 0],
+    [0, h - 1.6],
+    [-1.9, h - 3.5],
+    [-1.9, h - 5.3],
+    [-2.6, h - 6],
+    [-2.6, h - 6.25],
+    [-0.45, h - 8.4],
+    [-0.45, 0],
+  ];
 
   return union(
     ...items,
     ...processedLabels,
     translateZ(
       baseHeight,
-      subtract(
-        extrudeLinear(
-          { height: height * 7 },
-          roundedRectangle({
-            size: [width * SIZE, depth * SIZE],
-            roundRadius: PROFILE_FILLET,
-          }),
-        ),
-        // TODO: Floor fillet should not be equal wall fillet
-        roundedCuboid({
-          size: [
-            width * SIZE - WALL_THICKNESS * 2,
-            depth * SIZE - WALL_THICKNESS * 2,
-            height * 7 - WALL_THICKNESS + innerFillet * 2,
-          ],
-          center: [0, 0, (height * 7) / 2 + innerFillet + WALL_THICKNESS],
-          roundRadius: innerFillet,
+      sweepRounded(
+        polygon({
+          points,
         }),
+        41.5,
+        3.75,
       ),
     ),
+    // translateZ(
+    //   baseHeight,
+    //   subtract(
+    //     extrudeLinear(
+    //       { height: height * 7 },
+    //       roundedRectangle({
+    //         size: [width * SIZE, depth * SIZE],
+    //         roundRadius: PROFILE_FILLET,
+    //       }),
+    //     ),
+    //     // TODO: Floor fillet should not be equal wall fillet
+    //     roundedCuboid({
+    //       size: [
+    //         width * SIZE - WALL_THICKNESS * 2,
+    //         depth * SIZE - WALL_THICKNESS * 2,
+    //         height * 7 - WALL_THICKNESS + innerFillet * 2,
+    //       ],
+    //       center: [0, 0, (height * 7) / 2 + innerFillet + WALL_THICKNESS],
+    //       roundRadius: innerFillet,
+    //     }),
+    //   ),
+    // ),
   );
 }

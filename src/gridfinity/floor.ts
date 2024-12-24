@@ -13,7 +13,7 @@ export function floor() {
     [2.95, 4.75], // Up and out at a 45 degree angle
     [2.95, 5], // Up and out at a 45 degree angle
     [2.95, 6], // Up and out at a 45 degree angle
-    [0, 5],
+    [0, 6],
   ];
   const baseWidth = Math.max(...points.map((point) => point[0]));
   const baseHeight = Math.max(...points.map((point) => point[1]));
