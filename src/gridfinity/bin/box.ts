@@ -1,11 +1,10 @@
 import { union } from "@jscad/modeling/src/operations/booleans";
 import { floor } from "./floor.ts";
 import { translateZ } from "@jscad/modeling/src/operations/transforms";
-import { PROFILE_FILLET, WALL_THICKNESS } from "./constants.ts";
 import { positionedLabel } from "./label.ts";
 
-import { Label } from "../app/types/label.ts";
-import { sweepRounded } from "./utils/sweepRounded.ts";
+import { Label } from "../../app/types/label.ts";
+import { sweepRounded } from "../utils/sweepRounded.ts";
 import { polygon } from "@jscad/modeling/src/primitives";
 
 export type BoxGeomProps = {
@@ -23,9 +22,6 @@ export function box({
   height = 1,
   labels = [],
 }: BoxGeomProps = {}) {
-  const innerFillet =
-    PROFILE_FILLET > WALL_THICKNESS ? PROFILE_FILLET - WALL_THICKNESS : 0;
-
   /**
    * TODO:
    * - [ ] Magnet holes

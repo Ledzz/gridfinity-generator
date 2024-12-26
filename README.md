@@ -15,7 +15,7 @@
   - [x] Magnet holes
   - [ ] Stack connector
   - [ ] Thumb screw
-- [ ] Grid
+- [x] Grid
 
 ## Box
 - [ ] Styles

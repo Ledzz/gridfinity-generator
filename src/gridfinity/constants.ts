@@ -3,8 +3,8 @@ import { ReactElement } from "react";
 import { BoxEdit } from "../app/BoxEdit.tsx";
 import { BaseplateEdit } from "../app/BaseplateEdit.tsx";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
-import { box } from "./box.ts";
-import { baseplate } from "./baseplate.ts";
+import { box } from "./bin/box.ts";
+import { baseplate } from "./baseplate/baseplate.ts";
 
 export const baseHeight = 4.75;
 

@@ -1,7 +1,7 @@
 import { union } from "@jscad/modeling/src/operations/booleans";
 import { polygon } from "@jscad/modeling/src/primitives";
-import { sweepRounded } from "./utils/sweepRounded.ts";
-import { FILLET, QUALITY, SIZE, TOLERANCE } from "./constants.ts";
+import { sweepRounded } from "../utils/sweepRounded.ts";
+import { FILLET, QUALITY, SIZE, TOLERANCE } from "../constants.ts";
 import RecursiveArray from "@jscad/modeling/src/utils/recursiveArray";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 import {

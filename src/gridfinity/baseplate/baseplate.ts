@@ -7,11 +7,12 @@ import {
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { rotate, translate } from "@jscad/modeling/src/operations/transforms";
 import { subtract, union } from "@jscad/modeling/src/operations/booleans";
-import { SIZE } from "./constants.ts";
+import { SIZE } from "../constants.ts";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
-import { extrudeWithChamfer } from "./utils/extrudeWithChamfer.ts";
-import { range } from "./utils/range.ts";
-import { sweepRounded } from "./utils/sweepRounded.ts";
+import { extrudeWithChamfer } from "../utils/extrudeWithChamfer.ts";
+import { range } from "../utils/range.ts";
+import { sweepRounded } from "../utils/sweepRounded.ts";
+import { connectorHole } from "./connectorHole.ts";
 
 interface BaseplateGeomProps {
   style: "refined-lite";
@@ -22,17 +23,6 @@ interface BaseplateGeomProps {
   width: number;
   depth: number;
 }
-
-const baseplatePoly = [
-  [3, 0],
-  [3, 3],
-  [7, 6],
-  [7, 9],
-  [-7, 9],
-  [-7, 6],
-  [-3, 3],
-  [-3, 0],
-];
 
 export const baseplate = ({
   style = "refined-lite",
@@ -49,26 +39,8 @@ export const baseplate = ({
 
   switch (style) {
     case "refined-lite": {
-      const bottomFillet = 0.6;
       const squareSize = 17.4;
 
-      const lips = [0, 1, 2, 3].map((i) =>
-        rotate(
-          [0, 0, (i * Math.PI) / 2],
-          translate(
-            [SIZE / 2, 0, 0],
-            rotate(
-              [0, 0, Math.PI / 2],
-              extrudeLinear(
-                { height },
-                polygon({
-                  points: baseplatePoly,
-                }),
-              ),
-            ),
-          ),
-        ),
-      );
       const points = [
         [0, 0], // Innermost bottom point
         [0.7, 0.7], // Up and out at a 45 degree angle
@@ -83,53 +55,27 @@ export const baseplate = ({
       const baseWidth = Math.max(...points.map((point) => point[0]));
       const baseHeight = Math.max(...points.map((point) => point[1]));
 
-      const itemSubtract = [
-        // hollow inside
-        translate(
-          [0, 0, height],
-          extrudeLinear(
-            { height: baseHeight },
-            roundedRectangle({
-              size: [SIZE, SIZE],
-              roundRadius: 1.15 + baseWidth,
-            }),
-          ),
-        ),
-        // center hole
-        cuboid({
-          center: [0, 0, height / 2],
-          size: [squareSize, squareSize, height],
-        }),
-        // lips for stacking
-        ...lips,
-        // magnet holes
-        ...(hasMagnetHoles
-          ? [0, 1, 2, 3].map((i) =>
-              rotate(
-                [0, 0, (i * Math.PI) / 2],
-                translate(
-                  [SIZE / 2 - baseWidth - 5.05, SIZE / 2 - baseWidth - 5.05, 0],
-                  extrudeWithChamfer(
-                    { height: 2.4, chamfer: 0.6 },
-                    union(
-                      circle({ radius: 6.1 / 2 }),
-                      // TODO: angle should be 80 degrees, not 90
-                      rectangle({
-                        size: [6.1 / 2, 6.1 / 2],
-                        center: [6.1 / 4, 6.1 / 4],
-                      }),
-                    ),
-                  ),
-                ),
-              ),
-            )
-          : []),
-      ];
-
       const toSubtract = range(width)
         .map((i) =>
-          range(depth).map((j) =>
-            translate(
+          range(depth).map((j) => {
+            const ca: number[] = [];
+            if (i === 0) {
+              ca.push(2);
+            }
+            if (i === width - 1) {
+              ca.push(0);
+            }
+            if (j === 0) {
+              ca.push(3);
+            }
+            if (j === depth - 1) {
+              ca.push(1);
+            }
+            const connectors = ca.map((index) =>
+              connectorHole({ index, height }),
+            );
+
+            return translate(
               [
                 SIZE *
                   (i - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
@@ -137,9 +83,52 @@ export const baseplate = ({
                   (j - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
                 0,
               ],
-              ...itemSubtract,
-            ),
-          ),
+              // hollow inside
+              translate(
+                [0, 0, height],
+                extrudeLinear(
+                  { height: baseHeight },
+                  roundedRectangle({
+                    size: [SIZE, SIZE],
+                    roundRadius: 1.15 + baseWidth,
+                  }),
+                ),
+              ),
+              // center hole
+              cuboid({
+                center: [0, 0, height / 2],
+                size: [squareSize, squareSize, height],
+              }),
+              // connectors for stacking
+              ...connectors,
+              // magnet holes
+              ...(hasMagnetHoles
+                ? [0, 1, 2, 3].map((i) =>
+                    rotate(
+                      [0, 0, (i * Math.PI) / 2],
+                      translate(
+                        [
+                          SIZE / 2 - baseWidth - 5.05,
+                          SIZE / 2 - baseWidth - 5.05,
+                          0,
+                        ],
+                        extrudeWithChamfer(
+                          { height: 2.4, chamfer: 0.6 },
+                          union(
+                            circle({ radius: 6.1 / 2 }),
+                            // TODO: angle should be 80 degrees, not 90
+                            rectangle({
+                              size: [6.1 / 2, 6.1 / 2],
+                              center: [6.1 / 4, 6.1 / 4],
+                            }),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : []),
+            );
+          }),
         )
         .flat();
 
