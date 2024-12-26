@@ -9,10 +9,8 @@ import { baseplate } from "./baseplate/baseplate.ts";
 export const baseHeight = 4.75;
 
 export const SIZE = 42;
-export const WALL_THICKNESS = 0.8;
 
 export const FILLET = 0.8;
-export const PROFILE_FILLET = FILLET + 2.95;
 export const TOLERANCE = 0.5;
 
 export const EDIT_FORMS: Record<Item["type"], ReactElement> = {
