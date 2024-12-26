@@ -51,6 +51,7 @@
 - [ ] Move items
 
 ## Other TODO
+- [ ] Move to worker
 - [ ] Deploy
 - [ ] Enable eslint
 - [ ] Fix types
