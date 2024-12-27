@@ -5,7 +5,7 @@ import { subtract, union } from "@jscad/modeling/src/operations/booleans";
 import { SIZE } from "../constants.ts";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 import { extrudeWithChamfer } from "../utils/extrudeWithChamfer.ts";
-import { mapReduce2D } from "../utils/range.ts";
+import { mapReduce2D, range } from "../utils/range.ts";
 import { sweepRounded } from "../utils/sweepRounded.ts";
 import { connectorHoles } from "./connectorHole.ts";
 import { centerHole } from "./centerHole.ts";
@@ -16,6 +16,7 @@ interface BaseplateGeomProps {
   size: number;
   height: number;
   hasMagnetHoles: boolean;
+  hasStackableConnectors: boolean;
   width: number;
   depth: number;
   quality: number;
@@ -25,6 +26,7 @@ export const baseplate = ({
   style = "refined-lite",
   height = 3,
   hasMagnetHoles = false,
+  hasStackableConnectors = false,
   width = 1,
   depth = 1,
   quality = 16,
@@ -64,10 +66,12 @@ export const baseplate = ({
             ),
           ),
           centerHole({ width, depth, height, x, y }),
-          connectorHoles({ width, depth, height, x, y }),
+          hasStackableConnectors
+            ? connectorHoles({ width, depth, height, x, y })
+            : [],
           // magnet holes
           ...(hasMagnetHoles
-            ? [0, 1, 2, 3].map((i) =>
+            ? range(4).map((i) =>
                 rotate(
                   [0, 0, (i * Math.PI) / 2],
                   translate(

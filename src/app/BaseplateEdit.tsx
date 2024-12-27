@@ -32,6 +32,13 @@ export const BaseplateEdit: FC<{
         >
           <Checkbox />
         </Form.Item>
+        <Form.Item
+          label="Stackable connectors"
+          name={"hasStackableConnectors"}
+          valuePropName={"checked"}
+        >
+          <Checkbox />
+        </Form.Item>
 
         <Flex wrap gap={"middle"}>
           <Button type={"primary"} danger onClick={handleDeleteBaseplate}>

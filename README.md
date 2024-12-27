@@ -13,7 +13,7 @@
   - [ ] Normal
 - [ ] Adjustable features
   - [x] Magnet holes
-  - [ ] Stack connector
+  - [x] Stack connector
   - [ ] Thumb screw
 - [x] Grid
 

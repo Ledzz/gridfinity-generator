@@ -4,4 +4,5 @@ export type Baseplate = {
   width: number;
   depth: number;
   hasMagnetHoles: boolean;
+  hasStackableConnectors: boolean;
 };
