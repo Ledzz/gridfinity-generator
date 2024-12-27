@@ -14,7 +14,7 @@ const connectorPoly = [
   [-3, 0],
 ];
 
-export const connectorHole = ({
+const connectorHole = ({
   index, // right, top, left, bottom
   height,
 }: {
@@ -36,3 +36,32 @@ export const connectorHole = ({
       ),
     ),
   );
+
+export const connectorHoles = ({
+  x,
+  y,
+  width,
+  depth,
+  height,
+}: {
+  x: number;
+  y: number;
+  width: number;
+  depth: number;
+  height: number;
+}) => {
+  const ca: number[] = [];
+  if (x === 0) {
+    ca.push(2);
+  }
+  if (x === width - 1) {
+    ca.push(0);
+  }
+  if (y === 0) {
+    ca.push(3);
+  }
+  if (y === depth - 1) {
+    ca.push(1);
+  }
+  return ca.map((index) => connectorHole({ index, height }));
+};
