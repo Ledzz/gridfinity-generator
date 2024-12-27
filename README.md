@@ -52,6 +52,7 @@
 
 ## Other TODO
 - [ ] Move to worker
+- [ ] Different quality for preview and final
 - [ ] Deploy
 - [ ] Enable eslint
 - [ ] Fix types
