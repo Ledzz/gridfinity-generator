@@ -1,6 +1,6 @@
 import { FC, useCallback } from "react";
 import { Button, Checkbox, Flex, Form, InputNumber } from "antd";
-import { Baseplate } from "./types/baseplate.ts";
+import { Baseplate } from "./gridfinity/types/baseplate.ts";
 
 export const BaseplateEdit: FC<{
   value: Baseplate;

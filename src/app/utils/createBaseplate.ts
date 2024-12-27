@@ -1,4 +1,4 @@
-import { Baseplate } from "../types/baseplate.ts";
+import { Baseplate } from "../gridfinity/types/baseplate.ts";
 import { v4 as uuidv4 } from "uuid";
 
 export const createBaseplate = (): Baseplate => ({

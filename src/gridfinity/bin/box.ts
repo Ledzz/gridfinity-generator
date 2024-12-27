@@ -3,7 +3,7 @@ import { floor } from "./floor.ts";
 import { translateZ } from "@jscad/modeling/src/operations/transforms";
 import { positionedLabel } from "./label.ts";
 
-import { Label } from "../../app/types/label.ts";
+import { Label } from "../../app/gridfinity/types/label.ts";
 import { sweepRounded } from "../utils/sweepRounded.ts";
 import { polygon } from "@jscad/modeling/src/primitives";
 

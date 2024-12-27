@@ -1,4 +1,4 @@
-import { Box } from "../types/box.ts";
+import { Box } from "../gridfinity/types/box.ts";
 import { v4 as uuidv4 } from "uuid";
 
 export const createBox = (): Box => ({

@@ -51,7 +51,7 @@
 - [ ] Move items
 
 ## Other TODO
-- [ ] Move to worker
+- [x] Move to worker
 - [ ] Different quality for preview and final
 - [ ] Deploy
 - [ ] Enable eslint
