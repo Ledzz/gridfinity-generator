@@ -7,4 +7,5 @@ export type Box = {
   height: number;
   depth: number;
   labels?: Label[];
+  hasMagnetHoles: boolean;
 };

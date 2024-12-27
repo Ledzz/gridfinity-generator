@@ -1,12 +1,16 @@
-import { union } from "@jscad/modeling/src/operations/booleans";
+import { subtract, union } from "@jscad/modeling/src/operations/booleans";
 import { floor } from "./floor.ts";
-import { translateZ } from "@jscad/modeling/src/operations/transforms";
+import {
+  translate,
+  translateZ,
+} from "@jscad/modeling/src/operations/transforms";
 import { positionedLabel } from "./label.ts";
 
 import { Label } from "../../app/gridfinity/types/label.ts";
 import { sweepRounded } from "../utils/sweepRounded.ts";
-import { polygon } from "@jscad/modeling/src/primitives";
+import { circle, polygon } from "@jscad/modeling/src/primitives";
 import { DEFAULT_QUALITY } from "../constants.ts";
+import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 
 export type BoxGeomProps = {
   width?: number;
@@ -25,14 +29,6 @@ export function box({
   labels = [],
   quality = DEFAULT_QUALITY,
 }: BoxGeomProps = {}) {
-  /**
-   * TODO:
-   * - [ ] Magnet holes
-   * - [ ] Screw hole
-   * - [ ] Fix floor fillet size
-   * - [ ] Lip
-   */
-
   const processedLabels = labels
     .map((l) => positionedLabel(l, { width, depth, height }))
     .filter(Boolean);
@@ -51,8 +47,31 @@ export function box({
     [-0.45, 0],
   ];
 
+  const r = 5.86 / 2;
+
   return union(
-    floor({ width, depth, quality }),
+    subtract(
+      floor({ width, depth, quality }),
+      translate(
+        [13, 13, 0.35],
+        extrudeLinear(
+          { height: 1.9 },
+          union(
+            circle({ radius: r }),
+            polygon({
+              points: [
+                [5.6, r],
+                [0, r],
+                [0, -r],
+                [3.5, -r],
+                [3.5 + 2.1, -r - 1.47],
+              ],
+            }),
+          ),
+        ),
+      ),
+    ),
+
     ...processedLabels,
     translateZ(
       baseHeight,

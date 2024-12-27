@@ -1,6 +1,6 @@
 import { FC, Fragment, useCallback } from "react";
 import { Box } from "./gridfinity/types/box.ts";
-import { Button, Flex, Form, Input, InputNumber } from "antd";
+import { Button, Checkbox, Flex, Form, Input, InputNumber } from "antd";
 import { MinusCircleOutlined } from "@ant-design/icons";
 import { createLabel } from "./utils/createLabel.ts";
 
@@ -29,6 +29,13 @@ export const BoxEdit: FC<{
         </Form.Item>
         <Form.Item label="Height" name={"height"}>
           <InputNumber min={1} />
+        </Form.Item>
+        <Form.Item
+          label="Magnet holes"
+          name={"hasMagnetHoles"}
+          valuePropName={"checked"}
+        >
+          <Checkbox />
         </Form.Item>
         <Form.List name="labels">
           {(fields, { add, remove }) => (
