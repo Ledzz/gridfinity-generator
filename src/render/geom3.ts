@@ -6,6 +6,8 @@ import {
   Matrix4,
   MeshStandardMaterial,
 } from "three";
+import { BufferGeometryUtils } from "three/examples/jsm/Addons.js";
+import { toCreasedNormals } from "three/examples/jsm/utils/BufferGeometryUtils";
 
 export function createComplexGeometry(jsonData: Geom3) {
   // Create a new BufferGeometry
@@ -37,30 +39,30 @@ export function createComplexGeometry(jsonData: Geom3) {
   // Create attributes
   geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
   geometry.setIndex(indices);
+  geometry.deleteAttribute("normal");
 
+  const geom2 = BufferGeometryUtils.mergeVertices(geometry);
   // Compute vertex normals for proper lighting
-  geometry.computeVertexNormals();
+  geom2.computeVertexNormals();
 
   // Apply transforms if provided
   if (jsonData.transforms) {
     const matrix = new Matrix4();
     matrix.fromArray(jsonData.transforms);
-    geometry.applyMatrix4(matrix);
+    geom2.applyMatrix4(matrix);
   }
 
-  return geometry;
+  return toCreasedNormals(geom2, 30 * (Math.PI / 180));
 }
 
 export function createComplexMaterial(jsonData: Geom3) {
   // Extract color components
   const [r, g, b, a] = jsonData.color ?? [0.5, 0.5, 0.5, 1];
 
-  // Create material with proper transparency handling
-  const material = new MeshStandardMaterial({
+  return new MeshStandardMaterial({
     color: new Color(r, g, b),
     opacity: a,
     transparent: a < 1,
+    flatShading: false,
   });
-
-  return material;
 }

@@ -2,7 +2,7 @@ import { circle, polygon, rectangle } from "@jscad/modeling/src/primitives";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { rotate, translate } from "@jscad/modeling/src/operations/transforms";
 import { subtract, union } from "@jscad/modeling/src/operations/booleans";
-import { SIZE } from "../constants.ts";
+import { DEFAULT_QUALITY, SIZE } from "../constants.ts";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 import { extrudeWithChamfer } from "../utils/extrudeWithChamfer.ts";
 import { mapReduce2D, range } from "../utils/range.ts";
@@ -29,7 +29,7 @@ export const baseplate = ({
   hasStackableConnectors = false,
   width = 1,
   depth = 1,
-  quality = 16,
+  quality = DEFAULT_QUALITY,
 }: Partial<BaseplateGeomProps> = {}) => {
   switch (style) {
     case "refined-lite": {

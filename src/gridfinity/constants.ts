@@ -4,4 +4,4 @@ export const SIZE = 42;
 
 export const FILLET = 0.8;
 export const TOLERANCE = 0.5;
-export const QUALITY = 128;
+export const DEFAULT_QUALITY = 16;

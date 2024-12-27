@@ -6,6 +6,7 @@ import { positionedLabel } from "./label.ts";
 import { Label } from "../../app/gridfinity/types/label.ts";
 import { sweepRounded } from "../utils/sweepRounded.ts";
 import { polygon } from "@jscad/modeling/src/primitives";
+import { DEFAULT_QUALITY } from "../constants.ts";
 
 export type BoxGeomProps = {
   width?: number;
@@ -22,7 +23,7 @@ export function box({
   depth = 1,
   height = 1,
   labels = [],
-  quality = 16,
+  quality = DEFAULT_QUALITY,
 }: BoxGeomProps = {}) {
   /**
    * TODO:

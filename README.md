@@ -48,7 +48,8 @@
 - [ ] Stack connector
 - [ ] Thumb screw
 - [ ] Cutout generator
-- [ ] Move items
+- [ ] Move/rotate items
+- [ ] Wireframe
 
 ## Other TODO
 - [x] Move to worker
