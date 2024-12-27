@@ -49,7 +49,7 @@
 - [ ] Thumb screw
 - [ ] Cutout generator
 - [ ] Move/rotate items
-- [ ] Wireframe
+- [x] Wireframe
 
 ## Other TODO
 - [x] Move to worker
