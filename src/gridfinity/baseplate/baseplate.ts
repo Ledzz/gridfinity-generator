@@ -5,9 +5,9 @@ import { subtract, union } from "@jscad/modeling/src/operations/booleans";
 import { QUALITY, SIZE } from "../constants.ts";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 import { extrudeWithChamfer } from "../utils/extrudeWithChamfer.ts";
-import { mapReduce2D, range } from "../utils/range.ts";
+import { mapReduce2D } from "../utils/range.ts";
 import { sweepRounded } from "../utils/sweepRounded.ts";
-import { connectorHole, connectorHoles } from "./connectorHole.ts";
+import { connectorHoles } from "./connectorHole.ts";
 import { centerHole } from "./centerHole.ts";
 
 interface BaseplateGeomProps {
@@ -27,12 +27,6 @@ export const baseplate = ({
   width = 1,
   depth = 1,
 }: Partial<BaseplateGeomProps> = {}) => {
-  /**
-   * TODO:
-   * - [ ] Magnet holes
-   * - [ ] Screw hole
-   */
-
   switch (style) {
     case "refined-lite": {
       const points = [
@@ -98,31 +92,25 @@ export const baseplate = ({
         ),
       );
 
-      const toAdd = range(width)
-        .map((i) =>
-          range(depth).map((j) =>
-            translate(
-              [
-                SIZE *
-                  (i - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
-                SIZE *
-                  (j - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
-                0,
-              ],
-              translate(
-                [0, 0, height],
-                sweepRounded(
-                  polygon({
-                    points,
-                  }),
-                  SIZE - baseWidth * 2,
-                  1.15,
-                ),
-              ),
+      const toAdd = mapReduce2D(width, depth, (x, y) =>
+        translate(
+          [
+            SIZE * (x - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
+            SIZE * (y - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
+            0,
+          ],
+          translate(
+            [0, 0, height],
+            sweepRounded(
+              polygon({
+                points,
+              }),
+              SIZE - baseWidth * 2,
+              1.15,
             ),
           ),
-        )
-        .flat();
+        ),
+      );
 
       return union(
         subtract(
