@@ -7,7 +7,7 @@ import { World } from "./app/World.tsx";
 import { createBox } from "./app/utils/createBox.ts";
 import { createBaseplate } from "./app/utils/createBaseplate.ts";
 import { useAppStore } from "./app/appStore.ts";
-import { Button, Flex, Layout, theme } from "antd";
+import { Button, Checkbox, Flex, Layout, theme } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
 import { DownloadOutlined } from "@ant-design/icons";
@@ -21,6 +21,7 @@ function App() {
   } = theme.useToken();
 
   const selectedItemId = useAppStore((state) => state.selectedItemId);
+  const isWireframe = useAppStore((state) => state.isWireframe);
   const selectedItem = useWorldStore((state) =>
     state.items.find((i) => i.id === selectedItemId),
   );
@@ -69,6 +70,14 @@ function App() {
           }}
           width={300}
         >
+          <Checkbox
+            checked={isWireframe}
+            onChange={(e) => {
+              useAppStore.setState({ isWireframe: e.target.checked });
+            }}
+          >
+            Wireframe
+          </Checkbox>
           {Edit ? (
             <Edit
               value={selectedItem}

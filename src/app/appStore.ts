@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 
 interface AppStore {
   selectedItemId: string | null;
+  isWireframe: boolean;
 }
 
 export const useAppStore = create<AppStore>()(
@@ -10,6 +11,7 @@ export const useAppStore = create<AppStore>()(
     () =>
       ({
         selectedItemId: null,
+        isWireframe: false,
       }) as AppStore,
     { name: "app" },
   ),
