@@ -1,5 +1,4 @@
 import { subtract, union } from "@jscad/modeling/src/operations/booleans";
-import { floor } from "./floor.ts";
 import {
   translate,
   translateZ,
@@ -8,9 +7,10 @@ import { positionedLabel } from "./label.ts";
 
 import { Label } from "../../app/gridfinity/types/label.ts";
 import { sweepRounded } from "../utils/sweepRounded.ts";
-import { circle, polygon } from "@jscad/modeling/src/primitives";
+import { circle, polygon, rectangle } from "@jscad/modeling/src/primitives";
 import { DEFAULT_QUALITY } from "../constants.ts";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
+import { floor } from "./floor.ts";
 
 export type BoxGeomProps = {
   width?: number;
@@ -52,6 +52,16 @@ export function box({
   return union(
     subtract(
       floor({ width, depth, quality }),
+      translate(
+        [6.07, 13, 0],
+        extrudeLinear(
+          { height: 2.25 },
+          union(
+            circle({ radius: 1.25 }),
+            rectangle({ center: [4.28 / 2, 0], size: [4.28, 2.5] }),
+          ),
+        ),
+      ),
       translate(
         [13, 13, 0.35],
         extrudeLinear(
