@@ -2,7 +2,7 @@ import { circle, polygon, rectangle } from "@jscad/modeling/src/primitives";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { rotate, translate } from "@jscad/modeling/src/operations/transforms";
 import { subtract, union } from "@jscad/modeling/src/operations/booleans";
-import { QUALITY, SIZE } from "../constants.ts";
+import { SIZE } from "../constants.ts";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 import { extrudeWithChamfer } from "../utils/extrudeWithChamfer.ts";
 import { mapReduce2D } from "../utils/range.ts";
@@ -18,6 +18,7 @@ interface BaseplateGeomProps {
   hasMagnetHoles: boolean;
   width: number;
   depth: number;
+  quality: number;
 }
 
 export const baseplate = ({
@@ -26,6 +27,7 @@ export const baseplate = ({
   hasMagnetHoles = false,
   width = 1,
   depth = 1,
+  quality = 16,
 }: Partial<BaseplateGeomProps> = {}) => {
   switch (style) {
     case "refined-lite": {
@@ -77,7 +79,7 @@ export const baseplate = ({
                     extrudeWithChamfer(
                       { height: 2.4, chamfer: 0.6 },
                       union(
-                        circle({ radius: 6.1 / 2, segments: QUALITY }),
+                        circle({ radius: 6.1 / 2, segments: quality }),
                         // TODO: angle should be 80 degrees, not 90
                         rectangle({
                           size: [6.1 / 2, 6.1 / 2],
@@ -107,6 +109,7 @@ export const baseplate = ({
               }),
               SIZE - baseWidth * 2,
               1.15,
+              quality,
             ),
           ),
         ),

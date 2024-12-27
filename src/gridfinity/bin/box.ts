@@ -14,6 +14,7 @@ export type BoxGeomProps = {
   size?: number;
   labels?: Label[];
   profileFillet?: number;
+  quality?: number;
 };
 
 export function box({
@@ -21,6 +22,7 @@ export function box({
   depth = 1,
   height = 1,
   labels = [],
+  quality = 16,
 }: BoxGeomProps = {}) {
   /**
    * TODO:
@@ -49,7 +51,7 @@ export function box({
   ];
 
   return union(
-    floor({ width, depth }),
+    floor({ width, depth, quality }),
     ...processedLabels,
     translateZ(
       baseHeight,
@@ -59,6 +61,7 @@ export function box({
         }),
         [width * 42 - 0.5, depth * 42 - 0.5],
         3.75,
+        quality,
       ),
     ),
   );

@@ -1,7 +1,7 @@
 import { union } from "@jscad/modeling/src/operations/booleans";
 import { polygon } from "@jscad/modeling/src/primitives";
 import { sweepRounded } from "../utils/sweepRounded.ts";
-import { FILLET, QUALITY, SIZE, TOLERANCE } from "../constants.ts";
+import { FILLET, SIZE, TOLERANCE } from "../constants.ts";
 import RecursiveArray from "@jscad/modeling/src/utils/recursiveArray";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 import {
@@ -11,7 +11,7 @@ import {
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 
-export function floor({ width, depth }) {
+export function floor({ width, depth, quality }) {
   const points = [
     [0, 0], // Innermost bottom point
     [0.8, 0.8], // Up and out at a 45 degree angle
@@ -35,7 +35,7 @@ export function floor({ width, depth }) {
             roundedRectangle({
               size: [baseSize, baseSize],
               roundRadius: FILLET,
-              segments: QUALITY,
+              segments: quality,
             }),
           ),
           sweepRounded(
@@ -44,6 +44,7 @@ export function floor({ width, depth }) {
             }),
             35.6,
             FILLET,
+            quality,
           ),
         ),
       );
@@ -59,7 +60,7 @@ export function floor({ width, depth }) {
         roundedRectangle({
           size: [width * SIZE - TOLERANCE, depth * SIZE - TOLERANCE],
           roundRadius: FILLET + baseWidth,
-          segments: QUALITY,
+          segments: quality,
         }),
       ),
     ),
