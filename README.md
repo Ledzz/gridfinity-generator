@@ -10,11 +10,11 @@
     - [x] Corners details
     - [x] Top margin
   - [ ] Refined
+    - [ ] Thumb screw
   - [ ] Normal
-- [ ] Adjustable features
+- [x] Adjustable features
   - [x] Magnet holes
   - [x] Stack connector
-  - [ ] Thumb screw
 - [x] Grid
 
 ## Box
