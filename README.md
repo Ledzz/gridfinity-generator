@@ -23,7 +23,7 @@
   - [ ] Refined
   - [ ] Normal
 - [ ] Adjustable features
-  - [ ] Magnet holes
+  - [x] Magnet holes
   - [ ] Thumb screw
   - [x] Stackable lip
   - [ ] Thin lip

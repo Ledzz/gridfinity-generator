@@ -1,5 +1,6 @@
 import { subtract, union } from "@jscad/modeling/src/operations/booleans";
 import {
+  rotate,
   translate,
   translateZ,
 } from "@jscad/modeling/src/operations/transforms";
@@ -11,6 +12,7 @@ import { circle, polygon, rectangle } from "@jscad/modeling/src/primitives";
 import { DEFAULT_QUALITY } from "../constants.ts";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { floor } from "./floor.ts";
+import { range } from "../utils/range.ts";
 
 export type BoxGeomProps = {
   width?: number;
@@ -20,6 +22,7 @@ export type BoxGeomProps = {
   labels?: Label[];
   profileFillet?: number;
   quality?: number;
+  hasMagnetHoles?: boolean;
 };
 
 export function box({
@@ -28,6 +31,7 @@ export function box({
   height = 1,
   labels = [],
   quality = DEFAULT_QUALITY,
+  hasMagnetHoles = false,
 }: BoxGeomProps = {}) {
   const processedLabels = labels
     .map((l) => positionedLabel(l, { width, depth, height }))
@@ -49,39 +53,44 @@ export function box({
 
   const r = 5.86 / 2;
 
-  return union(
-    subtract(
-      floor({ width, depth, quality }),
-      translate(
-        [6.07, 13, 0],
-        extrudeLinear(
-          { height: 2.25 },
-          union(
-            circle({ radius: 1.25 }),
-            rectangle({ center: [4.28 / 2, 0], size: [4.28, 2.5] }),
+  const magnetHoles = hasMagnetHoles
+    ? range(4).map((i) =>
+        rotate(
+          [0, 0, (i * Math.PI) / 2],
+          translate(
+            [6.07, 13, 0],
+            extrudeLinear(
+              { height: 2.25 },
+              union(
+                circle({ radius: 1.25 }),
+                rectangle({ center: [4.28 / 2, 0], size: [4.28, 2.5] }),
+              ),
+            ),
+          ),
+          translate(
+            [13, 13, 0.35],
+            extrudeLinear(
+              { height: 1.9 },
+              union(
+                circle({ radius: r }),
+                polygon({
+                  points: [
+                    [5.6, r],
+                    [0, r],
+                    [0, -r],
+                    [3.5, -r],
+                    [3.5 + 2.1, -r - 1.47],
+                  ],
+                }),
+              ),
+            ),
           ),
         ),
-      ),
-      translate(
-        [13, 13, 0.35],
-        extrudeLinear(
-          { height: 1.9 },
-          union(
-            circle({ radius: r }),
-            polygon({
-              points: [
-                [5.6, r],
-                [0, r],
-                [0, -r],
-                [3.5, -r],
-                [3.5 + 2.1, -r - 1.47],
-              ],
-            }),
-          ),
-        ),
-      ),
-    ),
+      )
+    : [];
 
+  return union(
+    subtract(floor({ width, depth, quality }), ...magnetHoles),
     ...processedLabels,
     translateZ(
       baseHeight,
