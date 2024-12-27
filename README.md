@@ -24,11 +24,10 @@
   - [ ] Normal
 - [ ] Adjustable features
   - [ ] Magnet holes
-  - [ ] Stack connector
   - [ ] Thumb screw
-  - [ ] Stackable lip
+  - [x] Stackable lip
   - [ ] Thin lip
-- [ ] Fix inner fillets
+- [x] Fix inner fillets
 - [ ] Label positions
   - [ ] top-left
   - [ ] top-center
