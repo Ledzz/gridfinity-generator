@@ -3,11 +3,9 @@ import { Box } from "./gridfinity/types/box.ts";
 import { Button, Checkbox, Flex, Form, Input, InputNumber } from "antd";
 import { MinusCircleOutlined } from "@ant-design/icons";
 import { createLabel } from "./utils/createLabel.ts";
+import { EditFormProps } from "./gridfinity/types/item.ts";
 
-export const BoxEdit: FC<{
-  value: Box;
-  onChange: (value: Box | null) => void;
-}> = ({ value, onChange }) => {
+export const BoxEdit: FC<EditFormProps<Box>> = ({ value, onChange }) => {
   const handleDeleteBox = useCallback(() => {
     onChange(null);
   }, [onChange]);
@@ -17,7 +15,7 @@ export const BoxEdit: FC<{
       <Form
         layout={"vertical"}
         initialValues={value}
-        onValuesChange={(_, v) => {
+        onValuesChange={(_, v: Box) => {
           onChange({ ...value, ...v });
         }}
       >

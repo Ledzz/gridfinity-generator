@@ -1,11 +1,12 @@
 import { FC, useCallback } from "react";
 import { Button, Checkbox, Flex, Form, InputNumber } from "antd";
+import { EditFormProps } from "./gridfinity/types/item.ts";
 import { Baseplate } from "./gridfinity/types/baseplate.ts";
 
-export const BaseplateEdit: FC<{
-  value: Baseplate;
-  onChange: (value: Baseplate | null) => void;
-}> = ({ value, onChange }) => {
+export const BaseplateEdit: FC<EditFormProps<Baseplate>> = ({
+  value,
+  onChange,
+}) => {
   const handleDeleteBaseplate = useCallback(() => {
     onChange(null);
   }, [onChange]);
@@ -15,7 +16,7 @@ export const BaseplateEdit: FC<{
       <Form
         layout={"vertical"}
         initialValues={value}
-        onValuesChange={(_, v) => {
+        onValuesChange={(_, v: Baseplate) => {
           onChange({ ...value, ...v });
         }}
       >
