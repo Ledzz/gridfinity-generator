@@ -8,13 +8,34 @@ import {
 } from "@jscad/modeling/src/operations/transforms";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { union } from "@jscad/modeling/src/operations/booleans";
-import { baseHeight } from "../constants.ts";
-import { Label } from "../../app/gridfinity/types/label.ts";
-import { Box } from "../../app/gridfinity/types/box.ts";
+import { baseHeight, SIZE } from "../constants.ts";
+import { BoxGeomProps } from "./box.ts";
+import { Vec3 } from "@jscad/modeling/src/maths/vec3";
 
 export const DEFAULT_FONT_SIZE = 8;
 const TEXT_HEIGHT = 1;
-export const label = ({ text, fontSize = DEFAULT_FONT_SIZE }: Label) => {
+
+export type LabelGeomProps = {
+  text: string;
+  fontSize: number;
+};
+
+type LabelPosition =
+  | "top-left"
+  | "top-center"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-center"
+  | "bottom-right";
+
+export type PositionedLabelGeomProps = LabelGeomProps & {
+  position: LabelPosition;
+};
+
+export const label = ({
+  text,
+  fontSize = DEFAULT_FONT_SIZE,
+}: LabelGeomProps) => {
   if (!text) {
     return [];
   }
@@ -58,20 +79,21 @@ export const label = ({ text, fontSize = DEFAULT_FONT_SIZE }: Label) => {
 };
 
 export const positionedLabel = (
-  { position = "top-center", ...props }: Label,
-  box: Box,
+  { position = "top-center", ...props }: PositionedLabelGeomProps,
+  box: BoxGeomProps,
 ) => {
   if (!props.text) {
     return null;
   }
+  const l = label(props);
   // TODO: Label should be cut by box inner
-  return translate(getPosition(position, box), label(props));
+  return l ? translate(getPosition(position, box), l) : null;
 };
 
-function getPosition(position: string, box: Box) {
+function getPosition(position: LabelPosition, box: BoxGeomProps): Vec3 {
   switch (position) {
     case "top-center":
-      return [0, (box.size * box.depth) / 2 - 10, box.height * 7 + baseHeight];
+      return [0, (SIZE * box.depth) / 2 - 10, box.height * 7 + baseHeight];
     default:
       return [0, 0, 0];
   }

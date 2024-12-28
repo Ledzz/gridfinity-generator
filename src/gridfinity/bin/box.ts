@@ -37,7 +37,8 @@ export function box({
   quality = DEFAULT_QUALITY,
   hasMagnetHoles = false,
 }: Partial<BoxGeomProps> = {}) {
-  const processedLabels = (items.filter((i) => i.type === "label") as Label[])
+  const processedLabels = items
+    .filter((i) => i.type === "label")
     .map((l) => positionedLabel(l, { width, depth, height }))
     .filter(Boolean);
 
