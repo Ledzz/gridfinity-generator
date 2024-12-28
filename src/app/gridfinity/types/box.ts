@@ -1,4 +1,7 @@
 import { Label } from "./label.ts";
+import { Wall } from "./wall.ts";
+import { Ledge } from "./ledge.ts";
+import { Scoop } from "./scoop.ts";
 
 export type Box = {
   id: string;
@@ -6,6 +9,6 @@ export type Box = {
   width: number;
   height: number;
   depth: number;
-  labels?: Label[];
+  items?: (Wall | Label | Ledge | Scoop)[];
   hasMagnetHoles: boolean;
 };

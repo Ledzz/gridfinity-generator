@@ -26,7 +26,6 @@
   - [x] Magnet holes
   - [ ] Thumb screw
   - [x] Stackable lip
-  - [ ] Thin lip
 - [x] Fix inner fillets
 - [ ] Label positions
   - [ ] top-left
@@ -53,6 +52,7 @@
 ## Other TODO
 - [x] Move to worker
 - [x] Different quality for preview and final
+- [ ] SEO / title
 - [ ] Deploy
 - [ ] Enable eslint
 - [ ] Fix types
