@@ -1,14 +1,9 @@
-import { Label } from "./label.ts";
-import { Wall } from "./wall.ts";
-import { Ledge } from "./ledge.ts";
-import { Scoop } from "./scoop.ts";
+import { BoxGeomProps } from "../../../gridfinity/bin/box.ts";
 
-export type Box = {
+export type Box = Pick<
+  BoxGeomProps,
+  "width" | "height" | "depth" | "items" | "hasMagnetHoles"
+> & {
   id: string;
   type: "box";
-  width: number;
-  height: number;
-  depth: number;
-  items?: (Wall | Label | Ledge | Scoop)[];
-  hasMagnetHoles: boolean;
 };

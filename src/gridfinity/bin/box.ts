@@ -13,27 +13,30 @@ import { DEFAULT_QUALITY } from "../constants.ts";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { floor } from "./floor.ts";
 import { range } from "../utils/range.ts";
+import { Wall } from "../../app/gridfinity/types/wall.ts";
+import { Ledge } from "../../app/gridfinity/types/ledge.ts";
+import { Scoop } from "../../app/gridfinity/types/scoop.ts";
 
 export type BoxGeomProps = {
-  width?: number;
-  depth?: number;
-  height?: number;
-  size?: number;
-  labels?: Label[];
-  profileFillet?: number;
-  quality?: number;
-  hasMagnetHoles?: boolean;
+  width: number;
+  depth: number;
+  height: number;
+  size: number;
+  items: (Wall | Label | Ledge | Scoop)[];
+  profileFillet: number;
+  quality: number;
+  hasMagnetHoles: boolean;
 };
 
 export function box({
   width = 1,
   depth = 1,
   height = 1,
-  labels = [],
+  items = [],
   quality = DEFAULT_QUALITY,
   hasMagnetHoles = false,
-}: BoxGeomProps = {}) {
-  const processedLabels = labels
+}: Partial<BoxGeomProps> = {}) {
+  const processedLabels = (items.filter((i) => i.type === "label") as Label[])
     .map((l) => positionedLabel(l, { width, depth, height }))
     .filter(Boolean);
 

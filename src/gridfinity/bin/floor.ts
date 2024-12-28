@@ -10,16 +10,26 @@ import {
 } from "@jscad/modeling/src/operations/transforms";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
+import { Vec2 } from "@jscad/modeling/src/maths/vec2";
 
-export function floor({ width, depth, quality }) {
-  const points = [
-    [0, 0], // Innermost bottom point
-    [0.8, 0.8], // Up and out at a 45 degree angle
-    [0.8, 2.6], // Straight up
-    [2.95, 4.75], // Up and out at a 45 degree angle
-    [2.95, 5], // Up and out at a 45 degree angle
-    [0, 5],
-  ];
+const points = [
+  [0, 0], // Innermost bottom point
+  [0.8, 0.8], // Up and out at a 45 degree angle
+  [0.8, 2.6], // Straight up
+  [2.95, 4.75], // Up and out at a 45 degree angle
+  [2.95, 5], // Up and out at a 45 degree angle
+  [0, 5],
+] as Vec2[];
+
+export function floor({
+  width,
+  depth,
+  quality,
+}: {
+  width: number;
+  depth: number;
+  quality: number;
+}) {
   const baseWidth = Math.max(...points.map((point) => point[0]));
   const baseHeight = Math.max(...points.map((point) => point[1]));
   const baseSize = SIZE - baseWidth * 2 - TOLERANCE;
