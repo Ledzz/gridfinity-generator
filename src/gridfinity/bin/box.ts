@@ -17,6 +17,7 @@ import { Wall } from "../../app/gridfinity/types/wall.ts";
 import { Ledge } from "../../app/gridfinity/types/ledge.ts";
 import { Scoop } from "../../app/gridfinity/types/scoop.ts";
 import { Vec2 } from "@jscad/modeling/src/maths/vec2";
+import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 
 export type BoxGeomProps = {
   width: number;
@@ -37,7 +38,7 @@ export function box({
   quality = DEFAULT_QUALITY,
   hasMagnetHoles = false,
 }: Partial<BoxGeomProps> = {}) {
-  const processedLabels = items
+  const processedLabels: Geom3[] = items
     .filter((i) => i.type === "label")
     .map((l) => positionedLabel(l, { width, depth, height }))
     .filter(Boolean);

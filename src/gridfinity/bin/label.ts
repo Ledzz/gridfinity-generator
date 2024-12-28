@@ -11,6 +11,7 @@ import { union } from "@jscad/modeling/src/operations/booleans";
 import { baseHeight, SIZE } from "../constants.ts";
 import { BoxGeomProps } from "./box.ts";
 import { Vec3 } from "@jscad/modeling/src/maths/vec3";
+import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 
 export const DEFAULT_FONT_SIZE = 8;
 const TEXT_HEIGHT = 1;
@@ -35,7 +36,7 @@ export type PositionedLabelGeomProps = LabelGeomProps & {
 export const label = ({
   text,
   fontSize = DEFAULT_FONT_SIZE,
-}: LabelGeomProps) => {
+}: Partial<LabelGeomProps>) => {
   if (!text) {
     return [];
   }
@@ -79,15 +80,17 @@ export const label = ({
 };
 
 export const positionedLabel = (
-  { position = "top-center", ...props }: PositionedLabelGeomProps,
+  { position = "top-center", ...props }: Partial<PositionedLabelGeomProps>,
   box: BoxGeomProps,
-) => {
+): Geom3 | null => {
   if (!props.text) {
     return null;
   }
   const l = label(props);
   // TODO: Label should be cut by box inner
-  return l ? translate(getPosition(position, box), l) : null;
+  return l
+    ? (translate(getPosition(position, box), l) as unknown as Geom3)
+    : null;
 };
 
 function getPosition(position: LabelPosition, box: BoxGeomProps): Vec3 {
