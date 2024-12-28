@@ -7,15 +7,16 @@ import {
   MeshStandardMaterial,
 } from "three";
 import { BufferGeometryUtils } from "three/examples/jsm/Addons.js";
-import { toCreasedNormals } from "three/examples/jsm/utils/BufferGeometryUtils";
+
+const { toCreasedNormals } = BufferGeometryUtils;
 
 export function createComplexGeometry(jsonData: Geom3) {
   // Create a new BufferGeometry
   const geometry = new BufferGeometry();
 
   // Arrays to store all vertex positions and indices
-  const positions = [];
-  const indices = [];
+  const positions: number[] = [];
+  const indices: number[] = [];
   let vertexIndex = 0;
 
   // Process each polygon
@@ -56,8 +57,7 @@ export function createComplexGeometry(jsonData: Geom3) {
 }
 
 export function createComplexMaterial(jsonData: Geom3) {
-  // Extract color components
-  const [r, g, b, a] = jsonData.color ?? [0.5, 0.5, 0.5, 1];
+  const [r = 0.5, g = 0.5, b = 0.5, a = 1] = jsonData.color ?? [];
 
   return new MeshStandardMaterial({
     color: new Color(r, g, b),

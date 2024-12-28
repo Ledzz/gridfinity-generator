@@ -3,9 +3,13 @@ import slice from "@jscad/modeling/src/operations/extrusions/slice";
 import geom2 from "@jscad/modeling/src/geometries/geom2";
 import { mat4 } from "@jscad/modeling/src/maths";
 import { expand } from "@jscad/modeling/src/operations/expansions";
+import Geom2 from "@jscad/modeling/src/geometries/geom2/type";
 
-export const extrudeWithChamfer = ({ height, chamfer }, shape) => {
-  return extrudeFromSlices(
+export const extrudeWithChamfer = (
+  { height, chamfer }: { height: number; chamfer: number },
+  shape: Geom2,
+) =>
+  extrudeFromSlices(
     {
       numberOfSlices: 3,
       callback: (progress) => {
@@ -23,4 +27,3 @@ export const extrudeWithChamfer = ({ height, chamfer }, shape) => {
     },
     shape,
   );
-};
