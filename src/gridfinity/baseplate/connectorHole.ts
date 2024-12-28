@@ -2,6 +2,7 @@ import { rotate, translate } from "@jscad/modeling/src/operations/transforms";
 import { SIZE } from "../constants.ts";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { polygon } from "@jscad/modeling/src/primitives";
+import { Vec2 } from "@jscad/modeling/src/maths/vec2";
 
 const connectorPoly = [
   [3, 0],
@@ -12,7 +13,7 @@ const connectorPoly = [
   [-7, 6],
   [-3, 3],
   [-3, 0],
-];
+] as Vec2[];
 
 const connectorHole = ({
   index, // right, top, left, bottom

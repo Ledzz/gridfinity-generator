@@ -1,6 +1,18 @@
 import { cuboid } from "@jscad/modeling/src/primitives";
 
-export const centerHole = ({ width, depth, height, x, y }) => {
+export const centerHole = ({
+  width,
+  depth,
+  height,
+  x,
+  y,
+}: {
+  width: number;
+  depth: number;
+  height: number;
+  x: number;
+  y: number;
+}) => {
   const squareSize = 17.4;
   const add = 9.45;
 

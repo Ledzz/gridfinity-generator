@@ -16,6 +16,7 @@ import { range } from "../utils/range.ts";
 import { Wall } from "../../app/gridfinity/types/wall.ts";
 import { Ledge } from "../../app/gridfinity/types/ledge.ts";
 import { Scoop } from "../../app/gridfinity/types/scoop.ts";
+import { Vec2 } from "@jscad/modeling/src/maths/vec2";
 
 export type BoxGeomProps = {
   width: number;
@@ -52,7 +53,7 @@ export function box({
     [-2.6, h - 6.25],
     [-0.45, h - 8.4],
     [-0.45, 0],
-  ];
+  ] as Vec2[];
 
   const r = 5.86 / 2;
 

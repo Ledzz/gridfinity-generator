@@ -7,6 +7,6 @@ export const createBox = (): Box => ({
   width: 1,
   height: 3,
   depth: 1,
-  labels: [],
+  items: [],
   hasMagnetHoles: false,
 });

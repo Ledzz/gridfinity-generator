@@ -7,4 +7,5 @@ export const createBaseplate = (): Baseplate => ({
   width: 1,
   depth: 1,
   hasMagnetHoles: false,
+  hasStackableConnectors: true,
 });

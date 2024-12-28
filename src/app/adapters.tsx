@@ -3,14 +3,14 @@ import { Item } from "./gridfinity/types/item.ts";
 import { GridfinityGenWorker } from "../gridfinity";
 import { toMesh } from "../render/toMesh.ts";
 import { useAppStore } from "./appStore.ts";
-import { Mesh } from "three";
+import { Mesh, MeshBasicMaterial, Object3D } from "three";
 
 export const RenderGeom = <Props,>({
   onClick,
   type,
   ...props
 }: Props & { onClick: () => void; type: Item["type"] }) => {
-  const [obj, setObj] = useState(null);
+  const [obj, setObj] = useState<Object3D | null>(null);
   const propsHash = JSON.stringify(props);
   const memoizedProps = useMemo(() => props, [propsHash]);
   const isWireframe = useAppStore((state) => state.isWireframe);
@@ -25,7 +25,7 @@ export const RenderGeom = <Props,>({
     if (obj) {
       obj.traverse((o) => {
         if (o instanceof Mesh) {
-          o.material.wireframe = isWireframe;
+          (o.material as MeshBasicMaterial).wireframe = isWireframe;
         }
       });
     }

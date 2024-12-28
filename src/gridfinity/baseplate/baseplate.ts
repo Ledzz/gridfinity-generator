@@ -9,8 +9,9 @@ import { mapReduce2D, range } from "../utils/range.ts";
 import { sweepRounded } from "../utils/sweepRounded.ts";
 import { connectorHoles } from "./connectorHole.ts";
 import { centerHole } from "./centerHole.ts";
+import { Vec2 } from "@jscad/modeling/src/maths/vec2";
 
-interface BaseplateGeomProps {
+export interface BaseplateGeomProps {
   style: "refined-lite";
   fillet: number;
   size: number;
@@ -40,7 +41,7 @@ export const baseplate = ({
         [2.6, 4.4], // Up and out at a 45 degree angle
         [2.85, 4.4], // Top shelf
         [2.85, 0], // Straight down
-      ];
+      ] as Vec2[];
 
       points.reverse();
 
