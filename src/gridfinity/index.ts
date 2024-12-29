@@ -6,11 +6,6 @@ export const GridfinityGenWorker = Comlink.wrap<GridfinityGenApi>(
   new Worker(),
 ) as unknown as WorkerApi;
 
-// type WorkerApi = {
-//   box: (props: Partial<BoxGeomProps>) => Promise<ArrayBuffer>;
-//   baseplate: (props: Partial<BaseplateGeomProps>) => Promise<ArrayBuffer>;
-// };
-
 type WorkerApi = {
   [K in keyof GridfinityGenApi]: (
     props: Parameters<GridfinityGenApi[K]>[0],

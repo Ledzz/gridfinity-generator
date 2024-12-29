@@ -4,6 +4,6 @@ import { Baseplate } from "./baseplate.ts";
 export type Item = Box | Baseplate;
 
 export type EditFormProps<T extends Item> = {
-  value: T; // changed from just T to T | null
+  value: T;
   onChange: (value: T | null) => void;
 };

@@ -14,7 +14,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 import { EDIT_FORMS } from "./constants.ts";
 import { GridfinityGenWorker } from "./gridfinity";
 import { serialize } from "@jscad/stl-serializer";
-import { Item } from "./app/gridfinity/types/item.ts";
+import { EditFormProps, Item } from "./app/gridfinity/types/item.ts";
 
 function App() {
   const {
@@ -53,10 +53,7 @@ function App() {
     }));
   }, []);
   const EditComponent = selectedItem
-    ? (EDIT_FORMS[selectedItem.type] as FC<{
-        value: typeof selectedItem;
-        onChange: (value: typeof selectedItem | null) => void;
-      }>)
+    ? (EDIT_FORMS[selectedItem.type] as FC<EditFormProps<typeof selectedItem>>)
     : null;
   return (
     <>
