@@ -4,6 +4,7 @@ import { Button, Checkbox, Flex, Form, Input, InputNumber } from "antd";
 import { MinusCircleOutlined } from "@ant-design/icons";
 import { createLabel } from "./utils/createLabel.ts";
 import { EditFormProps } from "./gridfinity/types/item.ts";
+import { createWall } from "./utils/createWall.ts";
 
 export const BoxEdit: FC<EditFormProps<Box>> = ({ value, onChange }) => {
   const handleDeleteBox = useCallback(() => {
@@ -35,34 +36,59 @@ export const BoxEdit: FC<EditFormProps<Box>> = ({ value, onChange }) => {
         >
           <Checkbox />
         </Form.Item>
-        <Form.List name="labels">
+        <Form.List name="items">
           {(fields, { add, remove }) => (
             <div>
-              {fields.map(({ key, name, ...restField }) => (
-                <Form.Item key={key}>
-                  <Form.Item
-                    label={"Label text"}
-                    {...restField}
-                    name={[name, "text"]}
-                  >
-                    <Input />
+              Labels
+              {fields
+                .filter((f) => value.items[f.name]?.type === "label")
+                .map(({ key, name, ...restField }) => (
+                  <Form.Item key={key}>
+                    <Form.Item
+                      label={"Label text"}
+                      {...restField}
+                      name={[name, "text"]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      label={"Font size"}
+                      {...restField}
+                      name={[name, "fontSize"]}
+                    >
+                      <InputNumber min={1} />
+                    </Form.Item>
+                    <MinusCircleOutlined
+                      className="dynamic-delete-button"
+                      onClick={() => remove(name)}
+                    />
                   </Form.Item>
-                  <Form.Item
-                    label={"Font size"}
-                    {...restField}
-                    name={[name, "fontSize"]}
-                  >
-                    <InputNumber min={1} />
-                  </Form.Item>
-                  <MinusCircleOutlined
-                    className="dynamic-delete-button"
-                    onClick={() => remove(name)}
-                  />
-                </Form.Item>
-              ))}
+                ))}
               <Form.Item>
                 <Button type="dashed" onClick={() => add(createLabel())} block>
                   + Add Label
+                </Button>
+              </Form.Item>
+            </div>
+          )}
+        </Form.List>
+        <Form.List name="items">
+          {(fields, { add, remove }) => (
+            <div>
+              Walls
+              {fields
+                .filter((f) => value.items[f.name]?.type === "wall")
+                .map(({ key, name }) => (
+                  <Form.Item key={key}>
+                    <MinusCircleOutlined
+                      className="dynamic-delete-button"
+                      onClick={() => remove(name)}
+                    />
+                  </Form.Item>
+                ))}
+              <Form.Item>
+                <Button type="dashed" onClick={() => add(createWall())} block>
+                  + Add Wall
                 </Button>
               </Form.Item>
             </div>
