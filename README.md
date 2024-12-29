@@ -55,7 +55,7 @@
 - [ ] SEO / title
 - [ ] Deploy
 - [ ] Enable eslint
-- [ ] Fix types
+- [x] Fix types
 - [ ] Write tests
 - [ ] Credits
 - [ ] License
