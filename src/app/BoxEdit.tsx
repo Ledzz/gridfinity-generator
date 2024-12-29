@@ -1,4 +1,4 @@
-import { FC, Fragment, useCallback } from "react";
+import { FC, useCallback } from "react";
 import { Box } from "./gridfinity/types/box.ts";
 import { Button, Checkbox, Flex, Form, Input, InputNumber } from "antd";
 import { MinusCircleOutlined } from "@ant-design/icons";

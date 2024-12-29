@@ -1,6 +1,6 @@
 import { useLoader } from "@react-three/fiber";
-import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
 import { FC, PropsWithChildren } from "react";
+import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 
 export const Stl: FC<PropsWithChildren<{ url: string }>> = ({
   url,

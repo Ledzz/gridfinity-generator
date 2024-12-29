@@ -5,11 +5,11 @@ import { toMesh } from "../render/toMesh.ts";
 import { useAppStore } from "./appStore.ts";
 import { Mesh, MeshBasicMaterial, Object3D } from "three";
 
-export const RenderGeom = <Props,>({
+export const RenderGeom = <T extends Item>({
   onClick,
   type,
   ...props
-}: Props & { onClick: () => void; type: Item["type"] }) => {
+}: Item & { onClick: () => void; type: T["type"] }) => {
   const [obj, setObj] = useState<Object3D | null>(null);
   const propsHash = JSON.stringify(props);
   const memoizedProps = useMemo(() => props, [propsHash]);
@@ -17,7 +17,9 @@ export const RenderGeom = <Props,>({
 
   useEffect(() => {
     GridfinityGenWorker[type](memoizedProps).then((o) => {
-      setObj(toMesh(o));
+      if (o) {
+        setObj(toMesh(o));
+      }
     });
   }, [memoizedProps, type]);
 
