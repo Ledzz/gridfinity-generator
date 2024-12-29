@@ -10,8 +10,6 @@ import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { union } from "@jscad/modeling/src/operations/booleans";
 import { baseHeight, SIZE } from "../constants.ts";
 import { BoxGeomProps } from "./box.ts";
-import { Vec3 } from "@jscad/modeling/src/maths/vec3";
-import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 
 export const DEFAULT_FONT_SIZE = 8;
 const TEXT_HEIGHT = 1;
@@ -19,25 +17,34 @@ const TEXT_HEIGHT = 1;
 export type LabelGeomProps = {
   text: string;
   fontSize: number;
-};
-
-type LabelPosition =
-  | "top-left"
-  | "top-center"
-  | "top-right"
-  | "bottom-left"
-  | "bottom-center"
-  | "bottom-right";
-
-export type PositionedLabelGeomProps = LabelGeomProps & {
   position: LabelPosition;
+  size: number | "auto";
 };
 
-export const label = ({
-  text,
-  fontSize = DEFAULT_FONT_SIZE,
-}: Partial<LabelGeomProps>) => {
-  if (!text) {
+type VerticalPosition = "top" | "bottom";
+type HorizontalPosition = "left" | "center" | "right";
+type LabelPosition = `${VerticalPosition}-${HorizontalPosition}`;
+
+export const LABEL_POSITIONS: readonly LabelPosition[] = [
+  "top-left",
+  "top-center",
+  "top-right",
+  "bottom-left",
+  "bottom-center",
+  "bottom-right",
+] as const;
+
+const LABEL_WIDTH = 32;
+const LABEL_DEPTH = 10;
+const LABEL_MARGIN = 10;
+const LIP_HEIGHT = 8.4;
+
+export const label = (
+  { text, position, fontSize = DEFAULT_FONT_SIZE }: Partial<LabelGeomProps>,
+
+  box: Pick<BoxGeomProps, "width" | "height" | "depth">,
+) => {
+  if (!text || !position) {
     return [];
   }
   const lineRadius = 0.5;
@@ -52,55 +59,53 @@ export const label = ({
   if (!lineSegments.length) {
     return null;
   }
-  const width = 32;
-  const depth = 10;
-  return union(
-    center(
-      { relativeTo: [0, depth / 2, TEXT_HEIGHT / 2] },
-      extrudeLinear({ height: TEXT_HEIGHT }, union(lineSegments)),
-    ),
-    translate(
-      [-width / 2, 0, 0],
-      rotate(
-        [0, Math.PI / 2, 0],
-        extrudeLinear(
-          { height: width },
-          polygon({
-            points: [
-              [0, 0],
-              [depth, depth],
-              [0, depth],
-              [0, 0],
-            ],
-          }),
+  const [vertical, horizontal] = position.split("-") as [
+    VerticalPosition,
+    HorizontalPosition,
+  ];
+
+  const h = {
+    left: (-SIZE * box.width + LABEL_WIDTH) / 2 + LABEL_MARGIN,
+    center: 0,
+    right: (SIZE * box.width - LABEL_WIDTH) / 2 - LABEL_MARGIN,
+  } as const;
+  const v = {
+    top: (SIZE * box.depth) / 2 - LABEL_DEPTH,
+    bottom: -(SIZE * box.depth) / 2,
+  } as const;
+
+  return translate(
+    [
+      h[horizontal],
+      v[vertical],
+      box.height * 7 + baseHeight - LIP_HEIGHT + TEXT_HEIGHT,
+    ],
+    union(
+      center(
+        {
+          relativeTo: [0, LABEL_DEPTH / 2, TEXT_HEIGHT / 2],
+        },
+        extrudeLinear({ height: TEXT_HEIGHT }, union(lineSegments)),
+      ),
+      center(
+        {
+          relativeTo: [0, LABEL_DEPTH / 2, -LABEL_DEPTH / 2],
+        },
+        rotate(
+          [0, Math.PI / 2, vertical === "bottom" ? Math.PI : 0],
+          extrudeLinear(
+            { height: LABEL_WIDTH },
+            polygon({
+              points: [
+                [0, 0],
+                [LABEL_DEPTH, LABEL_DEPTH],
+                [0, LABEL_DEPTH],
+                [0, 0],
+              ],
+            }),
+          ),
         ),
       ),
     ),
   );
 };
-
-export const positionedLabel = (
-  { position = "top-center", ...props }: Partial<PositionedLabelGeomProps>,
-  box: Pick<BoxGeomProps, "width" | "height" | "depth">,
-): Geom3 | null => {
-  if (!props.text) {
-    return null;
-  }
-  const l = label(props);
-  // TODO: Label should be cut by box inner
-  return l
-    ? (translate(getPosition(position, box), l) as unknown as Geom3)
-    : null;
-};
-
-function getPosition(
-  position: LabelPosition,
-  box: Pick<BoxGeomProps, "width" | "height" | "depth">,
-): Vec3 {
-  switch (position) {
-    case "top-center":
-      return [0, (SIZE * box.depth) / 2 - 10, box.height * 7 + baseHeight];
-    default:
-      return [0, 0, 0];
-  }
-}

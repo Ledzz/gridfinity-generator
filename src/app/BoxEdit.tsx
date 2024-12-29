@@ -1,15 +1,43 @@
 import { FC, useCallback } from "react";
 import { Box } from "./gridfinity/types/box.ts";
-import { Button, Checkbox, Flex, Form, Input, InputNumber } from "antd";
+import {
+  Button,
+  Checkbox,
+  Flex,
+  Form,
+  Input,
+  InputNumber,
+  Radio,
+  Select,
+  Space,
+} from "antd";
 import { MinusCircleOutlined } from "@ant-design/icons";
 import { createLabel } from "./utils/createLabel.ts";
 import { EditFormProps } from "./gridfinity/types/item.ts";
 import { createWall } from "./utils/createWall.ts";
+import { LABEL_POSITIONS } from "../gridfinity/bin/label.ts";
+import { Label } from "./gridfinity/types/label.ts";
+import { BoxItem } from "../gridfinity/bin/box.ts";
+import { Wall } from "./gridfinity/types/wall.ts";
+
+const labelPositionOptions = LABEL_POSITIONS.map((position) => ({
+  value: position,
+  label: position,
+}));
+
+function isLabel(item: BoxItem): item is Label {
+  return item.type === "label";
+}
+function isWall(item: BoxItem): item is Wall {
+  return item.type === "wall";
+}
 
 export const BoxEdit: FC<EditFormProps<Box>> = ({ value, onChange }) => {
   const handleDeleteBox = useCallback(() => {
     onChange(null);
   }, [onChange]);
+
+  const [form] = Form.useForm();
 
   return (
     <>
@@ -19,6 +47,7 @@ export const BoxEdit: FC<EditFormProps<Box>> = ({ value, onChange }) => {
         onValuesChange={(_, v: Box) => {
           onChange({ ...value, ...v });
         }}
+        form={form}
       >
         <Form.Item label="Width" name={"width"}>
           <InputNumber min={1} />
@@ -40,9 +69,14 @@ export const BoxEdit: FC<EditFormProps<Box>> = ({ value, onChange }) => {
           {(fields, { add, remove }) => (
             <div>
               Labels
-              {fields
-                .filter((f) => value.items[f.name]?.type === "label")
-                .map(({ key, name, ...restField }) => (
+              {fields.map(({ key, name, ...restField }) => {
+                const item = value.items[name];
+
+                if (!isLabel(item)) {
+                  return null;
+                }
+
+                return (
                   <Form.Item key={key}>
                     <Form.Item
                       label={"Label text"}
@@ -51,6 +85,44 @@ export const BoxEdit: FC<EditFormProps<Box>> = ({ value, onChange }) => {
                     >
                       <Input />
                     </Form.Item>
+                    <Form.Item
+                      label={"Position"}
+                      {...restField}
+                      name={[name, "position"]}
+                    >
+                      <Select options={labelPositionOptions} />
+                    </Form.Item>
+
+                    <Form.Item label={"Size"}>
+                      <Radio.Group
+                        value={item.size === "auto"}
+                        onChange={(v) => {
+                          onChange({
+                            ...value,
+                            items: value.items.map((item, i) => {
+                              if (i === name) {
+                                return {
+                                  ...item,
+                                  size: v.target.value ? "auto" : 1,
+                                };
+                              }
+                              return item;
+                            }),
+                          });
+                        }}
+                      >
+                        <Space direction="vertical">
+                          <Radio value={true}>Auto</Radio>
+                          <Radio value={false}>Custom</Radio>
+                        </Space>
+                      </Radio.Group>
+                    </Form.Item>
+                    {item.size !== "auto" ? (
+                      <Form.Item {...restField} name={[name, "size"]}>
+                        <InputNumber min={1} />
+                      </Form.Item>
+                    ) : null}
+
                     <Form.Item
                       label={"Font size"}
                       {...restField}
@@ -63,7 +135,8 @@ export const BoxEdit: FC<EditFormProps<Box>> = ({ value, onChange }) => {
                       onClick={() => remove(name)}
                     />
                   </Form.Item>
-                ))}
+                );
+              })}
               <Form.Item>
                 <Button type="dashed" onClick={() => add(createLabel())} block>
                   + Add Label
@@ -76,16 +149,22 @@ export const BoxEdit: FC<EditFormProps<Box>> = ({ value, onChange }) => {
           {(fields, { add, remove }) => (
             <div>
               Walls
-              {fields
-                .filter((f) => value.items[f.name]?.type === "wall")
-                .map(({ key, name }) => (
+              {fields.map(({ key, name }) => {
+                const item = value.items[name];
+
+                if (!isWall(item)) {
+                  return null;
+                }
+
+                return (
                   <Form.Item key={key}>
                     <MinusCircleOutlined
                       className="dynamic-delete-button"
                       onClick={() => remove(name)}
                     />
                   </Form.Item>
-                ))}
+                );
+              })}
               <Form.Item>
                 <Button type="dashed" onClick={() => add(createWall())} block>
                   + Add Wall

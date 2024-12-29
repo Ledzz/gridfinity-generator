@@ -1,6 +1,6 @@
-export type Label = {
+import { LabelGeomProps } from "../../../gridfinity/bin/label.ts";
+
+export type Label = LabelGeomProps & {
   id: string;
   type: "label";
-  text: string;
-  fontSize?: number;
 };

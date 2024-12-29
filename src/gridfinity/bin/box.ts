@@ -1,6 +1,6 @@
 import { union } from "@jscad/modeling/src/operations/booleans";
 import { translateZ } from "@jscad/modeling/src/operations/transforms";
-import { positionedLabel } from "./label.ts";
+import { label } from "./label.ts";
 
 import { Label } from "../../app/gridfinity/types/label.ts";
 import { sweepRounded } from "../utils/sweepRounded.ts";
@@ -13,12 +13,14 @@ import { Scoop } from "../../app/gridfinity/types/scoop.ts";
 import { Vec2 } from "@jscad/modeling/src/maths/vec2";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 
+export type BoxItem = Wall | Label | Ledge | Scoop;
+
 export type BoxGeomProps = {
   width: number;
   depth: number;
   height: number;
   size: number;
-  items: (Wall | Label | Ledge | Scoop)[];
+  items: BoxItem[];
   profileFillet: number;
   quality: number;
   hasMagnetHoles: boolean;
@@ -34,7 +36,7 @@ export function box({
 }: Partial<BoxGeomProps> = {}) {
   const processedLabels: Geom3[] = items
     .filter((i) => i.type === "label")
-    .map((l) => positionedLabel(l, { width, depth, height }))
+    .map((l) => label(l, { width, depth, height }))
     .filter(Boolean);
 
   const baseHeight = 6;

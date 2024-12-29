@@ -6,4 +6,6 @@ export const createLabel = (): Label => ({
   type: "label",
   fontSize: 8,
   text: "",
+  position: "top-center",
+  size: "auto",
 });
