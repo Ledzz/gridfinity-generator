@@ -2,7 +2,7 @@ import "./App.css";
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
 import { useWorldStore } from "./app/worldStore.ts";
-import { Suspense, useCallback } from "react";
+import { FC, Suspense, useCallback } from "react";
 import { World } from "./app/World.tsx";
 import { createBox } from "./app/utils/createBox.ts";
 import { createBaseplate } from "./app/utils/createBaseplate.ts";
@@ -52,8 +52,12 @@ function App() {
       items: [...s.items, createBaseplate()],
     }));
   }, []);
-  const Edit = selectedItem ? EDIT_FORMS[selectedItem.type] : null;
-
+  const EditComponent = selectedItem
+    ? (EDIT_FORMS[selectedItem.type] as FC<{
+        value: typeof selectedItem;
+        onChange: (value: typeof selectedItem | null) => void;
+      }>)
+    : null;
   return (
     <>
       <Layout
@@ -79,8 +83,8 @@ function App() {
           >
             Wireframe
           </Checkbox>
-          {Edit ? (
-            <Edit
+          {EditComponent && selectedItem ? (
+            <EditComponent
               value={selectedItem}
               onChange={(value) =>
                 useWorldStore.setState((s) => ({
