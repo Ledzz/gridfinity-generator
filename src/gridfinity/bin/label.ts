@@ -81,7 +81,7 @@ export const label = ({
 
 export const positionedLabel = (
   { position = "top-center", ...props }: Partial<PositionedLabelGeomProps>,
-  box: BoxGeomProps,
+  box: Pick<BoxGeomProps, "width" | "height" | "depth">,
 ): Geom3 | null => {
   if (!props.text) {
     return null;
@@ -93,7 +93,10 @@ export const positionedLabel = (
     : null;
 };
 
-function getPosition(position: LabelPosition, box: BoxGeomProps): Vec3 {
+function getPosition(
+  position: LabelPosition,
+  box: Pick<BoxGeomProps, "width" | "height" | "depth">,
+): Vec3 {
   switch (position) {
     case "top-center":
       return [0, (SIZE * box.depth) / 2 - 10, box.height * 7 + baseHeight];

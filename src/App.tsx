@@ -14,6 +14,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 import { EDIT_FORMS } from "./constants.ts";
 import { GridfinityGenWorker } from "./gridfinity";
 import { serialize } from "@jscad/stl-serializer";
+import { Item } from "./app/gridfinity/types/item.ts";
 
 function App() {
   const {
@@ -26,20 +27,20 @@ function App() {
     state.items.find((i) => i.id === selectedItemId),
   );
   const saveStl = useCallback(() => {
-    if (!selectedItem) return;
-
-    GridfinityGenWorker[selectedItem.type]({
-      ...selectedItem,
-      quality: 128,
-    }).then((data) => {
+    const save = async <T extends Item>(item: T) => {
+      const data = await GridfinityGenWorker[item.type](item);
       const rawData = serialize({ binary: true }, data);
-      const blob = new Blob(rawData);
+      const blob = new Blob([rawData]);
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       a.download = "model.stl";
       a.click();
-    });
+    };
+
+    if (selectedItem) {
+      save(selectedItem);
+    }
   }, [selectedItem]);
   const addBox = useCallback(() => {
     useWorldStore.setState((s) => ({
