@@ -27,13 +27,13 @@
   - [ ] Thumb screw
   - [x] Stackable lip
 - [x] Fix inner fillets
-- [ ] Label positions
-  - [ ] top-left
-  - [ ] top-center
-  - [ ] top-right
-  - [ ] bottom-left
-  - [ ] bottom-center
-  - [ ] bottom-right
+- [x] Label positions
+  - [x] top-left
+  - [x] top-center
+  - [x] top-right
+  - [x] bottom-left
+  - [x] bottom-center
+  - [x] bottom-right
 - [ ] Label sizes
   - [ ] Fixed
   - [ ] Auto
