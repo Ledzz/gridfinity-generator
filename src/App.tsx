@@ -23,6 +23,7 @@ import { EDIT_FORMS } from "./constants.ts";
 import { GridfinityGenWorker } from "./gridfinity";
 import { serialize } from "@jscad/stl-serializer";
 import { EditFormProps, Item } from "./app/gridfinity/types/item.ts";
+import { noEvents, PointerEvents } from "./utils/pointer-events.ts";
 
 function App() {
   const {
@@ -156,7 +157,9 @@ function App() {
               far: 10000,
               position: [-100, 60, 100],
             }}
+            events={noEvents}
           >
+            <PointerEvents />
             <Suspense
               fallback={
                 <>
