@@ -149,7 +149,7 @@ export const BoxEdit: FC<EditFormProps<Box>> = ({ value, onChange }) => {
           {(fields, { add, remove }) => (
             <div>
               Walls
-              {fields.map(({ key, name }) => {
+              {fields.map(({ key, name, ...restField }) => {
                 const item = value.items[name];
 
                 if (!isWall(item)) {
@@ -158,6 +158,49 @@ export const BoxEdit: FC<EditFormProps<Box>> = ({ value, onChange }) => {
 
                 return (
                   <Form.Item key={key}>
+                    <Form.Item
+                      label={"width"}
+                      {...restField}
+                      name={[name, "width"]}
+                    >
+                      <InputNumber min={1} />
+                    </Form.Item>
+                    <Form.Item
+                      label={"height"}
+                      {...restField}
+                      name={[name, "height"]}
+                    >
+                      <InputNumber min={0} step={7} />
+                    </Form.Item>
+                    <Form.Item
+                      label={"thickness"}
+                      {...restField}
+                      name={[name, "thickness"]}
+                    >
+                      <InputNumber min={1} />
+                    </Form.Item>
+                    <Form.Item
+                      label={"rotation"}
+                      {...restField}
+                      name={[name, "rotation"]}
+                    >
+                      <InputNumber min={0} step={90} />
+                    </Form.Item>
+                    <Form.Item
+                      label={"position x"}
+                      {...restField}
+                      name={[name, "position", 0]}
+                    >
+                      <InputNumber min={1} />
+                    </Form.Item>
+                    <Form.Item
+                      label={"position y"}
+                      {...restField}
+                      name={[name, "position", 1]}
+                    >
+                      <InputNumber min={1} />
+                    </Form.Item>
+
                     <MinusCircleOutlined
                       className="dynamic-delete-button"
                       onClick={() => remove(name)}
@@ -166,7 +209,11 @@ export const BoxEdit: FC<EditFormProps<Box>> = ({ value, onChange }) => {
                 );
               })}
               <Form.Item>
-                <Button type="dashed" onClick={() => add(createWall())} block>
+                <Button
+                  type="dashed"
+                  onClick={() => add(createWall(value))}
+                  block
+                >
                   + Add Wall
                 </Button>
               </Form.Item>

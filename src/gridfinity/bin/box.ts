@@ -1,11 +1,15 @@
 import { union } from "@jscad/modeling/src/operations/booleans";
-import { translateZ } from "@jscad/modeling/src/operations/transforms";
+import {
+  rotate,
+  translate,
+  translateZ,
+} from "@jscad/modeling/src/operations/transforms";
 import { label } from "./label.ts";
 
 import { Label } from "../../app/gridfinity/types/label.ts";
 import { sweepRounded } from "../utils/sweepRounded.ts";
-import { polygon } from "@jscad/modeling/src/primitives";
-import { DEFAULT_QUALITY } from "../constants.ts";
+import { cuboid, polygon } from "@jscad/modeling/src/primitives";
+import { baseHeight, DEFAULT_QUALITY } from "../constants.ts";
 import { floor } from "./floor.ts";
 import { Wall } from "../../app/gridfinity/types/wall.ts";
 import { Ledge } from "../../app/gridfinity/types/ledge.ts";
@@ -26,6 +30,27 @@ export type BoxGeomProps = {
   hasMagnetHoles: boolean;
 };
 
+export type WallGeomProps = {
+  width: number;
+  height: number;
+  thickness: number;
+  rotation: number;
+  position: Vec2;
+};
+
+function wall(wall: WallGeomProps) {
+  return translate(
+    [wall.position[0], wall.position[1], baseHeight],
+    rotate(
+      [0, 0, wall.rotation * (Math.PI / 180)],
+      cuboid({
+        size: [wall.width, wall.thickness, wall.height],
+        center: [0, 0, wall.height / 2],
+      }),
+    ),
+  );
+}
+
 export function box({
   width = 1,
   depth = 1,
@@ -34,9 +59,14 @@ export function box({
   quality = DEFAULT_QUALITY,
   hasMagnetHoles = false,
 }: Partial<BoxGeomProps> = {}) {
-  const processedLabels: Geom3[] = items
+  const labels: Geom3[] = items
     .filter((i) => i.type === "label")
     .map((l) => label(l, { width, depth, height }))
+    .filter(Boolean);
+
+  const walls: Geom3[] = items
+    .filter((i) => i.type === "wall")
+    .map(wall)
     .filter(Boolean);
 
   const baseHeight = 6;
@@ -55,7 +85,8 @@ export function box({
 
   return union(
     floor({ width, depth, quality, hasMagnetHoles }),
-    ...processedLabels,
+    ...labels,
+    ...walls,
     translateZ(
       baseHeight,
       sweepRounded(
