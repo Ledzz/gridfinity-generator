@@ -37,6 +37,7 @@
 - [ ] Label sizes
   - [ ] Fixed
   - [ ] Auto
+  - [ ] Full
 - [ ] Inner
   - [ ] Wall
   - [ ] Ledge
@@ -47,6 +48,7 @@
 - [ ] Thumb screw
 - [ ] Cutout generator
 - [ ] Move/rotate items
+- [ ] Keyboard shortcuts
 - [x] Wireframe
 - [x] Bed size
 

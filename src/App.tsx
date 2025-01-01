@@ -154,7 +154,7 @@ function App() {
             camera={{
               near: 0.1,
               far: 10000,
-              position: [100, 60, 100],
+              position: [-100, 60, 100],
             }}
           >
             <Suspense
