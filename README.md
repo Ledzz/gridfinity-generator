@@ -48,6 +48,7 @@
 - [ ] Cutout generator
 - [ ] Move/rotate items
 - [x] Wireframe
+- [x] Bed size
 
 ## Other TODO
 - [x] Move to worker

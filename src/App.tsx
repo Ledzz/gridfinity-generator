@@ -6,8 +6,16 @@ import { FC, Suspense, useCallback } from "react";
 import { World } from "./app/World.tsx";
 import { createBox } from "./app/utils/createBox.ts";
 import { createBaseplate } from "./app/utils/createBaseplate.ts";
-import { useAppStore } from "./app/appStore.ts";
-import { Button, Checkbox, Flex, Layout, theme } from "antd";
+import { BED_SIZES, useAppStore } from "./app/appStore.ts";
+import {
+  Button,
+  Checkbox,
+  Flex,
+  InputNumber,
+  Layout,
+  Select,
+  theme,
+} from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
 import { DownloadOutlined } from "@ant-design/icons";
@@ -28,9 +36,13 @@ function App() {
   );
   const saveStl = useCallback(() => {
     const save = async <T extends Item>(item: T) => {
-      const data = await GridfinityGenWorker[item.type](item);
+      const data = await GridfinityGenWorker[item.type]({
+        ...item,
+        quality: 128,
+      });
       const rawData = serialize({ binary: true }, data);
-      const blob = new Blob([rawData]);
+
+      const blob = new Blob([...rawData]);
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -55,6 +67,7 @@ function App() {
   const EditComponent = selectedItem
     ? (EDIT_FORMS[selectedItem.type] as FC<EditFormProps<typeof selectedItem>>)
     : null;
+  const bedSize = useAppStore((s) => s.bedSize);
   return (
     <>
       <Layout
@@ -80,6 +93,37 @@ function App() {
           >
             Wireframe
           </Checkbox>
+          <div>Bed size</div>
+          <Select
+            options={Object.keys(BED_SIZES).map((v) => ({
+              value: v,
+              label: v,
+            }))}
+            onChange={(v: string) => {
+              useAppStore.setState({
+                bedSize: BED_SIZES[v],
+              });
+            }}
+          ></Select>
+          <InputNumber
+            min={1}
+            value={bedSize?.[0]}
+            onChange={(e) =>
+              useAppStore.setState({
+                bedSize: [e ?? 0, useAppStore.getState().bedSize?.[1] ?? 0],
+              })
+            }
+          />
+          x
+          <InputNumber
+            min={1}
+            value={bedSize?.[1]}
+            onChange={(e) => {
+              useAppStore.setState({
+                bedSize: [useAppStore.getState().bedSize?.[0] ?? 0, e ?? 0],
+              });
+            }}
+          />
           {EditComponent && selectedItem ? (
             <EditComponent
               value={selectedItem}
@@ -134,9 +178,17 @@ function App() {
             {/*<gridHelper args={[100, 10]} position={[0, 3, -21]} />*/}
             {/*<arrowHelper args={[[0, 0, 1], [21, 21, 21], 60]} />*/}
             {/*<arrowHelper args={[{ x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, 60]} />*/}
-            <axesHelper scale={60} />
             {/*<gridHelper args={[100, 100, 0x444444, 0xdddddd]} />*/}
             {/*<gridHelper args={[100, 10]} />*/}
+
+            {bedSize ? (
+              <gridHelper
+                args={[1, 10, 0xaaaaaa, 0xdddddd]}
+                scale={[bedSize[0], 1, bedSize[1]]}
+              />
+            ) : null}
+            <axesHelper scale={60} />
+
             <group rotation-x={-Math.PI / 2}>
               <World />
               {/*<Stl*/}
