@@ -190,7 +190,7 @@ function App() {
                 scale={[bedSize[0], 1, bedSize[1]]}
               />
             ) : null}
-            <axesHelper scale={60} />
+            {/*<axesHelper scale={60} />*/}
 
             <group rotation-x={-Math.PI / 2}>
               <World />
