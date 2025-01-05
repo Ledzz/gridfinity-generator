@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren, useEffect, useRef } from "react";
-import { Plane, Raycaster, Vector3 } from "three";
+import { Group, Plane, PlaneHelper, Raycaster, Vector3 } from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 
 // dir?: Vector3,
@@ -67,7 +67,7 @@ function Arrow({ axis, ...props }) {
 }
 
 export const TransformControls: FC<PropsWithChildren> = ({ children }) => {
-  const groupRef = useRef(null);
+  const groupRef = useRef<Group>(null);
   const mouse = new Vector3();
   const gl = useThree((state) => state.gl);
   const camera = useThree((state) => state.camera);
@@ -75,30 +75,75 @@ export const TransformControls: FC<PropsWithChildren> = ({ children }) => {
   const plane = new Plane();
   const objectPosition = new Vector3();
   const intersectionPoint = new Vector3();
+  const offset = new Vector3();
   const controls = useThree((state) => state.controls);
+  const initialIntersection = useRef(new Vector3());
+  const planeNormal = new Vector3();
+  const scene = useThree((state) => state.scene);
 
-  const handleMouseMove = (e) => {
+  const raycast = (e, intersection: Vector3) => {
+    groupRef.current.getWorldPosition(objectPosition);
+
+    const axis = "z";
+    // switch (axis) {
+    //   case "x":
+    // planeNormal.set(0, 1, 0);
+    // break;
+    // case "y":
+    planeNormal.set(0, 0, 1);
+    // break;
+    // case "z":
+    // planeNormal.set(1, 0, 0);
+    // break;
+    // }
+    plane.setFromNormalAndCoplanarPoint(planeNormal, objectPosition);
+    const helper = new PlaneHelper(plane, 40, 0xff0000);
+    scene.add(helper);
+
     mouse.set(
       (e.clientX / gl.domElement.clientWidth) * 2 - 1,
       -(e.clientY / gl.domElement.clientHeight) * 2 + 1,
       0,
     );
-    groupRef.current.getWorldPosition(objectPosition);
+
     raycaster.setFromCamera(mouse, camera);
-    plane.setFromNormalAndCoplanarPoint(new Vector3(1, 0, 0), objectPosition);
-    raycaster.ray.intersectPlane(plane, intersectionPoint);
-    groupRef.current.position.z = intersectionPoint.y;
+    raycaster.ray.intersectPlane(plane, intersection);
+  };
+
+  const handleMouseMove = (e) => {
+    raycast(e, intersectionPoint);
+    const delta = intersectionPoint.clone().add(objectPosition);
+    // .sub(offset)
+    // .sub(initialIntersection.current);
+
+    // console.log(intersectionPoint);
+
+    /*offset
+      .clone()
+      .add(intersectionPoint)
+      .sub(initialIntersection.current); //intersectionPoint.clone().add(offset);*/
+    // .sub(objectPosition);
+
+    // offset.copy(intersectionPoint).sub(objectPosition);
+    // groupRef.current.position.z = delta.y;
+    groupRef.current.worldToLocal(delta);
+    delta.set(0, 0, delta.z);
+    console.log(groupRef.current.position.z);
+    groupRef.current.position.copy(delta);
     controls.enabled = false;
-    console.log(controls);
-    console.log(mouse);
   };
 
   const handleStartDrag = (axis) => (e) => {
+    raycast(e, initialIntersection.current);
+    offset.copy(groupRef.current.position.clone());
+    console.log(initialIntersection.current, groupRef.current.position);
     document.addEventListener("pointermove", handleMouseMove);
+    document.addEventListener("pointerup", handleEndDrag);
   };
 
   const handleEndDrag = () => {
     document.removeEventListener("pointermove", handleMouseMove);
+    document.removeEventListener("pointerup", handleEndDrag);
     controls.enabled = true;
   };
 
