@@ -1,6 +1,6 @@
-import { FC, PropsWithChildren, useRef } from "react";
-import { Vector3 } from "three";
-import { useFrame } from "@react-three/fiber";
+import { FC, PropsWithChildren, useEffect, useRef } from "react";
+import { Plane, Raycaster, Vector3 } from "three";
+import { useFrame, useThree } from "@react-three/fiber";
 
 // dir?: Vector3,
 //     origin?: Vector3,
@@ -30,7 +30,7 @@ const AXIS_MAP = {
 const start = new Vector3(0, 0, 0);
 const dir = new Vector3(0, 1, 0);
 
-function Arrow({ axis }) {
+function Arrow({ axis, ...props }) {
   const arrowRef = useRef(null);
   const groupRef = useRef(null);
   const size = 1;
@@ -46,13 +46,15 @@ function Arrow({ axis }) {
   });
 
   return (
-    <group ref={groupRef} rotation={AXIS_MAP[axis].rotation}>
-      <mesh
-        onPointerEnter={() => arrowRef.current.setColor(0xffff00)}
-        onPointerLeave={() => arrowRef.current.setColor(AXIS_MAP[axis].color)}
-        position={[0, 0.3, 0]}
-      >
-        <cylinderGeometry args={[0.2, 0, 0.6, 4]} />
+    <group
+      ref={groupRef}
+      rotation={AXIS_MAP[axis].rotation}
+      onPointerEnter={() => arrowRef.current.setColor(0xffff00)}
+      onPointerLeave={() => arrowRef.current.setColor(AXIS_MAP[axis].color)}
+      {...props}
+    >
+      <mesh position={[0, 0.55, 0]}>
+        <cylinderGeometry args={[0.2, 0, 1.1, 4]} />
         <meshBasicMaterial wireframe depthTest={false} />
       </mesh>
       <arrowHelper
@@ -65,11 +67,52 @@ function Arrow({ axis }) {
 }
 
 export const TransformControls: FC<PropsWithChildren> = ({ children }) => {
+  const groupRef = useRef(null);
+  const mouse = new Vector3();
+  const gl = useThree((state) => state.gl);
+  const camera = useThree((state) => state.camera);
+  const raycaster = new Raycaster();
+  const plane = new Plane();
+  const objectPosition = new Vector3();
+  const intersectionPoint = new Vector3();
+  const controls = useThree((state) => state.controls);
+
+  const handleMouseMove = (e) => {
+    mouse.set(
+      (e.clientX / gl.domElement.clientWidth) * 2 - 1,
+      -(e.clientY / gl.domElement.clientHeight) * 2 + 1,
+      0,
+    );
+    groupRef.current.getWorldPosition(objectPosition);
+    raycaster.setFromCamera(mouse, camera);
+    plane.setFromNormalAndCoplanarPoint(new Vector3(1, 0, 0), objectPosition);
+    raycaster.ray.intersectPlane(plane, intersectionPoint);
+    groupRef.current.position.z = intersectionPoint.y;
+    controls.enabled = false;
+    console.log(controls);
+    console.log(mouse);
+  };
+
+  const handleStartDrag = (axis) => (e) => {
+    document.addEventListener("pointermove", handleMouseMove);
+  };
+
+  const handleEndDrag = () => {
+    document.removeEventListener("pointermove", handleMouseMove);
+    controls.enabled = true;
+  };
+
+  useEffect(() => {
+    return () => {
+      handleEndDrag();
+    };
+  });
+
   return (
-    <group>
-      <Arrow axis={"x"} />
-      <Arrow axis={"y"} />
-      <Arrow axis={"z"} />
+    <group ref={groupRef}>
+      <Arrow axis={"x"} onPointerDown={handleStartDrag("x")} />
+      <Arrow axis={"y"} onPointerDown={handleStartDrag("y")} />
+      <Arrow axis={"z"} onPointerDown={handleStartDrag("z")} />
       {children}
     </group>
   );
