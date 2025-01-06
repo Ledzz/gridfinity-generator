@@ -14,6 +14,7 @@ import { boxInnerContent } from "./boxInnerContent.ts";
 import RecursiveArray from "@jscad/modeling/src/utils/recursiveArray";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 import { colorize } from "@jscad/modeling/src/colors";
+import { Vec2 } from "@jscad/modeling/src/maths/vec2";
 
 export const DEFAULT_FONT_SIZE = 6;
 const TEXT_HEIGHT = 0.3;
@@ -28,9 +29,10 @@ export type LabelGeomProps = {
 
 type VerticalPosition = "top" | "bottom";
 type HorizontalPosition = "left" | "center" | "right";
-type LabelPosition = `${VerticalPosition}-${HorizontalPosition}`;
+type LabelPositionString = `${VerticalPosition}-${HorizontalPosition}`;
+type LabelPosition = LabelPositionString | Vec2;
 
-export const LABEL_POSITIONS: readonly LabelPosition[] = [
+export const LABEL_POSITIONS: readonly LabelPositionString[] = [
   "top-left",
   "top-center",
   "top-right",
@@ -68,10 +70,6 @@ export const label = (
   if (!lineSegments.length) {
     return null;
   }
-  const [vertical, horizontal] = position.split("-") as [
-    VerticalPosition,
-    HorizontalPosition,
-  ];
 
   let textWidth = 0;
 
@@ -90,23 +88,13 @@ export const label = (
         ? textWidth + TEXT_PADDING * 2
         : size) ?? DEFAULT_LABEL_WIDTH;
 
-  const h = {
-    left: (-SIZE * box.width + labelWidth) / 2 + WALL_THICKNESS,
-    center: 0,
-    right: (SIZE * box.width - labelWidth) / 2 - WALL_THICKNESS,
-  } as const;
-  const v = {
-    top: (SIZE * box.depth) / 2 - LABEL_DEPTH - WALL_THICKNESS,
-    bottom: -(SIZE * box.depth) / 2,
-  } as const;
+  const p = getPosition({ position, box, labelWidth });
+  const shouldRotate =
+    typeof position === "string" && position.includes("bottom");
 
   return [
     translate(
-      [
-        h[horizontal],
-        v[vertical],
-        box.height * 7 + baseHeight - LIP_HEIGHT - TEXT_HEIGHT,
-      ],
+      [p[0], p[1], box.height * 7 + baseHeight - LIP_HEIGHT - TEXT_HEIGHT],
       center(
         {
           relativeTo: [0, LABEL_DEPTH / 2 - 1, TEXT_HEIGHT / 2],
@@ -120,17 +108,13 @@ export const label = (
     intersect(
       boxInnerContent(box),
       translate(
-        [
-          h[horizontal],
-          v[vertical],
-          box.height * 7 + baseHeight - LIP_HEIGHT - TEXT_HEIGHT,
-        ],
+        [p[0], p[1], box.height * 7 + baseHeight - LIP_HEIGHT - TEXT_HEIGHT],
         center(
           {
             relativeTo: [0, LABEL_DEPTH / 2, -LABEL_DEPTH / 2],
           },
           rotate(
-            [0, Math.PI / 2, vertical === "bottom" ? Math.PI : 0],
+            [0, Math.PI / 2, shouldRotate ? Math.PI : 0],
             extrudeLinear(
               { height: labelWidth },
               polygon({
@@ -148,3 +132,33 @@ export const label = (
     ),
   ];
 };
+
+function getPosition({
+  position,
+  box,
+  labelWidth,
+}: {
+  position: LabelPosition;
+  box: Pick<BoxGeomProps, "width" | "depth">;
+  labelWidth: number;
+}): Vec2 {
+  const h = {
+    left: (-SIZE * box.width + labelWidth) / 2 + WALL_THICKNESS,
+    center: 0,
+    right: (SIZE * box.width - labelWidth) / 2 - WALL_THICKNESS,
+  } as const;
+  const v = {
+    top: (SIZE * box.depth) / 2 - LABEL_DEPTH - WALL_THICKNESS,
+    bottom: -(SIZE * box.depth) / 2,
+  } as const;
+
+  if (typeof position === "string") {
+    const [vertical, horizontal] = position.split("-") as [
+      VerticalPosition,
+      HorizontalPosition,
+    ];
+    return [h[horizontal], v[vertical]];
+  } else {
+    return position;
+  }
+}

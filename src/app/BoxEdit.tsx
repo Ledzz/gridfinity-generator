@@ -1,16 +1,6 @@
 import { FC, useCallback } from "react";
 import { Box } from "./gridfinity/types/box.ts";
-import {
-  Button,
-  Checkbox,
-  Flex,
-  Form,
-  Input,
-  InputNumber,
-  Radio,
-  Select,
-  Space,
-} from "antd";
+import { Button, Checkbox, Flex, Form, Input, InputNumber } from "antd";
 import { MinusCircleOutlined } from "@ant-design/icons";
 import { createLabel } from "./utils/createLabel.ts";
 import { EditFormProps } from "./gridfinity/types/item.ts";
@@ -19,6 +9,8 @@ import { LABEL_POSITIONS } from "../gridfinity/bin/label.ts";
 import { Label } from "./gridfinity/types/label.ts";
 import { Wall } from "./gridfinity/types/wall.ts";
 import { BoxItemGeomProps } from "../gridfinity/bin/box-item.ts";
+import { NumberWithOptions } from "./NumberWithOptions.tsx";
+import { Vec2WithOptions } from "./Vec2WithOptions.tsx";
 
 const labelPositionOptions = LABEL_POSITIONS.map((position) => ({
   value: position,
@@ -90,39 +82,28 @@ export const BoxEdit: FC<EditFormProps<Box>> = ({ value, onChange }) => {
                       {...restField}
                       name={[name, "position"]}
                     >
-                      <Select options={labelPositionOptions} />
+                      <Vec2WithOptions
+                        options={labelPositionOptions}
+                        initialValue={[0, 0]}
+                      />
                     </Form.Item>
 
-                    <Form.Item label={"Size"}>
-                      <Radio.Group
-                        value={item.size === "auto"}
-                        onChange={(v) => {
-                          onChange({
-                            ...value,
-                            items: value.items.map((item, i) => {
-                              if (i === name) {
-                                return {
-                                  ...item,
-                                  size: v.target.value ? "auto" : 1,
-                                };
-                              }
-                              return item;
-                            }),
-                          });
-                        }}
-                      >
-                        <Space direction="vertical">
-                          <Radio value={true}>Auto</Radio>
-                          <Radio value={false}>Custom</Radio>
-                        </Space>
-                      </Radio.Group>
+                    <Form.Item
+                      label={"Size"}
+                      {...restField}
+                      name={[name, "size"]}
+                    >
+                      <NumberWithOptions
+                        options={[
+                          {
+                            value: "auto",
+                            label: "Auto",
+                          },
+                        ]}
+                        initialValue={42}
+                        min={1}
+                      />
                     </Form.Item>
-                    {item.size !== "auto" ? (
-                      <Form.Item {...restField} name={[name, "size"]}>
-                        <InputNumber min={1} />
-                      </Form.Item>
-                    ) : null}
-
                     <Form.Item
                       label={"Font size"}
                       {...restField}
