@@ -23,9 +23,9 @@ export const wall = (
       size: [
         box.width * 42 - TOLERANCE,
         box.depth * 42 - TOLERANCE,
-        box.height * 7,
+        box.height * 7 + baseHeight,
       ],
-      center: [0, 0, (box.height * 7) / 2],
+      center: [0, 0, (box.height * 7 + baseHeight) / 2],
     }),
     translate(
       [w.position[0], w.position[1], baseHeight],

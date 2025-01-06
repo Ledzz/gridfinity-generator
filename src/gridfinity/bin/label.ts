@@ -75,7 +75,11 @@ export const label = (
   } as const;
 
   return translate(
-    [h[horizontal], v[vertical], box.height * 7 + baseHeight - LIP_HEIGHT],
+    [
+      h[horizontal],
+      v[vertical],
+      box.height * 7 + baseHeight - LIP_HEIGHT - TEXT_HEIGHT,
+    ],
     union(
       center(
         {
