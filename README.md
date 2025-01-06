@@ -35,11 +35,11 @@
   - [x] bottom-center
   - [x] bottom-right
 - [ ] Label sizes
-  - [ ] Fixed
-  - [ ] Auto
+  - [x] Fixed
+  - [x] Auto
   - [ ] Full
 - [ ] Inner
-  - [ ] Wall
+  - [x] Wall
   - [ ] Ledge
   - [ ] Scoop
 

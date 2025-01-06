@@ -15,14 +15,14 @@ import RecursiveArray from "@jscad/modeling/src/utils/recursiveArray";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 import { colorize } from "@jscad/modeling/src/colors";
 
-export const DEFAULT_FONT_SIZE = 8;
+export const DEFAULT_FONT_SIZE = 6;
 const TEXT_HEIGHT = 0.3;
 
 export type LabelGeomProps = {
   text: string;
   fontSize: number;
   position: LabelPosition;
-  size: number | "auto";
+  size: number | "auto" | "full";
   type: "label";
 };
 
@@ -39,19 +39,24 @@ export const LABEL_POSITIONS: readonly LabelPosition[] = [
   "bottom-right",
 ] as const;
 
-const LABEL_WIDTH = 32;
+const DEFAULT_LABEL_WIDTH = 32;
 const LABEL_DEPTH = 10;
 const WALL_THICKNESS = 0.3;
+const TEXT_PADDING = 4;
 
 export const label = (
-  { text, position, fontSize = DEFAULT_FONT_SIZE }: Partial<LabelGeomProps>,
-
+  {
+    text,
+    position,
+    fontSize = DEFAULT_FONT_SIZE,
+    size,
+  }: Partial<LabelGeomProps>,
   box: Pick<BoxGeomProps, "width" | "height" | "depth">,
 ): RecursiveArray<Geom3> | null => {
   if (!text || !position) {
     return [];
   }
-  const lineRadius = 0.5;
+  const lineRadius = fontSize / 20;
   const lineCorner = circle({ radius: lineRadius });
   const lineSegmentPointArrays = vectorText({
     input: text,
@@ -68,10 +73,27 @@ export const label = (
     HorizontalPosition,
   ];
 
+  let textWidth = 0;
+
+  lineSegments.forEach((segment) => {
+    segment.sides.forEach((side) => {
+      side.forEach((point) => {
+        textWidth = Math.max(textWidth, point[0]);
+      });
+    });
+  });
+
+  const labelWidth =
+    (size === "full"
+      ? SIZE * box.width
+      : size === "auto"
+        ? textWidth + TEXT_PADDING * 2
+        : size) ?? DEFAULT_LABEL_WIDTH;
+
   const h = {
-    left: (-SIZE * box.width + LABEL_WIDTH) / 2 + WALL_THICKNESS,
+    left: (-SIZE * box.width + labelWidth) / 2 + WALL_THICKNESS,
     center: 0,
-    right: (SIZE * box.width - LABEL_WIDTH) / 2 - WALL_THICKNESS,
+    right: (SIZE * box.width - labelWidth) / 2 - WALL_THICKNESS,
   } as const;
   const v = {
     top: (SIZE * box.depth) / 2 - LABEL_DEPTH - WALL_THICKNESS,
@@ -87,7 +109,7 @@ export const label = (
       ],
       center(
         {
-          relativeTo: [0, LABEL_DEPTH / 2, TEXT_HEIGHT / 2],
+          relativeTo: [0, LABEL_DEPTH / 2 - 1, TEXT_HEIGHT / 2],
         },
         colorize(
           [0.1, 0.1, 0.1, 1],
@@ -110,7 +132,7 @@ export const label = (
           rotate(
             [0, Math.PI / 2, vertical === "bottom" ? Math.PI : 0],
             extrudeLinear(
-              { height: LABEL_WIDTH },
+              { height: labelWidth },
               polygon({
                 points: [
                   [0, 0],
