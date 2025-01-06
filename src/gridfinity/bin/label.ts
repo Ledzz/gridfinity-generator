@@ -11,6 +11,8 @@ import { intersect, union } from "@jscad/modeling/src/operations/booleans";
 import { baseHeight, LIP_HEIGHT, SIZE } from "../constants.ts";
 import { BoxGeomProps } from "./box.ts";
 import { boxInnerContent } from "./boxInnerContent.ts";
+import RecursiveArray from "@jscad/modeling/src/utils/recursiveArray";
+import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 
 export const DEFAULT_FONT_SIZE = 8;
 const TEXT_HEIGHT = 0.3;
@@ -44,7 +46,7 @@ export const label = (
   { text, position, fontSize = DEFAULT_FONT_SIZE }: Partial<LabelGeomProps>,
 
   box: Pick<BoxGeomProps, "width" | "height" | "depth">,
-) => {
+): RecursiveArray<Geom3> | null => {
   if (!text || !position) {
     return [];
   }
@@ -75,21 +77,28 @@ export const label = (
     bottom: -(SIZE * box.depth) / 2,
   } as const;
 
-  return intersect(
-    boxInnerContent(box),
+  return [
     translate(
       [
         h[horizontal],
         v[vertical],
         box.height * 7 + baseHeight - LIP_HEIGHT - TEXT_HEIGHT,
       ],
-      union(
-        center(
-          {
-            relativeTo: [0, LABEL_DEPTH / 2, TEXT_HEIGHT / 2],
-          },
-          extrudeLinear({ height: TEXT_HEIGHT }, union(lineSegments)),
-        ),
+      center(
+        {
+          relativeTo: [0, LABEL_DEPTH / 2, TEXT_HEIGHT / 2],
+        },
+        extrudeLinear({ height: TEXT_HEIGHT }, union(lineSegments)),
+      ),
+    ),
+    intersect(
+      boxInnerContent(box),
+      translate(
+        [
+          h[horizontal],
+          v[vertical],
+          box.height * 7 + baseHeight - LIP_HEIGHT - TEXT_HEIGHT,
+        ],
         center(
           {
             relativeTo: [0, LABEL_DEPTH / 2, -LABEL_DEPTH / 2],
@@ -111,5 +120,5 @@ export const label = (
         ),
       ),
     ),
-  );
+  ];
 };

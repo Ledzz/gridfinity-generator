@@ -10,6 +10,7 @@ import { Vec2 } from "@jscad/modeling/src/maths/vec2";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 import { wall } from "./wall.ts";
 import { BoxItemGeomProps } from "./box-item.ts";
+import RecursiveArray from "@jscad/modeling/src/utils/recursiveArray";
 
 export type BoxGeomProps = {
   width: number;
@@ -29,8 +30,8 @@ export function box({
   items = [],
   quality = DEFAULT_QUALITY,
   hasMagnetHoles = false,
-}: Partial<BoxGeomProps> = {}) {
-  const labels: Geom3[] = items
+}: Partial<BoxGeomProps> = {}): RecursiveArray<Geom3> {
+  const labels: RecursiveArray<Geom3> = items
     .filter((i) => i.type === "label")
     .map((l) => label(l, { width, depth, height }))
     .filter(Boolean);
@@ -54,20 +55,22 @@ export function box({
     [-0.45, 0],
   ] as Vec2[];
 
-  return union(
-    floor({ width, depth, quality, hasMagnetHoles }),
+  return [
     ...labels,
     ...walls,
-    translateZ(
-      baseHeight,
-      sweepRounded(
-        polygon({
-          points,
-        }),
-        [width * 42 - 0.5, depth * 42 - 0.5],
-        3.75,
-        quality,
+    union(
+      floor({ width, depth, quality, hasMagnetHoles }),
+      translateZ(
+        baseHeight,
+        sweepRounded(
+          polygon({
+            points,
+          }),
+          [width * 42 - 0.5, depth * 42 - 0.5],
+          3.75,
+          quality,
+        ),
       ),
     ),
-  );
+  ];
 }
