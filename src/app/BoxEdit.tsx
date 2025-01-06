@@ -177,7 +177,7 @@ export const BoxEdit: FC<EditFormProps<Box>> = ({ value, onChange }) => {
                       {...restField}
                       name={[name, "thickness"]}
                     >
-                      <InputNumber min={1} />
+                      <InputNumber />
                     </Form.Item>
                     <Form.Item
                       label={"rotation"}
@@ -191,14 +191,14 @@ export const BoxEdit: FC<EditFormProps<Box>> = ({ value, onChange }) => {
                       {...restField}
                       name={[name, "position", 0]}
                     >
-                      <InputNumber min={1} />
+                      <InputNumber />
                     </Form.Item>
                     <Form.Item
                       label={"position y"}
                       {...restField}
                       name={[name, "position", 1]}
                     >
-                      <InputNumber min={1} />
+                      <InputNumber />
                     </Form.Item>
 
                     <MinusCircleOutlined

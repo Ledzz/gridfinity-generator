@@ -8,7 +8,7 @@ export const createWall = (box: Box): Wall => {
     id: uuidv4(),
     type: "wall",
     width: box.width * SIZE,
-    height: box.height * 7,
+    height: box.height * 7 - 4.75,
     thickness: 0.8,
     rotation: 0,
     position: [0, 0],
