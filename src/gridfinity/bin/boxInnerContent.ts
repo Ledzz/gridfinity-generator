@@ -1,5 +1,5 @@
 import { BoxGeomProps } from "./box.ts";
-import { baseHeight, TOLERANCE } from "../constants.ts";
+import { baseHeight, TOLERANCE, WALL_THICKNESS } from "../constants.ts";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 
@@ -9,8 +9,11 @@ export const boxInnerContent = (
   extrudeLinear(
     { height: box.height * 7 + baseHeight },
     roundedRectangle({
-      size: [box.width * 42 - TOLERANCE, box.depth * 42 - TOLERANCE],
-      roundRadius: 3.75,
-      segments: 8,
+      size: [
+        box.width * 42 - TOLERANCE - WALL_THICKNESS,
+        box.depth * 42 - TOLERANCE - WALL_THICKNESS,
+      ],
+      roundRadius: 3.75 + 0.45,
+      segments: 256,
     }),
   );

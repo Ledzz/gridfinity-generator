@@ -4,7 +4,7 @@ import { label } from "./label";
 
 import { sweepRounded } from "../utils/sweepRounded.ts";
 import { polygon } from "@jscad/modeling/src/primitives";
-import { DEFAULT_QUALITY } from "../constants.ts";
+import { DEFAULT_QUALITY, TOLERANCE } from "../constants.ts";
 import { floor } from "./floor.ts";
 import { Vec2 } from "@jscad/modeling/src/maths/vec2";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
@@ -66,7 +66,7 @@ export function box({
           polygon({
             points,
           }),
-          [width * 42 - 0.5, depth * 42 - 0.5],
+          [width * 42 - TOLERANCE, depth * 42 - TOLERANCE],
           3.75,
           quality,
         ),
