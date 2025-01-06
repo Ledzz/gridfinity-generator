@@ -9,14 +9,14 @@ import { floor } from "./floor.ts";
 import { Vec2 } from "@jscad/modeling/src/maths/vec2";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
 import { wall } from "./wall.ts";
-import { BoxItem } from "./box-item.ts";
+import { BoxItemGeomProps } from "./box-item.ts";
 
 export type BoxGeomProps = {
   width: number;
   depth: number;
   height: number;
   size: number;
-  items: BoxItem[];
+  items: BoxItemGeomProps[];
   profileFillet: number;
   quality: number;
   hasMagnetHoles: boolean;
@@ -37,7 +37,7 @@ export function box({
 
   const walls: Geom3[] = items
     .filter((i) => i.type === "wall")
-    .map(wall)
+    .map((w) => wall(w, { width, depth, height }))
     .filter(Boolean);
 
   const baseHeight = 6;

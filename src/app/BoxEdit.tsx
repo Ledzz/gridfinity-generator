@@ -17,18 +17,18 @@ import { EditFormProps } from "./gridfinity/types/item.ts";
 import { createWall } from "./utils/createWall.ts";
 import { LABEL_POSITIONS } from "../gridfinity/bin/label.ts";
 import { Label } from "./gridfinity/types/label.ts";
-import { BoxItem } from "../gridfinity/bin/box.ts";
 import { Wall } from "./gridfinity/types/wall.ts";
+import { BoxItemGeomProps } from "../gridfinity/bin/box-item.ts";
 
 const labelPositionOptions = LABEL_POSITIONS.map((position) => ({
   value: position,
   label: position,
 }));
 
-function isLabel(item: BoxItem): item is Label {
+function isLabel(item: BoxItemGeomProps): item is Label {
   return item.type === "label";
 }
-function isWall(item: BoxItem): item is Wall {
+function isWall(item: BoxItemGeomProps): item is Wall {
   return item.type === "wall";
 }
 

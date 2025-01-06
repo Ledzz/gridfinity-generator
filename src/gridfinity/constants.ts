@@ -1,4 +1,4 @@
-export const baseHeight = 4.75;
+export const baseHeight = 5;
 
 export const SIZE = 42;
 
