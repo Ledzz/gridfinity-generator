@@ -80,9 +80,10 @@ function App() {
         <Sider
           style={{
             background: colorBgContainer,
-            minHeight: "100vh",
+            height: "100vh",
             borderInlineEnd: `1px ${lineType} ${colorSplit}`,
             padding: "16px",
+            overflow: "auto",
           }}
           width={300}
         >

@@ -13,6 +13,7 @@ import { BoxGeomProps } from "./box.ts";
 import { boxInnerContent } from "./boxInnerContent.ts";
 import RecursiveArray from "@jscad/modeling/src/utils/recursiveArray";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
+import { colorize } from "@jscad/modeling/src/colors";
 
 export const DEFAULT_FONT_SIZE = 8;
 const TEXT_HEIGHT = 0.3;
@@ -88,7 +89,10 @@ export const label = (
         {
           relativeTo: [0, LABEL_DEPTH / 2, TEXT_HEIGHT / 2],
         },
-        extrudeLinear({ height: TEXT_HEIGHT }, union(lineSegments)),
+        colorize(
+          [0.1, 0.1, 0.1, 1],
+          extrudeLinear({ height: TEXT_HEIGHT }, union(lineSegments)),
+        ),
       ),
     ),
     intersect(
