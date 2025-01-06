@@ -4,7 +4,6 @@ import { GridfinityGenWorker } from "../gridfinity";
 import { toMesh } from "../render/toMesh.ts";
 import { useAppStore } from "./appStore.ts";
 import { Mesh, MeshBasicMaterial, Object3D } from "three";
-import { TransformControls } from "./TransformControls.tsx";
 
 export const RenderGeom = <T extends Item>({
   onClick,
@@ -35,8 +34,8 @@ export const RenderGeom = <T extends Item>({
   }, [isWireframe, obj]);
 
   return obj ? (
-    <TransformControls>
-      <primitive object={obj} onClick={onClick}></primitive>
-    </TransformControls>
-  ) : null;
+    // <TransformControls>
+    <primitive object={obj} onClick={onClick}></primitive>
+  ) : // </TransformControls>
+  null;
 };
