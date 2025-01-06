@@ -7,9 +7,10 @@ import {
   translate,
 } from "@jscad/modeling/src/operations/transforms";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
-import { union } from "@jscad/modeling/src/operations/booleans";
+import { intersect, union } from "@jscad/modeling/src/operations/booleans";
 import { baseHeight, LIP_HEIGHT, SIZE } from "../constants.ts";
 import { BoxGeomProps } from "./box.ts";
+import { boxInnerContent } from "./boxInnerContent.ts";
 
 export const DEFAULT_FONT_SIZE = 8;
 const TEXT_HEIGHT = 0.3;
@@ -37,7 +38,7 @@ export const LABEL_POSITIONS: readonly LabelPosition[] = [
 
 const LABEL_WIDTH = 32;
 const LABEL_DEPTH = 10;
-const LABEL_MARGIN = 10;
+const WALL_THICKNESS = 0.3;
 
 export const label = (
   { text, position, fontSize = DEFAULT_FONT_SIZE }: Partial<LabelGeomProps>,
@@ -65,44 +66,47 @@ export const label = (
   ];
 
   const h = {
-    left: (-SIZE * box.width + LABEL_WIDTH) / 2 + LABEL_MARGIN,
+    left: (-SIZE * box.width + LABEL_WIDTH) / 2 + WALL_THICKNESS,
     center: 0,
-    right: (SIZE * box.width - LABEL_WIDTH) / 2 - LABEL_MARGIN,
+    right: (SIZE * box.width - LABEL_WIDTH) / 2 - WALL_THICKNESS,
   } as const;
   const v = {
-    top: (SIZE * box.depth) / 2 - LABEL_DEPTH,
+    top: (SIZE * box.depth) / 2 - LABEL_DEPTH - WALL_THICKNESS,
     bottom: -(SIZE * box.depth) / 2,
   } as const;
 
-  return translate(
-    [
-      h[horizontal],
-      v[vertical],
-      box.height * 7 + baseHeight - LIP_HEIGHT - TEXT_HEIGHT,
-    ],
-    union(
-      center(
-        {
-          relativeTo: [0, LABEL_DEPTH / 2, TEXT_HEIGHT / 2],
-        },
-        extrudeLinear({ height: TEXT_HEIGHT }, union(lineSegments)),
-      ),
-      center(
-        {
-          relativeTo: [0, LABEL_DEPTH / 2, -LABEL_DEPTH / 2],
-        },
-        rotate(
-          [0, Math.PI / 2, vertical === "bottom" ? Math.PI : 0],
-          extrudeLinear(
-            { height: LABEL_WIDTH },
-            polygon({
-              points: [
-                [0, 0],
-                [LABEL_DEPTH, LABEL_DEPTH],
-                [0, LABEL_DEPTH],
-                [0, 0],
-              ],
-            }),
+  return intersect(
+    boxInnerContent(box),
+    translate(
+      [
+        h[horizontal],
+        v[vertical],
+        box.height * 7 + baseHeight - LIP_HEIGHT - TEXT_HEIGHT,
+      ],
+      union(
+        center(
+          {
+            relativeTo: [0, LABEL_DEPTH / 2, TEXT_HEIGHT / 2],
+          },
+          extrudeLinear({ height: TEXT_HEIGHT }, union(lineSegments)),
+        ),
+        center(
+          {
+            relativeTo: [0, LABEL_DEPTH / 2, -LABEL_DEPTH / 2],
+          },
+          rotate(
+            [0, Math.PI / 2, vertical === "bottom" ? Math.PI : 0],
+            extrudeLinear(
+              { height: LABEL_WIDTH },
+              polygon({
+                points: [
+                  [0, 0],
+                  [LABEL_DEPTH, LABEL_DEPTH],
+                  [0, LABEL_DEPTH],
+                  [0, 0],
+                ],
+              }),
+            ),
           ),
         ),
       ),
