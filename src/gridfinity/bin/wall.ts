@@ -28,7 +28,7 @@ export const wall = (
       center: [0, 0, (box.height * 7) / 2],
     }),
     translate(
-      [w.position[0], w.position[1], baseHeight + 0.1],
+      [w.position[0], w.position[1], baseHeight],
       rotate(
         [0, 0, w.rotation * (Math.PI / 180)],
         cuboid({

@@ -8,11 +8,11 @@ import {
 } from "@jscad/modeling/src/operations/transforms";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { union } from "@jscad/modeling/src/operations/booleans";
-import { baseHeight, SIZE } from "../constants.ts";
+import { baseHeight, LIP_HEIGHT, SIZE } from "../constants.ts";
 import { BoxGeomProps } from "./box.ts";
 
 export const DEFAULT_FONT_SIZE = 8;
-const TEXT_HEIGHT = 1;
+const TEXT_HEIGHT = 0.3;
 
 export type LabelGeomProps = {
   text: string;
@@ -38,7 +38,6 @@ export const LABEL_POSITIONS: readonly LabelPosition[] = [
 const LABEL_WIDTH = 32;
 const LABEL_DEPTH = 10;
 const LABEL_MARGIN = 10;
-const LIP_HEIGHT = 8.4;
 
 export const label = (
   { text, position, fontSize = DEFAULT_FONT_SIZE }: Partial<LabelGeomProps>,
@@ -76,11 +75,7 @@ export const label = (
   } as const;
 
   return translate(
-    [
-      h[horizontal],
-      v[vertical],
-      box.height * 7 + baseHeight - LIP_HEIGHT + TEXT_HEIGHT,
-    ],
+    [h[horizontal], v[vertical], box.height * 7 + baseHeight - LIP_HEIGHT],
     union(
       center(
         {
