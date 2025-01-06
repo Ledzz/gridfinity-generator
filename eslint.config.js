@@ -55,6 +55,16 @@ export default tseslint.config(
               from: "./src",
               except: ["./gridfinity"],
             },
+            {
+              target: "./src/render/**",
+              from: "./src",
+              except: ["./render"],
+            },
+            {
+              target: "./src/utils/**",
+              from: "./src",
+              except: ["./utils"],
+            },
           ],
         },
       ],
