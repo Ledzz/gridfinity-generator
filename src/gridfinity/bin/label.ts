@@ -51,7 +51,7 @@ export const label = (
     fontSize = DEFAULT_FONT_SIZE,
     size,
   }: Partial<LabelGeomProps>,
-  box: Pick<BoxGeomProps, "width" | "height" | "depth">,
+  box: Pick<BoxGeomProps, "width" | "height" | "depth" | "quality">,
 ): RecursiveArray<Geom3> | null => {
   if (!text || !position) {
     return [];

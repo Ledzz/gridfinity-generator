@@ -17,7 +17,7 @@ export type WallGeomProps = {
 
 export const wall = (
   w: WallGeomProps,
-  box: Pick<BoxGeomProps, "width" | "depth" | "height">,
+  box: Pick<BoxGeomProps, "width" | "depth" | "height" | "quality">,
 ) =>
   intersect(
     boxInnerContent(box),

@@ -4,7 +4,7 @@ import { label } from "./label";
 
 import { sweepRounded } from "../utils/sweepRounded.ts";
 import { polygon } from "@jscad/modeling/src/primitives";
-import { DEFAULT_QUALITY, TOLERANCE } from "../constants.ts";
+import { DEFAULT_QUALITY, TOLERANCE, WALL_THICKNESS } from "../constants.ts";
 import { floor } from "./floor.ts";
 import { Vec2 } from "@jscad/modeling/src/maths/vec2";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
@@ -33,12 +33,12 @@ export function box({
 }: Partial<BoxGeomProps> = {}): RecursiveArray<Geom3> {
   const labels: RecursiveArray<Geom3> = items
     .filter((i) => i.type === "label")
-    .map((l) => label(l, { width, depth, height }))
+    .map((l) => label(l, { width, depth, height, quality }))
     .filter(Boolean);
 
   const walls: Geom3[] = items
     .filter((i) => i.type === "wall")
-    .map((w) => wall(w, { width, depth, height }))
+    .map((w) => wall(w, { width, depth, height, quality }))
     .filter(Boolean);
 
   const baseHeight = 6;
@@ -51,8 +51,8 @@ export function box({
     [-1.9, h - 5.3],
     [-2.6, h - 6],
     [-2.6, h - 6.25],
-    [-0.45, h - 8.4],
-    [-0.45, 0],
+    [-WALL_THICKNESS, h - 8.4],
+    [-WALL_THICKNESS, 0],
   ] as Vec2[];
 
   return [
