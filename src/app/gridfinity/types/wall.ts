@@ -1,6 +1,5 @@
-import { WallGeomProps } from "../../../gridfinity/bin/box.ts";
+import { WallGeomProps } from "../../../gridfinity/bin/wall.ts";
 
 export type Wall = WallGeomProps & {
   id: string;
-  type: "wall";
 };

@@ -1,23 +1,15 @@
 import { union } from "@jscad/modeling/src/operations/booleans";
-import {
-  rotate,
-  translate,
-  translateZ,
-} from "@jscad/modeling/src/operations/transforms";
-import { label } from "./label.ts";
+import { translateZ } from "@jscad/modeling/src/operations/transforms";
+import { label } from "./label";
 
-import { Label } from "../../app/gridfinity/types/label.ts";
 import { sweepRounded } from "../utils/sweepRounded.ts";
-import { cuboid, polygon } from "@jscad/modeling/src/primitives";
-import { baseHeight, DEFAULT_QUALITY } from "../constants.ts";
+import { polygon } from "@jscad/modeling/src/primitives";
+import { DEFAULT_QUALITY } from "../constants.ts";
 import { floor } from "./floor.ts";
-import { Wall } from "../../app/gridfinity/types/wall.ts";
-import { Ledge } from "../../app/gridfinity/types/ledge.ts";
-import { Scoop } from "../../app/gridfinity/types/scoop.ts";
 import { Vec2 } from "@jscad/modeling/src/maths/vec2";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
-
-export type BoxItem = Wall | Label | Ledge | Scoop;
+import { wall } from "./wall.ts";
+import { BoxItem } from "./box-item.ts";
 
 export type BoxGeomProps = {
   width: number;
@@ -29,27 +21,6 @@ export type BoxGeomProps = {
   quality: number;
   hasMagnetHoles: boolean;
 };
-
-export type WallGeomProps = {
-  width: number;
-  height: number;
-  thickness: number;
-  rotation: number;
-  position: Vec2;
-};
-
-function wall(wall: WallGeomProps) {
-  return translate(
-    [wall.position[0], wall.position[1], baseHeight],
-    rotate(
-      [0, 0, wall.rotation * (Math.PI / 180)],
-      cuboid({
-        size: [wall.width, wall.thickness, wall.height],
-        center: [0, 0, wall.height / 2],
-      }),
-    ),
-  );
-}
 
 export function box({
   width = 1,

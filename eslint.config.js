@@ -4,15 +4,25 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 import react from "eslint-plugin-react";
+import importPlugin from "eslint-plugin-import";
 
 export default tseslint.config(
   { ignores: ["dist"] },
   {
-    settings: { react: { version: "18.3" } },
+    settings: {
+      react: { version: "18.3" },
+      "import/resolver": {
+        typescript: true,
+        node: true,
+      },
+    },
 
     extends: [
       js.configs.recommended,
       ...tseslint.configs.recommendedTypeChecked,
+      importPlugin.flatConfigs.recommended,
+      importPlugin.flatConfigs.react,
+      importPlugin.flatConfigs.typescript,
     ],
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
@@ -36,6 +46,18 @@ export default tseslint.config(
       ],
       ...react.configs.recommended.rules,
       ...react.configs["jsx-runtime"].rules,
+      "import/no-restricted-paths": [
+        "error",
+        {
+          zones: [
+            {
+              target: "./src/gridfinity/**",
+              from: "./src",
+              except: ["./gridfinity"],
+            },
+          ],
+        },
+      ],
     },
   },
 );

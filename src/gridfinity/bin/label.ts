@@ -19,6 +19,7 @@ export type LabelGeomProps = {
   fontSize: number;
   position: LabelPosition;
   size: number | "auto";
+  type: "label";
 };
 
 type VerticalPosition = "top" | "bottom";
