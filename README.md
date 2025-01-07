@@ -58,6 +58,7 @@
 - [x] Different quality for preview and final
 - [ ] SEO / title
 - [ ] Deploy
+- [ ] Custom domain
 - [ ] Enable eslint
 - [x] Fix types
 - [ ] Write tests
