@@ -174,7 +174,7 @@ function App() {
               }
             >
               <Environment
-                files={"/studio_small_03_compressed.exr"}
+                files={"studio_small_03_compressed.exr"}
                 environmentIntensity={0.7}
               />
             </Suspense>
