@@ -8,5 +8,5 @@ export const createLabel = (): Label => ({
   fontSize: DEFAULT_FONT_SIZE,
   text: "",
   position: "top-center",
-  size: "auto",
+  size: "full",
 });

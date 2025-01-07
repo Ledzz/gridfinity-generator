@@ -97,7 +97,11 @@ export const label = (
       [p[0], p[1], box.height * 7 + baseHeight - LIP_HEIGHT - TEXT_HEIGHT],
       center(
         {
-          relativeTo: [0, LABEL_DEPTH / 2 - 1, TEXT_HEIGHT / 2],
+          relativeTo: [
+            0,
+            LABEL_DEPTH / 2 + (shouldRotate ? 1 : -1),
+            TEXT_HEIGHT / 2,
+          ],
         },
         colorize(
           [0.1, 0.1, 0.1, 1],

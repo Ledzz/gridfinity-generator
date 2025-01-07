@@ -17,6 +17,17 @@ const labelPositionOptions = LABEL_POSITIONS.map((position) => ({
   label: position,
 }));
 
+const labelSizeOptions = [
+  {
+    value: "auto",
+    label: "Auto",
+  },
+  {
+    value: "full",
+    label: "Full",
+  },
+];
+
 function isLabel(item: BoxItemGeomProps): item is Label {
   return item.type === "label";
 }
@@ -94,12 +105,7 @@ export const BoxEdit: FC<EditFormProps<Box>> = ({ value, onChange }) => {
                       name={[name, "size"]}
                     >
                       <NumberWithOptions
-                        options={[
-                          {
-                            value: "auto",
-                            label: "Auto",
-                          },
-                        ]}
+                        options={labelSizeOptions}
                         initialValue={42}
                         min={1}
                       />
