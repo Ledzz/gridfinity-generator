@@ -56,8 +56,8 @@
 ## Other TODO
 - [x] Move to worker
 - [x] Different quality for preview and final
-- [ ] SEO / title
-- [ ] Deploy
+- [x] SEO / title
+- [x] Deploy
 - [ ] Custom domain
 - [ ] Enable eslint
 - [x] Fix types
