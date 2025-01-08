@@ -50,6 +50,7 @@
 - [ ] Cutout generator
 - [ ] Move/rotate items
 - [ ] Keyboard shortcuts
+- [ ] Pretty names for saved STLs
 - [x] Wireframe
 - [x] Bed size
 
