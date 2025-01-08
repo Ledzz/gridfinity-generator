@@ -67,3 +67,4 @@
 - [ ] Copy / paste
 - [ ] Save / load
 - [ ] Versioning / what's new
+- [ ] Pretty README and Github page
