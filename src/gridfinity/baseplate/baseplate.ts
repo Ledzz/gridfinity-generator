@@ -66,7 +66,7 @@ export const baseplate = ({
               }),
             ),
           ),
-          centerHole({ width, depth, height, x, y }),
+          centerHole({ width, depth, height, x, y, hasMagnetHoles }),
           hasStackableConnectors
             ? connectorHoles({ width, depth, height, x, y })
             : [],

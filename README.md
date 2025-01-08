@@ -68,3 +68,7 @@
 - [ ] Save / load
 - [ ] Versioning / what's new
 - [ ] Pretty README and Github page
+
+# Known bugs
+- [ ] Plate size name not saved
+- [x] No magnet holes for lite baseplate
