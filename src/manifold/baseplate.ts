@@ -1,5 +1,8 @@
-import { DEFAULT_QUALITY } from "../gridfinity/constants.ts";
-import { Manifold } from "manifold-3d/manifold-encapsulated-types";
+import { DEFAULT_QUALITY, SIZE } from "../gridfinity/constants.ts";
+import { ManifoldToplevel } from "manifold-3d";
+import { Vec2 } from "@jscad/modeling/src/maths/vec2";
+import { centerHole } from "./centerHole.ts";
+import { mapReduceWithLink } from "../gridfinity/utils/range.ts";
 
 export interface BaseplateGeomProps {
   style: "refined-lite";
@@ -14,7 +17,7 @@ export interface BaseplateGeomProps {
 }
 
 export const baseplate = (
-  Manifold: Manifold,
+  wasm: ManifoldToplevel,
   {
     style = "refined-lite",
     height = 3,
@@ -25,11 +28,50 @@ export const baseplate = (
     quality = DEFAULT_QUALITY,
   }: Partial<BaseplateGeomProps> = {},
 ) => {
+  const {
+    Manifold: { cube, sphere },
+    CrossSection,
+  } = wasm;
   switch (style) {
     case "refined-lite": {
-      const { cube, sphere } = Manifold;
+      const points = [
+        [0, 0], // Innermost bottom point
+        [0.7, 0.7], // Up and out at a 45 degree angle
+        [0.7, 2.5], // Straight up
+        [2.6, 4.4], // Up and out at a 45 degree angle
+        [2.85, 4.4], // Top shelf
+        [2.85, 0], // Straight down
+      ] as Vec2[];
 
-      return cube([100, 100, 100], true);
+      points.reverse();
+
+      const baseWidth = Math.max(...points.map((point) => point[0]));
+      const baseHeight = Math.max(...points.map((point) => point[1]));
+
+      const a = CrossSection.square([SIZE * width, SIZE * depth], true).extrude(
+        height + baseHeight,
+      );
+
+      const b = mapReduceWithLink(a, width, depth, (i, x, y) => {
+        return i.subtract(
+          centerHole(wasm, {
+            width,
+            depth,
+            height,
+            x,
+            y,
+            hasMagnetHoles,
+          }).translate([
+            SIZE * (x - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
+            SIZE * (y - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
+            0,
+          ]),
+        );
+      });
+
+      console.log(b);
+
+      return b;
     }
   }
 };

@@ -4,9 +4,10 @@ import { baseplate } from "./manifold/baseplate.ts";
 
 const wasm = await Module();
 wasm.setup();
-const { Manifold } = wasm;
-const { cube, sphere } = Manifold;
-const result = baseplate(Manifold, {});
+const result = baseplate(wasm, {
+  width: 5,
+  depth: 5,
+});
 const id2matIndex = new Map();
 
 export const mesh = mesh2geometry(result.getMesh());
