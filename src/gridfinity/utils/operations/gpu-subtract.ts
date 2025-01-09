@@ -1,6 +1,6 @@
-import * as vec3 from "@jscad/modeling/src/maths/vec3";
 import { Vec3 } from "@jscad/modeling/src/maths/vec3";
 import Geom3 from "@jscad/modeling/src/geometries/geom3/type";
+import { Poly3 } from "@jscad/modeling/src/geometries/poly3";
 
 class GPUSubtract {
   device: GPUDevice = null;
@@ -13,138 +13,31 @@ class GPUSubtract {
     this.queue = this.device.queue;
   }
 
-  createBuffer(data, usage) {
-    const buffer = this.device.createBuffer({
-      size: data.byteLength,
-      usage: usage | GPUBufferUsage.COPY_DST,
-      mappedAtCreation: true,
-    });
-    new Float32Array(buffer.getMappedRange()).set(data);
-    buffer.unmap();
-    return buffer;
-  }
-
-  async checkOverlap(geom1: Geom3, geom2: Geom3) {
-    if (geom1.polygons.length === 0 || geom2.polygons.length === 0) {
-      return false;
-    }
-    // Extract bounding boxes
-    const boxes1 = this.computeBoundingBoxes(geom1.polygons);
-    const boxes2 = this.computeBoundingBoxes(geom2.polygons);
-
-    const boxBuffer1 = this.createBuffer(boxes1, GPUBufferUsage.STORAGE);
-    const boxBuffer2 = this.createBuffer(boxes2, GPUBufferUsage.STORAGE);
-    const resultBuffer = this.device.createBuffer({
-      size: geom1.polygons.length * geom2.polygons.length * 4,
-      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
-    });
-
-    const bindGroupLayout = this.device.createBindGroupLayout({
-      entries: [
-        {
-          binding: 0,
-          visibility: GPUShaderStage.COMPUTE,
-          buffer: { type: "read-only-storage" },
-        },
-        {
-          binding: 1,
-          visibility: GPUShaderStage.COMPUTE,
-          buffer: { type: "read-only-storage" },
-        },
-        {
-          binding: 2,
-          visibility: GPUShaderStage.COMPUTE,
-          buffer: { type: "storage" },
-        },
-      ],
-    });
-
-    const computePipeline = this.device.createComputePipeline({
-      layout: this.device.createPipelineLayout({
-        bindGroupLayouts: [bindGroupLayout],
-      }),
-      compute: {
-        module: this.device.createShaderModule({
-          code: `
-            struct Box { min: vec3<f32>, max: vec3<f32> }
-            
-            @group(0) @binding(0) var<storage> boxes1: array<Box>;
-            @group(0) @binding(1) var<storage> boxes2: array<Box>;
-            @group(0) @binding(2) var<storage, read_write> results: array<u32>;
-
-            @compute @workgroup_size(256)
-            fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
-              let idx = global_id.x;
-              let box1_idx = idx / arrayLength(&boxes2);
-              let box2_idx = idx % arrayLength(&boxes2);
-
-              let box1 = boxes1[box1_idx];
-              let box2 = boxes2[box2_idx];
-
-              results[idx] = u32(
-                box2.min.x <= box1.max.x && box2.max.x >= box1.min.x &&
-                box2.min.y <= box1.max.y && box2.max.y >= box1.min.y &&
-                box2.min.z <= box1.max.z && box2.max.z >= box1.min.z
-              );
-            }
-          `,
-        }),
-        entryPoint: "main",
-      },
-    });
-
-    // Execute compute shader
-    const commandEncoder = this.device.createCommandEncoder();
-    const passEncoder = commandEncoder.beginComputePass();
-    passEncoder.setPipeline(computePipeline);
-    passEncoder.setBindGroup(
-      0,
-      this.device.createBindGroup({
-        layout: bindGroupLayout,
-        entries: [
-          { binding: 0, resource: { buffer: boxBuffer1 } },
-          { binding: 1, resource: { buffer: boxBuffer2 } },
-          { binding: 2, resource: { buffer: resultBuffer } },
-        ],
-      }),
-    );
-    passEncoder.dispatchWorkgroups(
-      Math.ceil((geom1.polygons.length * geom2.polygons.length) / 256),
-    );
-    passEncoder.end();
-
-    // Get results
-    const readBuffer = this.device.createBuffer({
-      size: resultBuffer.size,
-      usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
-    });
-    commandEncoder.copyBufferToBuffer(
-      resultBuffer,
-      0,
-      readBuffer,
-      0,
-      resultBuffer.size,
-    );
-    this.queue.submit([commandEncoder.finish()]);
-
-    await readBuffer.mapAsync(GPUMapMode.READ);
-    const mappedRange = readBuffer.getMappedRange();
-    const hasOverlap = new Uint32Array(mappedRange).some((x) => x === 1);
-    readBuffer.unmap();
-
-    return hasOverlap;
-  }
-
   async splitPolygons(polygons: Array<Poly3>, plane: Plane) {
-    if (polygons.length === 0) {
-      return { front: [], back: [] };
-    }
+    console.log(
+      "Input vertices:",
+      polygons.map((p) => p.vertices),
+    );
+    console.log("Splitting plane:", plane);
+
+    if (polygons.length === 0) return { front: [], back: [] };
+
+    const testResults = polygons.map((poly) => ({
+      vertices: poly.vertices,
+      distances: poly.vertices.map(
+        (v) => plane[0] * v[0] + plane[1] * v[1] + plane[2] * v[2] - plane[3],
+      ),
+    }));
+    console.log("Vertex classification results:", testResults);
+
+    // Prepare data for GPU
     const vertexData = new Float32Array(
       polygons.reduce((acc, poly) => {
         poly.vertices.forEach((v) => acc.push(...v));
         return acc;
       }, []),
     );
+    console.log("Vertex buffer data:", vertexData);
 
     const vertexBuffer = this.createBuffer(vertexData, GPUBufferUsage.STORAGE);
     const planeBuffer = this.createBuffer(
@@ -152,8 +45,13 @@ class GPUSubtract {
       GPUBufferUsage.UNIFORM,
     );
 
+    const debugBuffer = this.device.createBuffer({
+      size: 16, // 4 u32 values
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+    });
+
     const resultBuffer = this.device.createBuffer({
-      size: vertexData.byteLength * 2, // Space for both front and back polygons
+      size: vertexData.byteLength * 2,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
     });
 
@@ -174,6 +72,11 @@ class GPUSubtract {
           visibility: GPUShaderStage.COMPUTE,
           buffer: { type: "storage" },
         },
+        {
+          binding: 3,
+          visibility: GPUShaderStage.COMPUTE,
+          buffer: { type: "storage" },
+        },
       ],
     });
 
@@ -184,9 +87,17 @@ class GPUSubtract {
       compute: {
         module: this.device.createShaderModule({
           code: `
+            struct DebugData {
+              front_count: atomic<u32>,
+              back_count: atomic<u32>,
+              spanning_count: atomic<u32>,
+              total_processed: atomic<u32>,
+            }
+
             @group(0) @binding(0) var<storage> vertices: array<vec3<f32>>;
             @group(0) @binding(1) var<uniform> plane: vec4<f32>;
             @group(0) @binding(2) var<storage, read_write> results: array<vec3<f32>>;
+            @group(0) @binding(3) var<storage, read_write> debug: DebugData;
 
             fn classifyPoint(point: vec3<f32>) -> f32 {
               return dot(plane.xyz, point) - plane.w;
@@ -200,43 +111,60 @@ class GPUSubtract {
             @compute @workgroup_size(256)
             fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
               let poly_idx = global_id.x;
-              let v1 = vertices[poly_idx * 3];
-              let v2 = vertices[poly_idx * 3 + 1];
-              let v3 = vertices[poly_idx * 3 + 2];
+              if (poly_idx >= arrayLength(&vertices) / 3u) { return; }
+
+              atomicAdd(&debug.total_processed, 1u);
+
+              let v1 = vertices[poly_idx * 3u];
+              let v2 = vertices[poly_idx * 3u + 1u];
+              let v3 = vertices[poly_idx * 3u + 2u];
 
               let d1 = classifyPoint(v1);
               let d2 = classifyPoint(v2);
               let d3 = classifyPoint(v3);
 
-              // Split polygon and output results
-              // Store vertices for front polygon
-              if (d1 >= 0.0) { results[poly_idx * 6] = v1; }
-              if (d2 >= 0.0) { results[poly_idx * 6 + 1] = v2; }
-              if (d3 >= 0.0) { results[poly_idx * 6 + 2] = v3; }
+              let all_front = d1 >= 0.0 && d2 >= 0.0 && d3 >= 0.0;
+              let all_back = d1 < 0.0 && d2 < 0.0 && d3 < 0.0;
 
-              // Store vertices for back polygon
-              if (d1 < 0.0) { results[poly_idx * 6 + 3] = v1; }
-              if (d2 < 0.0) { results[poly_idx * 6 + 4] = v2; }
-              if (d3 < 0.0) { results[poly_idx * 6 + 5] = v3; }
-
-              // Handle spanning case
-              if (d1 * d2 < 0.0) {
-                let i = interpolate(v1, v2, d1, d2);
-                let base_idx = poly_idx * 6u;
-                let offset = select(5u, 2u, d1 >= 0.0);
-                results[base_idx + offset] = i;
-              }
-              if (d2 * d3 < 0.0) {
-                let i = interpolate(v2, v3, d2, d3);
-                let base_idx = poly_idx * 6u;
-                let offset = select(5u, 2u, d2 >= 0.0);
-                results[base_idx + offset] = i;
-              }
-              if (d3 * d1 < 0.0) {
-                let i = interpolate(v3, v1, d3, d1);
-                let base_idx = poly_idx * 6u;
-                let offset = select(5u, 2u, d3 >= 0.0);
-                results[base_idx + offset] = i;
+              if (all_front) {
+                atomicAdd(&debug.front_count, 1u);
+                results[poly_idx * 6u] = v1;
+                results[poly_idx * 6u + 1u] = v2;
+                results[poly_idx * 6u + 2u] = v3;
+              } else if (all_back) {
+                atomicAdd(&debug.back_count, 1u);
+                results[poly_idx * 6u + 3u] = v1;
+                results[poly_idx * 6u + 4u] = v2;
+                results[poly_idx * 6u + 5u] = v3;
+              } else {
+                atomicAdd(&debug.spanning_count, 1u);
+                // Handle spanning case
+                if (d1 >= 0.0) { results[poly_idx * 6u] = v1; }
+                if (d2 >= 0.0) { results[poly_idx * 6u + 1u] = v2; }
+                if (d3 >= 0.0) { results[poly_idx * 6u + 2u] = v3; }
+                
+                if (d1 < 0.0) { results[poly_idx * 6u + 3u] = v1; }
+                if (d2 < 0.0) { results[poly_idx * 6u + 4u] = v2; }
+                if (d3 < 0.0) { results[poly_idx * 6u + 5u] = v3; }
+                
+                if (d1 * d2 < 0.0) {
+                  let i = interpolate(v1, v2, d1, d2);
+                  let base_idx = poly_idx * 6u;
+                  let offset = select(3u, 2u, d1 >= 0.0);
+                  results[base_idx + offset] = i;
+                }
+                if (d2 * d3 < 0.0) {
+                  let i = interpolate(v2, v3, d2, d3);
+                  let base_idx = poly_idx * 6u;
+                  let offset = select(4u, 1u, d2 >= 0.0);
+                  results[base_idx + offset] = i;
+                }
+                if (d3 * d1 < 0.0) {
+                  let i = interpolate(v3, v1, d3, d1);
+                  let base_idx = poly_idx * 6u;
+                  let offset = select(5u, 0u, d3 >= 0.0);
+                  results[base_idx + offset] = i;
+                }
               }
             }
           `,
@@ -245,7 +173,7 @@ class GPUSubtract {
       },
     });
 
-    // Execute and get results
+    // Execute compute shader
     const commandEncoder = this.device.createCommandEncoder();
     const passEncoder = commandEncoder.beginComputePass();
     passEncoder.setPipeline(computePipeline);
@@ -257,11 +185,22 @@ class GPUSubtract {
           { binding: 0, resource: { buffer: vertexBuffer } },
           { binding: 1, resource: { buffer: planeBuffer } },
           { binding: 2, resource: { buffer: resultBuffer } },
+          { binding: 3, resource: { buffer: debugBuffer } },
         ],
       }),
     );
-    passEncoder.dispatchWorkgroups(Math.ceil(polygons.length / 256));
+
+    const workgroupCount = Math.ceil(polygons.length / 256);
+    console.log("Dispatching workgroups:", workgroupCount);
+    passEncoder.dispatchWorkgroups(workgroupCount);
     passEncoder.end();
+
+    // Read debug data
+    const debugReadBuffer = this.device.createBuffer({
+      size: 16,
+      usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+    });
+    commandEncoder.copyBufferToBuffer(debugBuffer, 0, debugReadBuffer, 0, 16);
 
     // Read results
     const readBuffer = this.device.createBuffer({
@@ -275,95 +214,120 @@ class GPUSubtract {
       0,
       resultBuffer.size,
     );
+
     this.queue.submit([commandEncoder.finish()]);
 
+    // Get debug results
+    await debugReadBuffer.mapAsync(GPUMapMode.READ);
+    const debugData = new Uint32Array(debugReadBuffer.getMappedRange());
+    console.log("Debug data:", {
+      frontCount: debugData[0],
+      backCount: debugData[1],
+      spanningCount: debugData[2],
+      totalProcessed: debugData[3],
+    });
+    debugReadBuffer.unmap();
+
+    // Get polygon results
     await readBuffer.mapAsync(GPUMapMode.READ);
     const results = new Float32Array(readBuffer.getMappedRange());
+    console.log("Raw results:", results);
     readBuffer.unmap();
 
     return this.reconstructPolygons(results, polygons.length);
   }
 
-  private computeBoundingBoxes(polygons: Array<Poly3>): Float32Array {
-    const result = new Float32Array(polygons.length * 6);
-    polygons.forEach((poly, i) => {
-      let minX = Infinity,
-        minY = Infinity,
-        minZ = Infinity;
-      let maxX = -Infinity,
-        maxY = -Infinity,
-        maxZ = -Infinity;
-
-      poly.vertices.forEach((v) => {
-        minX = Math.min(minX, v[0]);
-        maxX = Math.max(maxX, v[0]);
-        minY = Math.min(minY, v[1]);
-        maxY = Math.max(maxY, v[1]);
-        minZ = Math.min(minZ, v[2]);
-        maxZ = Math.max(maxZ, v[2]);
-      });
-
-      const idx = i * 6;
-      result[idx] = minX;
-      result[idx + 1] = minY;
-      result[idx + 2] = minZ;
-      result[idx + 3] = maxX;
-      result[idx + 4] = maxY;
-      result[idx + 5] = maxZ;
+  private createBuffer(data: Float32Array, usage: number): GPUBuffer {
+    const buffer = this.device.createBuffer({
+      size: data.byteLength,
+      usage: usage | GPUBufferUsage.COPY_DST,
+      mappedAtCreation: true,
     });
-    return result;
+    new Float32Array(buffer.getMappedRange()).set(data);
+    buffer.unmap();
+    return buffer;
   }
 
   private reconstructPolygons(
     vertexData: Float32Array,
     numPolygons: number,
   ): { front: Array<Poly3>; back: Array<Poly3> } {
+    const vertexArray = Array.from(vertexData);
+    console.log("Reconstructing polygons from data:", {
+      dataLength: vertexArray.length,
+      numPolygons,
+      sampleData: vertexArray.slice(0, 18),
+    });
+
     const front: Array<Poly3> = [];
     const back: Array<Poly3> = [];
 
     for (let i = 0; i < numPolygons; i++) {
-      const frontVerts = [];
-      const backVerts = [];
+      const frontVerts: Vec3[] = [];
+      const backVerts: Vec3[] = [];
 
-      // Each polygon has 6 potential vertices (3 front, 3 back)
+      // Process front vertices
       for (let j = 0; j < 3; j++) {
-        const frontIdx = i * 18 + j * 3;
-        const backIdx = i * 18 + (j + 3) * 3;
-
-        if (!isNaN(vertexData[frontIdx])) {
-          frontVerts.push([
-            vertexData[frontIdx],
-            vertexData[frontIdx + 1],
-            vertexData[frontIdx + 2],
-          ] as Vec3);
-        }
-
-        if (!isNaN(vertexData[backIdx])) {
-          backVerts.push([
-            vertexData[backIdx],
-            vertexData[backIdx + 1],
-            vertexData[backIdx + 2],
-          ] as Vec3);
+        const idx = i * 18 + j * 3;
+        const vertex: Vec3 = [
+          vertexData[idx],
+          vertexData[idx + 1],
+          vertexData[idx + 2],
+        ];
+        if (!vertex.some(isNaN)) {
+          frontVerts.push(vertex);
         }
       }
+
+      // Process back vertices
+      for (let j = 0; j < 3; j++) {
+        const idx = i * 18 + (j + 3) * 3;
+        const vertex: Vec3 = [
+          vertexData[idx],
+          vertexData[idx + 1],
+          vertexData[idx + 2],
+        ];
+        if (!vertex.some(isNaN)) {
+          backVerts.push(vertex);
+        }
+      }
+
+      console.log(`Polygon ${i} vertices:`, {
+        front: frontVerts,
+        back: backVerts,
+      });
 
       if (frontVerts.length >= 3) front.push({ vertices: frontVerts });
       if (backVerts.length >= 3) back.push({ vertices: backVerts });
     }
 
+    console.log("Reconstruction results:", {
+      frontPolygons: front.length,
+      backPolygons: back.length,
+    });
+
     return { front, back };
   }
 
   async subtract(geom1: Geom3, geom2: Geom3): Promise<Geom3> {
-    if (!(await this.checkOverlap(geom1, geom2))) {
-      return geom1;
-    }
+    console.log("Subtracting geometries:", {
+      geom1Polygons: geom1.polygons.length,
+      geom2Polygons: geom2.polygons.length,
+    });
 
-    // For each polygon in geom2, split polygons of geom1
     let currentGeom = { ...geom1 };
-    for (const poly2 of geom2.polygons) {
-      const plane = poly2.plane || this.calculatePlane(poly2);
+
+    for (let i = 0; i < geom2.polygons.length; i++) {
+      console.log(
+        `Processing geometry2 polygon ${i + 1}/${geom2.polygons.length}`,
+      );
+      const poly2 = geom2.polygons[i];
+      const plane = this.calculatePlane(poly2);
+      console.log("Using plane:", plane);
+
       const { front } = await this.splitPolygons(currentGeom.polygons, plane);
+      console.log("Split result front polygons:", front.length);
+
       currentGeom = { ...currentGeom, polygons: front };
     }
 
@@ -371,21 +335,33 @@ class GPUSubtract {
   }
 
   private calculatePlane(poly: Poly3): Plane {
-    const v1 = poly.vertices[0];
-    const v2 = poly.vertices[1];
-    const v3 = poly.vertices[2];
+    if (poly.plane) return poly.plane;
 
-    const normal = vec3.cross(
-      vec3.create(),
-      vec3.subtract(vec3.create(), v2, v1),
-      vec3.subtract(vec3.create(), v3, v1),
+    const [v1, v2, v3] = poly.vertices;
+    const e1: Vec3 = [v2[0] - v1[0], v2[1] - v1[1], v2[2] - v1[2]];
+    const e2: Vec3 = [v3[0] - v1[0], v3[1] - v1[1], v3[2] - v1[2]];
+
+    // Cross product to get normal
+    const normal: Vec3 = [
+      e1[1] * e2[2] - e1[2] * e2[1],
+      e1[2] * e2[0] - e1[0] * e2[2],
+      e1[0] * e2[1] - e1[1] * e2[0],
+    ];
+
+    // Normalize
+    const len = Math.sqrt(
+      normal[0] * normal[0] + normal[1] * normal[1] + normal[2] * normal[2],
     );
-    vec3.normalize(normal, normal);
+    normal[0] /= len;
+    normal[1] /= len;
+    normal[2] /= len;
 
-    return [normal[0], normal[1], normal[2], vec3.dot(normal, v1)];
+    // Calculate d
+    const d = normal[0] * v1[0] + normal[1] * v1[1] + normal[2] * v1[2];
+
+    return [normal[0], normal[1], normal[2], d];
   }
 }
-
 export const subtract = async (...geometries: Array<Geom3>): Promise<Geom3> => {
   const gpuSubtract = new GPUSubtract();
   await gpuSubtract.initialize();
