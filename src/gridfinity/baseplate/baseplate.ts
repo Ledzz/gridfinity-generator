@@ -134,7 +134,6 @@ export const baseplate = ({
       );
     }
   }
-
   console.warn("Unknown baseplate style:", style);
   return null;
 };

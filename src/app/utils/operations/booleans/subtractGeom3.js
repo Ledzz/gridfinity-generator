@@ -1,30 +1,25 @@
-const flatten = require('../../utils/flatten')
-
-const retessellate = require('../modifiers/retessellate')
-
-const subtractSub = require('./subtractGeom3Sub')
-
+import { subtractGeom3Sub } from "./subtractGeom3Sub";
+import { flatten } from "@jscad/modeling/src/utils/index.js";
+import { retessellate } from "@jscad/modeling/src/operations/modifiers/index.js";
 /*
  * Return a new 3D geometry representing space in this geometry but not in the given geometries.
  * Neither this geometry nor the given geometries are modified.
  * @param {...geom3} geometries - list of geometries
  * @returns {geom3} new 3D geometry
  */
-const subtract = (...geometries) => {
-  geometries = flatten(geometries)
+export const subtract = (...geometries) => {
+  geometries = flatten(geometries);
 
-  let newgeometry = geometries.shift()
+  let newgeometry = geometries.shift();
   geometries.forEach((geometry, index) => {
-    console.time(`subtractSub ${index}`)
-    newgeometry = subtractSub(newgeometry, geometry)
-    console.timeEnd(`subtractSub ${index}`)
-  })
-  console.time('retessellate')
+    console.time(`subtractGeom3Sub ${index}`);
+    newgeometry = subtractGeom3Sub(newgeometry, geometry);
+    console.timeEnd(`subtractGeom3Sub ${index}`);
+  });
+  console.time("retessellate");
 
-  newgeometry = retessellate(newgeometry)
-  console.timeEnd('retessellate')
+  newgeometry = retessellate(newgeometry);
+  console.timeEnd("retessellate");
 
-  return newgeometry
-}
-
-module.exports = subtract
+  return newgeometry;
+};
