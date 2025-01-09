@@ -12,14 +12,10 @@ export const subtract = (...geometries) => {
 
   let newgeometry = geometries.shift();
   geometries.forEach((geometry, index) => {
-    console.time(`subtractGeom3Sub ${index}`);
     newgeometry = subtractGeom3Sub(newgeometry, geometry);
-    console.timeEnd(`subtractGeom3Sub ${index}`);
   });
-  console.time("retessellate");
 
   newgeometry = retessellate(newgeometry);
-  console.timeEnd("retessellate");
 
   return newgeometry;
 };

@@ -1,7 +1,7 @@
 import { circle, polygon, rectangle } from "@jscad/modeling/src/primitives";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { rotate, translate } from "@jscad/modeling/src/operations/transforms";
-import { subtract, union } from "@jscad/modeling/src/operations/booleans";
+import { union } from "@jscad/modeling/src/operations/booleans";
 import { DEFAULT_QUALITY, SIZE } from "../constants.ts";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 import { extrudeWithChamfer } from "../utils/extrudeWithChamfer.ts";
@@ -10,6 +10,8 @@ import { sweepRounded } from "../utils/sweepRounded.ts";
 import { connectorHoles } from "./connectorHole.ts";
 import { centerHole } from "./centerHole.ts";
 import { Vec2 } from "@jscad/modeling/src/maths/vec2";
+
+import { subtract } from "../../app/utils/operations/booleans/subtract";
 
 export interface BaseplateGeomProps {
   style: "refined-lite";
@@ -119,7 +121,6 @@ export const baseplate = ({
           ),
         ),
       );
-      console.time("subtract");
       const s = subtract(
         // Base shape
         extrudeWithChamfer(
@@ -128,15 +129,12 @@ export const baseplate = ({
         ),
         union(...toSubtract),
       );
-      console.timeEnd("subtract");
-      console.time("union");
 
       const res = union(
         s,
         // profile
         ...toAdd,
       );
-      console.timeEnd("union");
       return res;
     }
   }
