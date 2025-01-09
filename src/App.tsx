@@ -24,7 +24,6 @@ import { GridfinityGenWorker } from "./gridfinity";
 import { serialize } from "@jscad/stl-serializer";
 import { EditFormProps, Item } from "./app/gridfinity/types/item.ts";
 import { noEvents, PointerEvents } from "./utils/pointer-events.ts";
-import "./gridfinity/baseplate/subtract.ts";
 
 function App() {
   const {
