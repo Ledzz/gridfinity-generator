@@ -4,6 +4,7 @@ import { Vec2 } from "@jscad/modeling/src/maths/vec2";
 import { centerHole } from "./centerHole.ts";
 import { mapReduceWithLink } from "../gridfinity/utils/range.ts";
 import { connectorHoles } from "./connectorHole.ts";
+import { magnetHoles } from "./magnetHoles.ts";
 
 export interface BaseplateGeomProps {
   style: "refined-lite";
@@ -63,7 +64,15 @@ export const baseplate = (
             y,
             hasMagnetHoles,
           })
+            // TODO: hasConnectorHoles
             .add(connectorHoles(wasm, { width, depth, height, x, y }))
+            // TODO: hasMagnetHoles
+            .add(
+              magnetHoles(wasm, {
+                baseWidth,
+                quality,
+              }),
+            )
             .translate([
               SIZE *
                 (x - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),

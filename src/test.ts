@@ -7,6 +7,7 @@ wasm.setup();
 const result = baseplate(wasm, {
   width: 5,
   depth: 5,
+  hasMagnetHoles: true,
 });
 const id2matIndex = new Map();
 
