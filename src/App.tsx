@@ -25,8 +25,6 @@ import { serialize } from "@jscad/stl-serializer";
 import { EditFormProps, Item } from "./app/gridfinity/types/item.ts";
 import { noEvents, PointerEvents } from "./utils/pointer-events.ts";
 import "./gridfinity/baseplate/subtract.ts";
-import { toMesh } from "./render/toMesh.ts";
-import { result } from "./gridfinity/baseplate/subtract.ts";
 
 function App() {
   const {
@@ -198,7 +196,7 @@ function App() {
 
             <group rotation-x={-Math.PI / 2}>
               <World />
-              <primitive object={toMesh(result)}></primitive>
+              {/*<primitive object={toMesh(result)}></primitive>*/}
               {/*<Stl*/}
               {/*  renderOrder={100}*/}
               {/*  position={[-21, -21, 5]}*/}

@@ -10,9 +10,9 @@ const cube2 = cuboid({
   center: [5, 5, 5],
 });
 
-console.log("Input polygons:", cube1.polygons.length, cube2.polygons.length);
-export const result = subtract(cube1, cube2);
-console.log(
-  "Result faces:",
-  result.polygons.map((p) => p.vertices.length),
-);
+// console.log("Input polygons:", cube1.polygons.length, cube2.polygons.length);
+// export const result = subtract(cube1, cube2);
+// console.log(
+//   "Result faces:",
+//   result.polygons.map((p) => p.vertices.length),
+// );

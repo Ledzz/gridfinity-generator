@@ -119,19 +119,25 @@ export const baseplate = ({
           ),
         ),
       );
-
-      return union(
-        subtract(
-          // Base shape
-          extrudeWithChamfer(
-            { height: height + baseHeight, chamfer: -0.6 },
-            rectangle({ size: [SIZE * width, SIZE * depth] }),
-          ),
-          ...toSubtract,
+      console.time("subtract");
+      const s = subtract(
+        // Base shape
+        extrudeWithChamfer(
+          { height: height + baseHeight, chamfer: -0.6 },
+          rectangle({ size: [SIZE * width, SIZE * depth] }),
         ),
+        union(...toSubtract),
+      );
+      console.timeEnd("subtract");
+      console.time("union");
+
+      const res = union(
+        s,
         // profile
         ...toAdd,
       );
+      console.timeEnd("union");
+      return res;
     }
   }
   console.warn("Unknown baseplate style:", style);
