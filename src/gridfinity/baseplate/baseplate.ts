@@ -9,8 +9,7 @@ import { sweepRounded } from "../utils/sweepRounded.ts";
 import { connectorHoles } from "./connectorHole.ts";
 import { centerHole } from "./centerHole.ts";
 import { Vec2 } from "@jscad/modeling/src/maths/vec2";
-import { union } from "../utils/operations/booleans/union.js";
-import { subtract } from "../utils/operations/booleans/subtract.js";
+import { subtract, union } from "@jscad/modeling/src/operations/booleans";
 
 export interface BaseplateGeomProps {
   style: "refined-lite";
