@@ -18,9 +18,7 @@ export const RenderGeom = <T extends Item>({
   useEffect(() => {
     GridfinityGenWorker[type](memoizedProps).then((o) => {
       if (o) {
-        console.time("toMesh");
         setObj(toMesh(o));
-        console.timeEnd("toMesh");
       }
     });
   }, [memoizedProps, type]);
