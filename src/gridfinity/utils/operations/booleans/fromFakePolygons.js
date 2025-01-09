@@ -1,3 +1,6 @@
+import geom2 from "@jscad/modeling/src/geometries/geom2";
+import * as Vec2 from "@jscad/modeling/src/maths/vec2/index.js";
+
 export const fromFakePolygon = (epsilon, polygon) => {
   // this can happen based on union, seems to be residuals -
   // return null and handle in caller
@@ -22,10 +25,10 @@ export const fromFakePolygon = (epsilon, polygon) => {
   const points2D = points3D.map((v3) => {
     const x = Math.round(v3[0] / epsilon) * epsilon + 0; // no more -0
     const y = Math.round(v3[1] / epsilon) * epsilon + 0; // no more -0
-    return vec2.fromValues(x, y);
+    return Vec2.fromValues(x, y);
   });
 
-  if (vec2.equals(points2D[0], points2D[1])) return null;
+  if (Vec2.equals(points2D[0], points2D[1])) return null;
 
   const d = vert1Indices[1] - vert1Indices[0];
   if (d === 1 || d === 3) {

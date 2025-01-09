@@ -1,7 +1,6 @@
 import { circle, polygon, rectangle } from "@jscad/modeling/src/primitives";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { rotate, translate } from "@jscad/modeling/src/operations/transforms";
-import { union } from "@jscad/modeling/src/operations/booleans";
 import { DEFAULT_QUALITY, SIZE } from "../constants.ts";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 import { extrudeWithChamfer } from "../utils/extrudeWithChamfer.ts";
@@ -10,8 +9,8 @@ import { sweepRounded } from "../utils/sweepRounded.ts";
 import { connectorHoles } from "./connectorHole.ts";
 import { centerHole } from "./centerHole.ts";
 import { Vec2 } from "@jscad/modeling/src/maths/vec2";
-
-import { subtract } from "../../app/utils/operations/booleans/subtract";
+import { union } from "../utils/operations/booleans/union.js";
+import { subtract } from "../utils/operations/booleans/subtract.js";
 
 export interface BaseplateGeomProps {
   style: "refined-lite";

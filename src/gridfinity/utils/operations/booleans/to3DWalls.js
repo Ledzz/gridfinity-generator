@@ -1,12 +1,17 @@
 /*
  * Create a polygon (wall) from the given Z values and side.
  */
+import geom2 from "@jscad/modeling/src/geometries/geom2";
+import { geom3 } from "@jscad/modeling/src/geometries/index";
+import * as Vec3 from "@jscad/modeling/src/maths/vec3/index.js";
+import * as poly3 from "@jscad/modeling/src/geometries/poly3";
+
 const to3DWall = (z0, z1, side) => {
   const points = [
-    vec3.fromVec2(vec3.create(), side[0], z0),
-    vec3.fromVec2(vec3.create(), side[1], z0),
-    vec3.fromVec2(vec3.create(), side[1], z1),
-    vec3.fromVec2(vec3.create(), side[0], z1),
+    Vec3.fromVec2(Vec3.create(), side[0], z0),
+    Vec3.fromVec2(Vec3.create(), side[1], z0),
+    Vec3.fromVec2(Vec3.create(), side[1], z1),
+    Vec3.fromVec2(Vec3.create(), side[0], z1),
   ];
   return poly3.create(points);
 };
