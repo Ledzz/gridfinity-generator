@@ -1,13 +1,12 @@
 import Module from "manifold-3d";
 import { BufferAttribute, BufferGeometry, Mesh } from "three";
+import { baseplate } from "./manifold/baseplate.ts";
 
 const wasm = await Module();
 wasm.setup();
 const { Manifold } = wasm;
 const { cube, sphere } = Manifold;
-const box = cube([100, 100, 100], true);
-const ball = sphere(60, 100);
-const result = box.subtract(ball);
+const result = baseplate(Manifold, {});
 const id2matIndex = new Map();
 
 export const mesh = mesh2geometry(result.getMesh());
