@@ -3,6 +3,7 @@ import { ManifoldToplevel } from "manifold-3d";
 import { Vec2 } from "@jscad/modeling/src/maths/vec2";
 import { centerHole } from "./centerHole.ts";
 import { mapReduceWithLink } from "../gridfinity/utils/range.ts";
+import { connectorHoles } from "./connectorHole.ts";
 
 export interface BaseplateGeomProps {
   style: "refined-lite";
@@ -61,15 +62,17 @@ export const baseplate = (
             x,
             y,
             hasMagnetHoles,
-          }).translate([
-            SIZE * (x - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
-            SIZE * (y - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
-            0,
-          ]),
+          })
+            .add(connectorHoles(wasm, { width, depth, height, x, y }))
+            .translate([
+              SIZE *
+                (x - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
+              SIZE *
+                (y - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
+              0,
+            ]),
         );
       });
-
-      console.log(b);
 
       return b;
     }
