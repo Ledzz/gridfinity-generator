@@ -32,174 +32,57 @@ export const baseplate = (
   }: Partial<BaseplateGeomProps> = {},
 ) => {
   const { Manifold, CrossSection } = wasm;
+  const cachedProfile = profile(wasm, { quality }).translate([0, 0, height]);
+  const cachedMagnetHoles = magnetHoles(wasm, {
+    baseWidth: profileBaseWidth,
+    quality,
+  });
+  const cachedHollowInside = CrossSection.square(
+    [
+      SIZE - (1.15 + profileBaseWidth) * 2,
+      SIZE - (1.15 + profileBaseWidth) * 2,
+    ],
+    true,
+  )
+    .offset(1.15 + profileBaseWidth, "Round")
+    .extrude(profileBaseHeight)
+    .translate([0, 0, height]);
+  const empty = Manifold.union([]);
   switch (style) {
     case "refined-lite": {
-      const p = Manifold.union(
-        mapReduce2D(width, depth, (x, y) =>
-          profile(wasm, { quality }).translate([
+      return Manifold.compose([
+        ...mapReduce2D(width, depth, (x, y) => {
+          const translate = [
             SIZE * (x - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
             SIZE * (y - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
-            height,
-          ]),
-        ),
-      );
-      return Manifold.compose([
-        p,
-        Manifold.difference([
-          CrossSection.square([SIZE * width, SIZE * depth], true)
-            // TODO: chamfer
-            .extrude(height + profileBaseHeight),
-          ...mapReduce2D(width, depth, (x, y) => {
-            const translate = [
-              SIZE *
-                (x - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
-              SIZE *
-                (y - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
-              0,
-            ] as Vec3;
-            return [
-              centerHole(wasm, {
-                width,
-                depth,
-                height,
-                x,
-                y,
-                hasMagnetHoles,
-              })
-                // Hollow inside
-                .add(
-                  CrossSection.square(
-                    [
-                      SIZE - (1.15 + profileBaseWidth) * 2,
-                      SIZE - (1.15 + profileBaseWidth) * 2,
-                    ],
-                    true,
-                  )
-                    .offset(1.15 + profileBaseWidth, "Round")
-                    .extrude(profileBaseHeight)
-                    .translate([0, 0, height]),
-                )
-                .add(
-                  hasStackableConnectors
-                    ? connectorHoles(wasm, { width, depth, height, x, y })
-                    : Manifold.union([]),
-                )
-                .add(
-                  hasMagnetHoles
-                    ? magnetHoles(wasm, {
-                        baseWidth: profileBaseWidth,
-                        quality,
-                      })
-                    : Manifold.union([]),
-                )
-                .translate(translate),
-            ];
-          }).flat(),
-        ]),
+            0,
+          ] as Vec3;
+          return Manifold.compose([
+            CrossSection.square([SIZE, SIZE], true)
+              // TODO: chamfer
+              .extrude(height + profileBaseHeight)
+              .subtract(
+                centerHole(wasm, {
+                  width,
+                  depth,
+                  height,
+                  x,
+                  y,
+                  hasMagnetHoles,
+                }),
+              )
+              // Hollow inside
+              .subtract(cachedHollowInside)
+              .subtract(
+                hasStackableConnectors
+                  ? connectorHoles(wasm, { width, depth, height, x, y })
+                  : empty,
+              )
+              .subtract(hasMagnetHoles ? cachedMagnetHoles : empty),
+            cachedProfile,
+          ]).translate(translate);
+        }),
       ]);
     }
   }
-  // Hollow inside
-  // .add(
-  //   CrossSection.square(
-  //     [
-  //       SIZE - (1.15 + profileBaseWidth) * 2,
-  //       SIZE - (1.15 + profileBaseWidth) * 2,
-  //     ],
-  //     true,
-  //   )
-  //     .offset(1.15 + profileBaseWidth, "Round")
-  //     .extrude(profileBaseHeight)
-  //     .translate([0, 0, height]),
-  // )
-  // .add(
-  //   hasStackableConnectors
-  //     ? connectorHoles(wasm, { width, depth, height, x, y })
-  //     : Manifold.union([]),
-  // )
-  // .add(
-  //   hasMagnetHoles
-  //     ? magnetHoles(wasm, {
-  //         baseWidth: profileBaseWidth,
-  //         quality,
-  //       })
-  //     : Manifold.union([]),
-  // )
-  // .translate([
-  //   SIZE *
-  //     (x -
-  //       (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
-  //   SIZE *
-  //     (y -
-  //       (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
-  //   0,
-  // ]),
-  // ).flat(),
-  // ),
-  // )
-  // .add(
-  //   Manifold.union(
-  //     mapReduce2D(width, depth, (x, y) =>
-  //       profile(wasm, { quality }).translate([
-  //         SIZE *
-  //           (x - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
-  //         SIZE *
-  //           (y - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
-  //         height,
-  //       ]),
-  //     ),
-  //   ),
-  // )
-  // );
-  // }
-  // }
 };
-//
-//
-// Manifold.union(
-//     mapReduce2D(width, depth, (x, y) =>
-//         centerHole(wasm, {
-//             width,
-//             depth,
-//             height,
-//             x,
-//             y,
-//             hasMagnetHoles,
-//         })
-//             // Hollow inside
-//             .add(
-//                 CrossSection.square(
-//                     [
-//                         SIZE - (1.15 + profileBaseWidth) * 2,
-//                         SIZE - (1.15 + profileBaseWidth) * 2,
-//                     ],
-//                     true,
-//                 )
-//                     .offset(1.15 + profileBaseWidth, "Round")
-//                     .extrude(profileBaseHeight)
-//                     .translate([0, 0, height]),
-//             )
-//             .add(
-//                 hasStackableConnectors
-//                     ? connectorHoles(wasm, { width, depth, height, x, y })
-//                     : Manifold.union([]),
-//             )
-//             .add(
-//                 hasMagnetHoles
-//                     ? magnetHoles(wasm, {
-//                         baseWidth: profileBaseWidth,
-//                         quality,
-//                     })
-//                     : Manifold.union([]),
-//             )
-//             .translate([
-//                 SIZE *
-//                 (x -
-//                     (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
-//                 SIZE *
-//                 (y -
-//                     (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
-//                 0,
-//             ]),
-//     ),
-// ),
