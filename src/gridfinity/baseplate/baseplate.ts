@@ -1,7 +1,6 @@
 import { circle, polygon, rectangle } from "@jscad/modeling/src/primitives";
 import { extrudeLinear } from "@jscad/modeling/src/operations/extrusions";
 import { rotate, translate } from "@jscad/modeling/src/operations/transforms";
-import { subtract, union } from "@jscad/modeling/src/operations/booleans";
 import { DEFAULT_QUALITY, SIZE } from "../constants.ts";
 import roundedRectangle from "@jscad/modeling/src/primitives/roundedRectangle";
 import { extrudeWithChamfer } from "../utils/extrudeWithChamfer.ts";
@@ -10,6 +9,7 @@ import { sweepRounded } from "../utils/sweepRounded.ts";
 import { connectorHoles } from "./connectorHole.ts";
 import { centerHole } from "./centerHole.ts";
 import { Vec2 } from "@jscad/modeling/src/maths/vec2";
+import { subtract, union } from "@jscad/modeling/src/operations/booleans";
 
 export interface BaseplateGeomProps {
   style: "refined-lite";
@@ -127,14 +127,13 @@ export const baseplate = ({
             { height: height + baseHeight, chamfer: -0.6 },
             rectangle({ size: [SIZE * width, SIZE * depth] }),
           ),
-          ...toSubtract,
+          union(...toSubtract),
         ),
         // profile
-        ...toAdd,
+        union(...toAdd),
       );
     }
   }
-
   console.warn("Unknown baseplate style:", style);
   return null;
 };
