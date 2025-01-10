@@ -1,9 +1,9 @@
 import { DEFAULT_QUALITY, SIZE } from "../../gridfinity/constants.ts";
-import { ManifoldToplevel, Vec2, Vec3 } from "manifold-3d";
+import { ManifoldToplevel, Vec2 } from "manifold-3d";
 import { centerHole } from "./centerHole.ts";
-import { mapReduce2DWithLink } from "../../gridfinity/utils/range.ts";
 import { connectorHoles } from "./connectorHole.ts";
 import { magnetHoles } from "./magnetHoles.ts";
+import { mapReduce2D } from "../../gridfinity/utils/range.ts";
 import { profile } from "./profile.ts";
 
 export interface BaseplateGeomProps {
@@ -30,10 +30,7 @@ export const baseplate = (
     quality = DEFAULT_QUALITY,
   }: Partial<BaseplateGeomProps> = {},
 ) => {
-  const {
-    Manifold: { cube, sphere },
-    CrossSection,
-  } = wasm;
+  const { Manifold, CrossSection } = wasm;
   switch (style) {
     case "refined-lite": {
       const points = [
@@ -50,51 +47,70 @@ export const baseplate = (
       const baseWidth = Math.max(...points.map((point) => point[0]));
       const baseHeight = Math.max(...points.map((point) => point[1]));
 
-      const a = CrossSection.square([SIZE * width, SIZE * depth], true)
-        // TODO: chamfer
-        .extrude(height + baseHeight);
-      const b = mapReduce2DWithLink(a, width, depth, (i, x, y) => {
-        const translate = [
-          SIZE * (x - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
-          SIZE * (y - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
-          0,
-        ] as Vec3;
-        return i
+      return (
+        CrossSection.square([SIZE * width, SIZE * depth], true)
+          // TODO: chamfer
+          .extrude(height + baseHeight)
           .subtract(
-            centerHole(wasm, {
-              width,
-              depth,
-              height,
-              x,
-              y,
-              hasMagnetHoles,
-            })
-              // Hollow inside
-              .add(
-                // TODO: RoundedRectangle
-                CrossSection.square([SIZE, SIZE], true)
-                  .extrude(baseHeight)
-                  .translate([0, 0, height]),
-              )
-              // TODO: hasConnectorHoles
-              .add(connectorHoles(wasm, { width, depth, height, x, y }))
-              // TODO: hasMagnetHoles
-              .add(
-                magnetHoles(wasm, {
-                  baseWidth,
-                  quality,
-                }),
-              )
-              .translate(translate),
+            Manifold.union(
+              mapReduce2D(width, depth, (x, y) =>
+                centerHole(wasm, {
+                  width,
+                  depth,
+                  height,
+                  x,
+                  y,
+                  hasMagnetHoles,
+                })
+                  // Hollow inside
+                  .add(
+                    // TODO: RoundedRectangle
+                    CrossSection.square(
+                      [
+                        SIZE - (1.15 + baseWidth) * 2,
+                        SIZE - (1.15 + baseWidth) * 2,
+                      ],
+                      true,
+                    )
+                      .offset(1.15 + baseWidth, "Round")
+                      .extrude(baseHeight)
+                      .translate([0, 0, height]),
+                  )
+                  // TODO: hasConnectorHoles
+                  .add(connectorHoles(wasm, { width, depth, height, x, y }))
+                  // TODO: hasMagnetHoles
+                  .add(
+                    magnetHoles(wasm, {
+                      baseWidth,
+                      quality,
+                    }),
+                  )
+                  .translate([
+                    SIZE *
+                      (x -
+                        (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
+                    SIZE *
+                      (y -
+                        (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
+                    0,
+                  ]),
+              ),
+            ),
           )
           .add(
-            profile(wasm, { quality })
-              .translate([0, 0, height])
-              .translate(translate),
-          );
-      });
-
-      return b;
+            Manifold.union(
+              mapReduce2D(width, depth, (x, y) =>
+                profile(wasm, { quality }).translate([
+                  SIZE *
+                    (x - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
+                  SIZE *
+                    (y - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
+                  height,
+                ]),
+              ),
+            ),
+          )
+      );
     }
   }
 };

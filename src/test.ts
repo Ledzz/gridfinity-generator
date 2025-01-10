@@ -1,7 +1,7 @@
 import Module from "manifold-3d";
 import { BufferAttribute, BufferGeometry, Mesh } from "three";
-import { baseplate } from "./manifold/baseplate/baseplate.ts";
 import { BufferGeometryUtils } from "three/examples/jsm/Addons";
+import { baseplate } from "./manifold/baseplate/baseplate.ts";
 
 const wasm = await Module();
 wasm.setup();
