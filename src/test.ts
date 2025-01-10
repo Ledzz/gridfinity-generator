@@ -1,6 +1,7 @@
 import Module from "manifold-3d";
 import { BufferAttribute, BufferGeometry, Mesh } from "three";
-import { baseplate } from "./manifold/baseplate.ts";
+import { baseplate } from "./manifold/baseplate/baseplate.ts";
+import { BufferGeometryUtils } from "three/examples/jsm/Addons";
 
 const wasm = await Module();
 wasm.setup();
@@ -28,16 +29,24 @@ function mesh2geometry(mesh: Mesh) {
   // this ID. This allows runTransform to return the total transformation matrix
   // applied to each triangle run from its input mesh - even after many
   // consecutive operations.
-  let id = mesh.runOriginalID[0];
-  let start = mesh.runIndex[0];
-  for (let run = 0; run < mesh.numRun; ++run) {
-    const nextID = mesh.runOriginalID[run + 1];
-    if (nextID !== id) {
-      const end = mesh.runIndex[run + 1];
-      geometry.addGroup(start, end - start, id2matIndex.get(id));
-      id = nextID;
-      start = end;
-    }
-  }
-  return geometry;
+  // let id = mesh.runOriginalID[0];
+  // let start = mesh.runIndex[0];
+  // for (let run = 0; run < mesh.numRun; ++run) {
+  //   const nextID = mesh.runOriginalID[run + 1];
+  //   if (nextID !== id) {
+  //     const end = mesh.runIndex[run + 1];
+  //     geometry.addGroup(start, end - start, id2matIndex.get(id));
+  //     id = nextID;
+  //     start = end;
+  //   }
+  // }
+  // geometry.computeVertexNormals();
+  // geometry.normalizeNormals();
+
+  geometry.deleteAttribute("normal");
+
+  const geom2 = BufferGeometryUtils.mergeVertices(geometry);
+  // Compute vertex normals for proper lighting
+  geom2.computeVertexNormals();
+  return geom2;
 }

@@ -16,7 +16,20 @@ export const mapReduce2D = <T>(
 
   return result;
 };
+
 export const mapReduceWithLink = <T>(
+  start: T,
+  width: number,
+  callback: (i: T, x: number) => T,
+) => {
+  let value = start;
+  for (let x = 0; x < width; x++) {
+    value = callback(value, x);
+  }
+  return value;
+};
+
+export const mapReduce2DWithLink = <T>(
   start: T,
   width: number,
   height: number,
