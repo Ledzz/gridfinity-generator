@@ -1,6 +1,5 @@
 import { DEFAULT_QUALITY, SIZE } from "../../gridfinity/constants.ts";
-import { ManifoldToplevel } from "manifold-3d";
-import { Vec2 } from "@jscad/modeling/src/maths/vec2";
+import { ManifoldToplevel, Vec2, Vec3 } from "manifold-3d";
 import { centerHole } from "./centerHole.ts";
 import { mapReduce2DWithLink } from "../../gridfinity/utils/range.ts";
 import { connectorHoles } from "./connectorHole.ts";
@@ -59,7 +58,7 @@ export const baseplate = (
           SIZE * (x - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
           SIZE * (y - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
           0,
-        ] as const;
+        ] as Vec3;
         return i
           .subtract(
             centerHole(wasm, {
