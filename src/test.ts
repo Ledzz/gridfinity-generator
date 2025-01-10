@@ -10,6 +10,7 @@ const result = baseplate(wasm, {
   width: 5,
   depth: 5,
   hasMagnetHoles: true,
+  hasStackableConnectors: true,
 });
 console.timeEnd("manifold");
 

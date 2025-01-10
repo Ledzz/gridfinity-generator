@@ -1,10 +1,11 @@
 import { DEFAULT_QUALITY, SIZE } from "../../gridfinity/constants.ts";
-import { ManifoldToplevel, Vec2 } from "manifold-3d";
+import { ManifoldToplevel } from "manifold-3d";
 import { centerHole } from "./centerHole.ts";
-import { connectorHoles } from "./connectorHole.ts";
-import { magnetHoles } from "./magnetHoles.ts";
 import { mapReduce2D } from "../../gridfinity/utils/range.ts";
 import { profile } from "./profile.ts";
+import { profileBaseHeight, profileBaseWidth } from "./constants.ts";
+import { connectorHoles } from "./connectorHole.ts";
+import { magnetHoles } from "./magnetHoles.ts";
 
 export interface BaseplateGeomProps {
   style: "refined-lite";
@@ -33,24 +34,10 @@ export const baseplate = (
   const { Manifold, CrossSection } = wasm;
   switch (style) {
     case "refined-lite": {
-      const points = [
-        [0, 0], // Innermost bottom point
-        [0.7, 0.7], // Up and out at a 45 degree angle
-        [0.7, 2.5], // Straight up
-        [2.6, 4.4], // Up and out at a 45 degree angle
-        [2.85, 4.4], // Top shelf
-        [2.85, 0], // Straight down
-      ] as Vec2[];
-
-      points.reverse();
-
-      const baseWidth = Math.max(...points.map((point) => point[0]));
-      const baseHeight = Math.max(...points.map((point) => point[1]));
-
       return (
         CrossSection.square([SIZE * width, SIZE * depth], true)
           // TODO: chamfer
-          .extrude(height + baseHeight)
+          .extrude(height + profileBaseHeight)
           .subtract(
             Manifold.union(
               mapReduce2D(width, depth, (x, y) =>
@@ -64,26 +51,29 @@ export const baseplate = (
                 })
                   // Hollow inside
                   .add(
-                    // TODO: RoundedRectangle
                     CrossSection.square(
                       [
-                        SIZE - (1.15 + baseWidth) * 2,
-                        SIZE - (1.15 + baseWidth) * 2,
+                        SIZE - (1.15 + profileBaseWidth) * 2,
+                        SIZE - (1.15 + profileBaseWidth) * 2,
                       ],
                       true,
                     )
-                      .offset(1.15 + baseWidth, "Round")
-                      .extrude(baseHeight)
+                      .offset(1.15 + profileBaseWidth, "Round")
+                      .extrude(profileBaseHeight)
                       .translate([0, 0, height]),
                   )
-                  // TODO: hasConnectorHoles
-                  .add(connectorHoles(wasm, { width, depth, height, x, y }))
-                  // TODO: hasMagnetHoles
                   .add(
-                    magnetHoles(wasm, {
-                      baseWidth,
-                      quality,
-                    }),
+                    hasStackableConnectors
+                      ? connectorHoles(wasm, { width, depth, height, x, y })
+                      : Manifold.union([]),
+                  )
+                  .add(
+                    hasMagnetHoles
+                      ? magnetHoles(wasm, {
+                          baseWidth: profileBaseWidth,
+                          quality,
+                        })
+                      : Manifold.union([]),
                   )
                   .translate([
                     SIZE *
