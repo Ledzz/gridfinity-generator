@@ -44,7 +44,7 @@ export const baseplate = (
     ],
     true,
   )
-    .offset(1.15 + profileBaseWidth, "Round")
+    .offset(1.15 + profileBaseWidth, "Round", 0, quality)
     .extrude(profileBaseHeight)
     .translate([0, 0, height]);
   const empty = Manifold.union([]);
