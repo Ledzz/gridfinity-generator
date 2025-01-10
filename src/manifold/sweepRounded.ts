@@ -15,7 +15,7 @@ export const sweepRounded = (
 
   const shape = CrossSection.ofPolygons(profile);
 
-  const walls = Manifold.union(
+  return Manifold.compose(
     range(4).map((i) => {
       const x = i % 2 === 0 ? width / 2 : depth / 2;
       const z = i % 2 === 1 ? -width / 2 + fillet : -depth / 2 + fillet;
@@ -33,6 +33,4 @@ export const sweepRounded = (
         .rotate([180 / 2, 0, (i * 180) / 2]);
     }),
   );
-
-  return Manifold.union([walls]);
 };
