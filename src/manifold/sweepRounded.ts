@@ -22,7 +22,7 @@ export const sweepRounded = (
       const extrude = (i % 2 === 1 ? width : depth) - fillet * 2;
       const angle = shape
         .translate([fillet, 0])
-        .revolve(quality, 90)
+        .revolve(quality / 4, 90)
         .rotate([-90, 0, 0])
         .translate([-fillet, 0, 0]);
 
@@ -33,17 +33,6 @@ export const sweepRounded = (
         .rotate([180 / 2, 0, (i * 180) / 2]);
     }),
   );
-  // const b = new Manifold()
-
-  // const walls = mapReduceWithLink(4, shape, (i) => {
-  //   const x = i % 2 === 0 ? width / 2 : depth / 2;
-  //   const z = i % 2 === 1 ? -width / 2 + fillet : -depth / 2 + fillet;
-  //   const extrude = (i % 2 === 1 ? width : depth) - fillet * 2;
-  //   return rotate(
-  //     [Math.PI / 2, 0, (i * Math.PI) / 2],
-  //     translate([x, 0, z], extrudeLinear({ height: extrude }, baseShape)),
-  //   );
-  // });
 
   return Manifold.union([walls]);
 };
