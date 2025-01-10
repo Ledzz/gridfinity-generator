@@ -197,7 +197,7 @@ function App() {
             <group rotation-x={-Math.PI / 2}>
               <World />
               <mesh geometry={mesh}>
-                <meshStandardMaterial color={0x999999} />
+                <meshStandardMaterial color={0x999999} flatShading />
               </mesh>
               {/*<primitive object={mesh}></primitive>*/}
               {/*<Stl*/}

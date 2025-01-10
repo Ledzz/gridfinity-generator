@@ -5,11 +5,14 @@ import { BufferGeometryUtils } from "three/examples/jsm/Addons";
 
 const wasm = await Module();
 wasm.setup();
+console.time("manifold");
 const result = baseplate(wasm, {
   width: 5,
   depth: 5,
   hasMagnetHoles: true,
 });
+console.timeEnd("manifold");
+
 const id2matIndex = new Map();
 
 export const mesh = mesh2geometry(result.getMesh());
