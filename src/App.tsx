@@ -24,7 +24,6 @@ import { GridfinityGenWorker } from "./gridfinity";
 import { serialize } from "@jscad/stl-serializer";
 import { EditFormProps, Item } from "./app/gridfinity/types/item.ts";
 import { noEvents, PointerEvents } from "./utils/pointer-events.ts";
-import { mesh } from "./test.ts";
 
 function App() {
   const {
@@ -196,9 +195,9 @@ function App() {
 
             <group rotation-x={-Math.PI / 2}>
               <World />
-              <mesh geometry={mesh}>
-                <meshStandardMaterial color={0x999999} flatShading />
-              </mesh>
+              {/*<mesh geometry={mesh}>*/}
+              {/*  <meshStandardMaterial color={0x999999} flatShading />*/}
+              {/*</mesh>*/}
               {/*<primitive object={mesh}></primitive>*/}
               {/*<Stl*/}
               {/*  renderOrder={100}*/}
