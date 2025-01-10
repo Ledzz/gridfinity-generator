@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Item } from "./gridfinity/types/item.ts";
 import { useAppStore } from "./appStore.ts";
-import { BufferAttribute, BufferGeometry, Mesh, Object3D } from "three";
+import { BufferAttribute, BufferGeometry } from "three";
 import Module from "manifold-3d";
-import { BufferGeometryUtils } from "three/examples/jsm/Addons";
 import { baseplate } from "../manifold/baseplate/baseplate.ts";
+import { Mesh } from "manifold-3d/manifold-encapsulated-types";
 
 const wasm = await Module();
 wasm.setup();
@@ -14,7 +14,7 @@ export const RenderManifold = <T extends Item>({
   type,
   ...props
 }: Item & { onClick: () => void; type: T["type"] }) => {
-  const [obj, setObj] = useState<Object3D | null>(null);
+  const [obj, setObj] = useState<BufferGeometry | null>(null);
   const propsHash = JSON.stringify(props);
   const memoizedProps = useMemo(() => props, [propsHash]);
   const isWireframe = useAppStore((state) => state.isWireframe);
@@ -44,7 +44,7 @@ export const RenderManifold = <T extends Item>({
   null;
 };
 
-function mesh2geometry(mesh: Mesh) {
+function mesh2geometry(mesh: Mesh): BufferGeometry {
   const geometry = new BufferGeometry();
   // Assign buffers
   geometry.setAttribute(
@@ -53,10 +53,6 @@ function mesh2geometry(mesh: Mesh) {
   );
   geometry.setIndex(new BufferAttribute(mesh.triVerts, 1));
 
-  geometry.deleteAttribute("normal");
-
-  const geom2 = BufferGeometryUtils.mergeVertices(geometry);
-  // Compute vertex normals for proper lighting
-  geom2.computeVertexNormals();
-  return geom2;
+  geometry.computeVertexNormals();
+  return geometry;
 }

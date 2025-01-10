@@ -22,7 +22,7 @@ const connectorHole = (
     height: number;
   },
 ) => {
-  const { Manifold, CrossSection } = wasm;
+  const { CrossSection } = wasm;
   return new CrossSection(connectorPoly)
     .extrude(height)
     .rotate([0, 0, 180 / 2])

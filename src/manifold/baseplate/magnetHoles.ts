@@ -1,8 +1,14 @@
 import { ManifoldToplevel } from "manifold-3d";
 import { range } from "../../gridfinity/utils/range.ts";
-import { SIZE } from "../../gridfinity/constants.ts";
+import { DEFAULT_QUALITY, SIZE } from "../../gridfinity/constants.ts";
 
-export const magnetHoles = (wasm: ManifoldToplevel, { baseWidth, quality }) => {
+export const magnetHoles = (
+  wasm: ManifoldToplevel,
+  {
+    baseWidth,
+    quality = DEFAULT_QUALITY,
+  }: { baseWidth: number; quality: number },
+) => {
   const { Manifold, CrossSection } = wasm;
   return Manifold.compose(
     range(4).map((i) => {
