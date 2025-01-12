@@ -9,6 +9,7 @@ import { Mesh } from "manifold-3d/manifold-encapsulated-types";
 const wasm = await Module();
 wasm.setup();
 
+// TODO: MB this shader? https://jsfiddle.net/prisoner849/kmau6591/
 export const RenderManifold = <T extends Item>({
   onClick,
   type,

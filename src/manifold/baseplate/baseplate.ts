@@ -6,6 +6,7 @@ import { centerHole } from "./centerHole.ts";
 import { connectorHoles } from "./connectorHole.ts";
 import { magnetHoles } from "./magnetHoles.ts";
 import { profile } from "./profile.ts";
+import { extrudeWithChamfer } from "../extrudeWithChamfer.ts";
 
 export interface BaseplateGeomProps {
   style: "refined-lite";
@@ -58,9 +59,10 @@ export const baseplate = (
             0,
           ] as Vec3;
           return Manifold.compose([
-            CrossSection.square([SIZE, SIZE], true)
-              // TODO: chamfer
-              .extrude(height + profileBaseHeight)
+            extrudeWithChamfer(
+              { height: height + profileBaseHeight, chamfer: -0.6 },
+              CrossSection.square([SIZE, SIZE], true),
+            )
               .subtract(
                 centerHole(wasm, {
                   width,
