@@ -7,6 +7,7 @@ import { ManifoldToplevel, Vec2 } from "manifold-3d";
 import { BoxItemGeomProps } from "../../gridfinity/bin/box-item.ts";
 import { sweepRounded } from "../sweepRounded.ts";
 import { floor } from "./floor.ts";
+import { label } from "./label.ts";
 
 export type BoxGeomProps = {
   width: number;
@@ -30,7 +31,11 @@ export const box = (
     hasMagnetHoles = false,
   }: Partial<BoxGeomProps> = {},
 ) => {
-  // TODO: Labels
+  const labels = items
+    .filter((i) => i.type === "label")
+    .map((l) => label(wasm, l, { width, depth, height, quality }))
+    .filter(Boolean);
+
   // TODO: Walls
   const baseHeight = 6;
   const h = height * 7;
@@ -47,6 +52,7 @@ export const box = (
   ] as Vec2[];
 
   return wasm.Manifold.union([
+    ...labels,
     floor(wasm, { width, depth, quality, hasMagnetHoles }),
     sweepRounded(
       wasm,
@@ -56,6 +62,4 @@ export const box = (
       quality,
     ).translate([0, 0, baseHeight]),
   ]);
-
-  return wasm.Manifold.cube([42, 42, 42], true);
 };

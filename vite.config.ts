@@ -14,6 +14,10 @@ export default defineConfig({
       },
     }),
   ],
+
+  define: {
+    global: {},
+  },
   optimizeDeps: {
     exclude: ["manifold-3d"],
   },
