@@ -47,5 +47,7 @@ export const label = (
 
   console.log(polygons);
 
+  // return Manifold.union([]);
+  //
   return CrossSection.ofPolygons(polygons).extrude(1);
 };
