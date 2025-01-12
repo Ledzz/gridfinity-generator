@@ -50,9 +50,13 @@
 - [ ] Cutout generator
 - [ ] Move/rotate items
 - [ ] Keyboard shortcuts
+- [ ] Save STL
+- [ ] Save 3MF
 - [ ] Pretty names for saved STLs
 - [x] Wireframe
 - [x] Bed size
+- [ ] Font selection
+- [ ] Undo/redo
 
 ## Other TODO
 - [x] Move to worker
