@@ -2,8 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Item } from "./gridfinity/types/item.ts";
 import { useAppStore } from "./appStore.ts";
 import { BufferAttribute, BufferGeometry } from "three";
-import Module from "manifold-3d";
-import { baseplate } from "../manifold/baseplate/baseplate.ts";
+import Module, { Manifold, ManifoldToplevel } from "manifold-3d";
 import { Mesh } from "manifold-3d/manifold-encapsulated-types";
 
 const wasm = await Module();
@@ -13,24 +12,23 @@ wasm.setup();
 export const RenderManifold = <T extends Item>({
   onClick,
   type,
+  render,
   ...props
-}: Item & { onClick: () => void; type: T["type"] }) => {
+}: Item & {
+  onClick: () => void;
+  type: T["type"];
+  render: (wasm: ManifoldToplevel, props: T) => Manifold;
+}) => {
   const [obj, setObj] = useState<BufferGeometry | null>(null);
   const propsHash = JSON.stringify(props);
   const memoizedProps = useMemo(() => props, [propsHash]);
   const isWireframe = useAppStore((state) => state.isWireframe);
 
   useEffect(() => {
-    console.time("mesh");
-    const mesh = baseplate(wasm, memoizedProps).getMesh();
-    console.timeEnd("mesh");
-
-    console.time("geometry");
-
+    const mesh = render(wasm, memoizedProps).getMesh();
     const geometry = mesh2geometry(mesh);
-    console.timeEnd("geometry");
     setObj(geometry);
-  }, [memoizedProps, type]);
+  }, [render, memoizedProps, type]);
 
   return obj ? (
     // <TransformControls>
