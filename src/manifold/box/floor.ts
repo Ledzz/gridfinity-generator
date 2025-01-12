@@ -33,31 +33,30 @@ export function floor(
   const baseHeight = Math.max(...points.map((point) => point[1]));
   const baseSize = SIZE - baseWidth * 2 - TOLERANCE;
   const r = 5.86 / 2;
+  const cachedMagnetHole = Manifold.union([
+    CrossSection.union([
+      CrossSection.circle(1.25, quality),
+      CrossSection.square([4.28, 2.5], true).translate([4.28 / 2, 0]),
+    ])
+      .extrude(2.25)
+      .translate([6.07, 13, 0]),
+    CrossSection.union([
+      CrossSection.circle(r, quality),
+      CrossSection.ofPolygons([
+        [5.6, r],
+        [0, r],
+        [0, -r],
+        [3.5, -r],
+        [3.5 + 2.1, -r - 1.47],
+      ]),
+    ])
+      .extrude(1.9)
+      .translate([13, 13, 0.35]),
+  ]);
 
   const magnetHoles = hasMagnetHoles
     ? Manifold.union(
-        range(4).map((i) =>
-          Manifold.union([
-            CrossSection.union([
-              CrossSection.circle(1.25, quality),
-              CrossSection.square([4.28, 2.5], true).translate([4.28 / 2, 0]),
-            ])
-              .extrude(2.25)
-              .translate([6.07, 13, 0]),
-            CrossSection.union([
-              CrossSection.circle(r, quality),
-              CrossSection.ofPolygons([
-                [5.6, r],
-                [0, r],
-                [0, -r],
-                [3.5, -r],
-                [3.5 + 2.1, -r - 1.47],
-              ]),
-            ])
-              .extrude(1.9)
-              .translate([13, 13, 0.35]),
-          ]).rotate([0, 0, i * 90]),
-        ),
+        range(4).map((i) => cachedMagnetHole.rotate([0, 0, i * 90])),
       )
     : Manifold.union([]);
 
