@@ -7,6 +7,7 @@ import { connectorHoles } from "./connectorHole.ts";
 import { magnetHoles } from "./magnetHoles.ts";
 import { profile } from "./profile.ts";
 import { extrudeWithChamfer } from "../extrudeWithChamfer.ts";
+import { roundedRectangle } from "../roundedRectangle.ts";
 
 export interface BaseplateGeomProps {
   style: "refined-lite";
@@ -38,14 +39,11 @@ export const baseplate = (
     baseWidth: profileBaseWidth,
     quality,
   });
-  const cachedHollowInside = CrossSection.square(
-    [
-      SIZE - (1.15 + profileBaseWidth) * 2,
-      SIZE - (1.15 + profileBaseWidth) * 2,
-    ],
-    true,
-  )
-    .offset(1.15 + profileBaseWidth, "Round", 0, quality)
+  const cachedHollowInside = roundedRectangle(wasm, {
+    quality,
+    size: [SIZE, SIZE],
+    radius: 1.15 + profileBaseWidth,
+  })
     .extrude(profileBaseHeight)
     .translate([0, 0, height]);
   const empty = Manifold.union([]);
