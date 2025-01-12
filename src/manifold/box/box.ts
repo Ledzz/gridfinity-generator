@@ -20,7 +20,7 @@ export type BoxGeomProps = {
   hasMagnetHoles: boolean;
 };
 
-export const box = (
+export const box = async (
   wasm: ManifoldToplevel,
   {
     width = 1,
@@ -31,10 +31,12 @@ export const box = (
     hasMagnetHoles = false,
   }: Partial<BoxGeomProps> = {},
 ) => {
-  const labels = items
-    .filter((i) => i.type === "label")
-    .map((l) => label(wasm, l, { width, depth, height, quality }))
-    .filter(Boolean);
+  const labels = await Promise.all(
+    items
+      .filter((i) => i.type === "label")
+      .map((l) => label(wasm, l, { width, depth, height, quality }))
+      .filter(Boolean),
+  );
 
   // TODO: Walls
   const baseHeight = 6;

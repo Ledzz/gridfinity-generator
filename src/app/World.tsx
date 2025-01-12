@@ -23,6 +23,7 @@ export const World: FC = () => {
     },
     [],
   );
+
   return (
     <>
       {items.map((item) => (

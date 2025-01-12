@@ -31,7 +31,7 @@ const LABEL_DEPTH = 10;
 const WALL_THICKNESS = 0.3;
 const TEXT_PADDING = 4;
 
-export const label = (
+export const label = async (
   wasm: ManifoldToplevel,
   {
     text,
@@ -43,11 +43,11 @@ export const label = (
 ): Manifold | null => {
   const { Manifold, CrossSection } = wasm;
 
-  const polygons = textToPolygons(text);
+  const polygons = await textToPolygons(text, fontSize);
 
   console.log(polygons);
 
   // return Manifold.union([]);
   //
-  return CrossSection.ofPolygons(polygons).extrude(1);
+  return CrossSection.ofPolygons(polygons).extrude(1).translate([0, 0, 42]);
 };

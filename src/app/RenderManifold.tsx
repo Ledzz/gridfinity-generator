@@ -17,7 +17,7 @@ export const RenderManifold = <T extends Item>({
 }: Item & {
   onClick: () => void;
   type: T["type"];
-  render: (wasm: ManifoldToplevel, props: T) => Manifold;
+  render: (wasm: ManifoldToplevel, props: T) => Manifold | Promise<Manifold>;
 }) => {
   const [obj, setObj] = useState<BufferGeometry | null>(null);
   const propsHash = JSON.stringify(props);
@@ -25,9 +25,13 @@ export const RenderManifold = <T extends Item>({
   const isWireframe = useAppStore((state) => state.isWireframe);
 
   useEffect(() => {
-    const mesh = render(wasm, memoizedProps).getMesh();
-    const geometry = mesh2geometry(mesh);
-    setObj(geometry);
+    (async () => {
+      const mesh = (
+        await Promise.resolve(render(wasm, memoizedProps))
+      ).getMesh();
+      const geometry = mesh2geometry(mesh);
+      setObj(geometry);
+    })();
   }, [render, memoizedProps, type]);
 
   return obj ? (
