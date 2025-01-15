@@ -4,6 +4,7 @@ import { useAppStore } from "./appStore.ts";
 import { BufferAttribute, BufferGeometry } from "three";
 import Module, { Manifold, ManifoldToplevel } from "manifold-3d";
 import { Mesh } from "manifold-3d/manifold-encapsulated-types";
+import { Handle, PivotHandles } from "@react-three/handle";
 
 const wasm = await Module();
 wasm.setup();
@@ -36,13 +37,17 @@ export const RenderManifold = <T extends Item>({
 
   return obj ? (
     // <TransformControls>
-    <mesh geometry={obj} onClick={onClick}>
-      <meshStandardMaterial
-        color={0x999999}
-        flatShading
-        wireframe={isWireframe}
-      />
-    </mesh>
+    <PivotHandles scale={false} rotate={false}>
+      <Handle useTargetFromContext>
+        <mesh geometry={obj} onClick={onClick}>
+          <meshStandardMaterial
+            color={0x999999}
+            flatShading
+            wireframe={isWireframe}
+          />
+        </mesh>
+      </Handle>
+    </PivotHandles>
   ) : // </TransformControls>
   null;
 };

@@ -1,6 +1,6 @@
 import "./App.css";
 import { Canvas } from "@react-three/fiber";
-import { Environment, OrbitControls } from "@react-three/drei";
+import { Environment } from "@react-three/drei";
 import { useWorldStore } from "./app/worldStore.ts";
 import { FC, Suspense, useCallback } from "react";
 import { World } from "./app/World.tsx";
@@ -24,6 +24,7 @@ import { GridfinityGenWorker } from "./gridfinity";
 import { serialize } from "@jscad/stl-serializer";
 import { EditFormProps, Item } from "./app/gridfinity/types/item.ts";
 import { noEvents, PointerEvents } from "./utils/pointer-events.ts";
+import { OrbitHandles } from "@react-three/handle";
 
 function App() {
   const {
@@ -178,7 +179,8 @@ function App() {
                 environmentIntensity={0.7}
               />
             </Suspense>
-            <OrbitControls target={[0, 0, 0]} makeDefault />
+            <OrbitHandles />
+
             {/*<gridHelper args={[100, 10]} position={[0, 3, -21]} />*/}
             {/*<arrowHelper args={[[0, 0, 1], [21, 21, 21], 60]} />*/}
             {/*<arrowHelper args={[{ x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, 60]} />*/}
