@@ -42,10 +42,13 @@ export const label = async (
     size,
   }: Partial<LabelGeomProps>,
   box: Pick<BoxGeomProps, "width" | "height" | "depth" | "quality">,
-): Manifold | null => {
-  const { Manifold, CrossSection } = wasm;
+): Promise<Manifold | null> => {
+  if (!position) {
+    return null;
+  }
+  const { CrossSection } = wasm;
 
-  const polygons = await textToPolygons(text, fontSize);
+  const polygons = await textToPolygons(text ?? "", fontSize);
   const crossSection = CrossSection.ofPolygons(polygons);
   const { min, max } = crossSection.bounds();
 
@@ -70,6 +73,8 @@ export const label = async (
     .extrude(labelWidth)
     .rotate([90, 0, -90])
     .translate([labelWidth / 2, 0, -LABEL_DEPTH]);
+
+  // TODO: Colors for text
 
   return crossSection
     .extrude(TEXT_HEIGHT)

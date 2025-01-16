@@ -26,9 +26,8 @@ export const RenderManifold = <T extends Item>({
 
   useEffect(() => {
     (async () => {
-      const mesh = (
-        await Promise.resolve(render(wasm, memoizedProps))
-      ).getMesh();
+      const mesh = // @ts-expect-error wtf
+        (await Promise.resolve(render(wasm, memoizedProps))).getMesh();
       const geometry = mesh2geometry(mesh);
       setObj(geometry);
     })();

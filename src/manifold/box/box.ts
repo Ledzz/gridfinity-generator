@@ -31,12 +31,13 @@ export const box = async (
     hasMagnetHoles = false,
   }: Partial<BoxGeomProps> = {},
 ) => {
-  const labels = await Promise.all(
-    items
-      .filter((i) => i.type === "label")
-      .map((l) => label(wasm, l, { width, depth, height, quality }))
-      .filter(Boolean),
-  );
+  const labels = (
+    await Promise.all(
+      items
+        .filter((i) => i.type === "label")
+        .map((l) => label(wasm, l, { width, depth, height, quality })),
+    )
+  ).filter(Boolean);
 
   // TODO: Walls
   const baseHeight = 6;
