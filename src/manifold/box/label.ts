@@ -2,6 +2,7 @@ import { BoxGeomProps } from "../../gridfinity/bin/box.ts";
 import { Manifold, ManifoldToplevel, Vec2 } from "manifold-3d";
 import { textToPolygons } from "./textToPolygons.ts";
 import { baseHeight, LIP_HEIGHT, SIZE } from "../../gridfinity/constants.ts";
+import { boxInnerContent } from "./boxInnerContent.ts";
 
 export const DEFAULT_FONT_SIZE = 6;
 const TEXT_HEIGHT = 0.3;
@@ -56,6 +57,10 @@ export const label = async (
         ? textWidth + TEXT_PADDING * 2
         : size) ?? DEFAULT_LABEL_WIDTH;
 
+  const p = getPosition({ position, box, labelWidth });
+  const shouldRotate =
+    typeof position === "string" && position.includes("bottom");
+
   const body = CrossSection.ofPolygons([
     [0, 0],
     [LABEL_DEPTH, LABEL_DEPTH],
@@ -71,9 +76,44 @@ export const label = async (
     .rotate([180, 0, 0])
     .translate([
       -(max[0] + min[0]) / 2,
-      (max[1] + min[1]) / 2 - LABEL_DEPTH / 2 + 1,
+      (max[1] + min[1]) / 2 - LABEL_DEPTH / 2 + (shouldRotate ? 1 : -1),
       TEXT_HEIGHT,
     ])
     .add(body)
-    .translate([0, 0, box.height * 7 + baseHeight - LIP_HEIGHT]);
+    .translate([
+      p[0],
+      p[1] + LABEL_DEPTH,
+      box.height * 7 + baseHeight - LIP_HEIGHT,
+    ])
+    .intersect(boxInnerContent(wasm, box));
 };
+
+function getPosition({
+  position,
+  box,
+  labelWidth,
+}: {
+  position: LabelPosition;
+  box: Pick<BoxGeomProps, "width" | "depth">;
+  labelWidth: number;
+}): Vec2 {
+  const h = {
+    left: (-SIZE * box.width + labelWidth) / 2 + WALL_THICKNESS,
+    center: 0,
+    right: (SIZE * box.width - labelWidth) / 2 - WALL_THICKNESS,
+  } as const;
+  const v = {
+    top: (SIZE * box.depth) / 2 - LABEL_DEPTH - WALL_THICKNESS,
+    bottom: -(SIZE * box.depth) / 2,
+  } as const;
+
+  if (typeof position === "string") {
+    const [vertical, horizontal] = position.split("-") as [
+      VerticalPosition,
+      HorizontalPosition,
+    ];
+    return [h[horizontal], v[vertical]];
+  } else {
+    return position;
+  }
+}
