@@ -36,7 +36,6 @@ export const RenderManifold = <T extends Item>({
   }, [render, memoizedProps, type]);
 
   return obj ? (
-    // <TransformControls>
     <PivotHandles scale={false} rotate={false}>
       <Handle useTargetFromContext>
         <mesh geometry={obj} onClick={onClick}>
@@ -48,8 +47,7 @@ export const RenderManifold = <T extends Item>({
         </mesh>
       </Handle>
     </PivotHandles>
-  ) : // </TransformControls>
-  null;
+  ) : null;
 };
 
 function mesh2geometry(mesh: Mesh): BufferGeometry {
