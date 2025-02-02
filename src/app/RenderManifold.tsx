@@ -4,6 +4,7 @@ import { useAppStore } from "./appStore.ts";
 import { BufferGeometry } from "three";
 import Module, { Manifold, ManifoldToplevel } from "manifold-3d";
 import { toThreeGeometry } from "../exporters/threeGeometry.ts";
+import { HandleTarget, PivotHandles } from "@react-three/handle";
 
 const wasm = await Module();
 wasm.setup();
@@ -34,16 +35,23 @@ export const RenderManifold = <T extends Item>({
   }, [render, memoizedProps, type]);
 
   return obj ? (
-    // <PivotHandles scale={false} rotate={false}>
-    //   <Handle useTargetFromContext>
-    <mesh geometry={obj} onClick={onClick}>
-      <meshStandardMaterial
-        color={0x999999}
-        flatShading
-        wireframe={isWireframe}
-      />
-    </mesh>
-  ) : // </Handle>
-  // </PivotHandles>
-  null;
+    <HandleTarget>
+      <PivotHandles
+        scale={false}
+        rotation={false}
+        apply={(state, target) => {
+          target.position.copy(state.current.position);
+          console.log(state.current.position);
+        }}
+      >
+        <mesh geometry={obj} onClick={onClick}>
+          <meshStandardMaterial
+            color={0x999999}
+            flatShading
+            wireframe={isWireframe}
+          />
+        </mesh>
+      </PivotHandles>
+    </HandleTarget>
+  ) : null;
 };
