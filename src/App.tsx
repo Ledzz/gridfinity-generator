@@ -54,7 +54,8 @@ function App() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "model.stl";
+      const filename = `${item.type}-${item.width}x${item.depth}`;
+      a.download = `${filename}.stl`;
       a.click();
     };
 
