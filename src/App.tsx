@@ -26,6 +26,7 @@ import { OrbitHandles } from "@react-three/handle";
 import { toSTL } from "./exporters/stl.ts";
 import Module from "manifold-3d";
 import { RENDER } from "./app/gridfinity/items.ts";
+import { to3MF } from "./exporters/3mf.ts";
 
 const wasm = await Module();
 wasm.setup();
@@ -56,6 +57,31 @@ function App() {
       a.href = url;
       const filename = `${item.type}-${item.width}x${item.depth}`;
       a.download = `${filename}.stl`;
+      a.click();
+    };
+
+    if (selectedItem) {
+      save(selectedItem);
+    }
+  }, [selectedItem]);
+  const save3MF = useCallback(() => {
+    const save = async <T extends Item>(item: T) => {
+      const mesh = (
+        await Promise.resolve(
+          RENDER[item.type](wasm, { ...item, quality: 128 }),
+        )
+      ).getMesh();
+
+      const data = await to3MF(mesh);
+
+      const blob = new Blob(data, {
+        type: "text/plain",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const filename = `${item.type}-${item.width}x${item.depth}`;
+      a.download = `${filename}.3mf`;
       a.click();
     };
 
@@ -153,6 +179,13 @@ function App() {
               onClick={saveStl}
             >
               Save STL
+            </Button>
+            <Button
+              type="primary"
+              icon={<DownloadOutlined />}
+              onClick={save3MF}
+            >
+              Save 3MF
             </Button>
 
             <Button onClick={addBox}>add box</Button>

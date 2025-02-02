@@ -51,7 +51,7 @@
 - [ ] Move/rotate items
 - [ ] Keyboard shortcuts
 - [x] Save STL
-- [ ] Save 3MF
+- [x] Save 3MF
 - [x] Pretty names for saved STLs
 - [x] Wireframe
 - [x] Bed size

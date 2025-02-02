@@ -59,7 +59,7 @@ export const box = async (
     [-WALL_THICKNESS, 0],
   ] as Vec2[];
 
-  return wasm.Manifold.union([
+  return wasm.Manifold.compose([
     ...labels,
     ...walls,
     floor(wasm, { width, depth, quality, hasMagnetHoles }),
