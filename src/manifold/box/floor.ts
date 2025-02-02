@@ -1,14 +1,9 @@
 import { ManifoldToplevel, Vec2 } from "manifold-3d";
-import { BoxGeomProps } from "../../gridfinity/bin/box.ts";
-import {
-  DEFAULT_QUALITY,
-  FILLET,
-  SIZE,
-  TOLERANCE,
-} from "../../gridfinity/constants.ts";
 import { roundedRectangle } from "../roundedRectangle.ts";
-import { mapReduce2D, range } from "../../gridfinity/utils/range.ts";
 import { sweepRounded } from "../sweepRounded.ts";
+import { DEFAULT_QUALITY, FILLET, SIZE, TOLERANCE } from "../constants.ts";
+import { BoxGeomProps } from "./box.ts";
+import { mapReduce2D, range } from "../utils/range.ts";
 
 const points = [
   [0, 0], // Innermost bottom point
@@ -68,8 +63,6 @@ export function floor(
     .extrude(baseHeight)
     .add(sweepRounded(wasm, points, 35.6, FILLET, quality))
     .subtract(magnetHoles);
-
-  // TODO: items
 
   const bases = mapReduce2D(width, depth, (i, j) =>
     cachedBase.translate([

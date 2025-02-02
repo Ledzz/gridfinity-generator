@@ -5,12 +5,12 @@ import { MinusCircleOutlined } from "@ant-design/icons";
 import { createLabel } from "./utils/createLabel.ts";
 import { EditFormProps } from "./gridfinity/types/item.ts";
 import { createWall } from "./utils/createWall.ts";
-import { LABEL_POSITIONS } from "../gridfinity/bin/label.ts";
 import { Label } from "./gridfinity/types/label.ts";
 import { Wall } from "./gridfinity/types/wall.ts";
-import { BoxItemGeomProps } from "../gridfinity/bin/box-item.ts";
 import { NumberWithOptions } from "./NumberWithOptions.tsx";
 import { Vec2WithOptions } from "./Vec2WithOptions.tsx";
+import { LABEL_POSITIONS } from "../manifold/box/label.ts";
+import { BoxItemGeomProps } from "../manifold/box/box-item.ts";
 
 const labelPositionOptions = LABEL_POSITIONS.map((position) => ({
   value: position,

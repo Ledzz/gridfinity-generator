@@ -1,5 +1,5 @@
 import { ManifoldToplevel, Vec2 } from "manifold-3d";
-import { SIZE } from "../../gridfinity/constants.ts";
+import { SIZE } from "../constants.ts";
 
 const connectorPoly = [
   [3, 0],

@@ -1,14 +1,10 @@
-import {
-  DEFAULT_QUALITY,
-  TOLERANCE,
-  WALL_THICKNESS,
-} from "../../gridfinity/constants.ts";
 import { ManifoldToplevel, Vec2 } from "manifold-3d";
 import { sweepRounded } from "../sweepRounded.ts";
 import { floor } from "./floor.ts";
 import { label } from "./label.ts";
 import { BoxItemGeomProps } from "./box-item.ts";
 import { wall } from "./wall.ts";
+import { DEFAULT_QUALITY, TOLERANCE, WALL_THICKNESS } from "../constants.ts";
 
 export type BoxGeomProps = {
   width: number;

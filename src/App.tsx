@@ -20,8 +20,6 @@ import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
 import { DownloadOutlined } from "@ant-design/icons";
 import { EDIT_FORMS } from "./constants.ts";
-import { GridfinityGenWorker } from "./gridfinity";
-import { serialize } from "@jscad/stl-serializer";
 import { EditFormProps, Item } from "./app/gridfinity/types/item.ts";
 import { noEvents, PointerEvents } from "./utils/pointer-events.ts";
 import { OrbitHandles } from "@react-three/handle";
@@ -38,18 +36,18 @@ function App() {
   );
   const saveStl = useCallback(() => {
     const save = async <T extends Item>(item: T) => {
-      const data = await GridfinityGenWorker[item.type]({
-        ...item,
-        quality: 128,
-      });
-      const rawData = serialize({ binary: true }, data);
-
-      const blob = new Blob([...rawData]);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "model.stl";
-      a.click();
+      // const data = await GridfinityGenWorker[item.type]({
+      //   ...item,
+      //   quality: 128,
+      // });
+      // const rawData = serialize({ binary: true }, data);
+      //
+      // const blob = new Blob([...rawData]);
+      // const url = URL.createObjectURL(blob);
+      // const a = document.createElement("a");
+      // a.href = url;
+      // a.download = "model.stl";
+      // a.click();
     };
 
     if (selectedItem) {

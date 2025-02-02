@@ -1,11 +1,7 @@
 import { BoxGeomProps } from "./box.ts";
 import { roundedRectangle } from "../roundedRectangle.ts";
-import {
-  baseHeight,
-  TOLERANCE,
-  WALL_THICKNESS,
-} from "../../gridfinity/constants.ts";
 import { ManifoldToplevel } from "manifold-3d";
+import { baseHeight, TOLERANCE, WALL_THICKNESS } from "../constants.ts";
 
 export const boxInnerContent = (
   wasm: ManifoldToplevel,

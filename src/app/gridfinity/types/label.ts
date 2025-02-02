@@ -1,4 +1,4 @@
-import { LabelGeomProps } from "../../../gridfinity/bin/label.ts";
+import { LabelGeomProps } from "../../../manifold/box/label.ts";
 
 export type Label = LabelGeomProps & {
   id: string;

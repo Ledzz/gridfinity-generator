@@ -1,8 +1,8 @@
-import { BoxGeomProps } from "../../gridfinity/bin/box.ts";
 import { Manifold, ManifoldToplevel, Vec2 } from "manifold-3d";
 import { textToPolygons } from "./textToPolygons.ts";
-import { baseHeight, LIP_HEIGHT, SIZE } from "../../gridfinity/constants.ts";
 import { boxInnerContent } from "./boxInnerContent.ts";
+import { BoxGeomProps } from "./box.ts";
+import { baseHeight, LIP_HEIGHT, SIZE } from "../constants.ts";
 
 export const DEFAULT_FONT_SIZE = 6;
 const TEXT_HEIGHT = 0.3;

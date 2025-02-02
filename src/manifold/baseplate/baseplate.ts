@@ -1,13 +1,13 @@
-import { DEFAULT_QUALITY, SIZE } from "../../gridfinity/constants.ts";
 import { ManifoldToplevel, Vec3 } from "manifold-3d";
 import { profileBaseHeight, profileBaseWidth } from "./constants.ts";
-import { mapReduce2D } from "../../gridfinity/utils/range.ts";
 import { centerHole } from "./centerHole.ts";
 import { connectorHoles } from "./connectorHole.ts";
 import { magnetHoles } from "./magnetHoles.ts";
 import { profile } from "./profile.ts";
 import { extrudeWithChamfer } from "../extrudeWithChamfer.ts";
 import { roundedRectangle } from "../roundedRectangle.ts";
+import { DEFAULT_QUALITY, SIZE } from "../constants.ts";
+import { mapReduce2D } from "../utils/range.ts";
 
 export interface BaseplateGeomProps {
   style: "refined-lite";

@@ -1,4 +1,4 @@
-import { WallGeomProps } from "../../../gridfinity/bin/wall.ts";
+import { WallGeomProps } from "../../../manifold/box/wall.ts";
 
 export type Wall = WallGeomProps & {
   id: string;

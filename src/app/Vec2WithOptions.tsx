@@ -1,7 +1,7 @@
 import { InputNumber, Radio, Space } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { RadioChangeEvent } from "antd/es/radio/interface";
-import { Vec2 } from "@jscad/modeling/src/maths/vec2";
+import { Vec2 } from "manifold-3d";
 
 type ValueType = string | Vec2;
 

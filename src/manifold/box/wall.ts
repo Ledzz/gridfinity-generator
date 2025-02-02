@@ -1,7 +1,7 @@
 import { ManifoldToplevel, Vec2 } from "manifold-3d";
 import { BoxGeomProps } from "./box.ts";
-import { baseHeight } from "../../gridfinity/constants.ts";
 import { boxInnerContent } from "./boxInnerContent.ts";
+import { baseHeight } from "../constants.ts";
 
 export type WallGeomProps = {
   width: number;

@@ -1,4 +1,4 @@
-import { BaseplateGeomProps } from "../../../gridfinity/baseplate/baseplate.ts";
+import { BaseplateGeomProps } from "../../../manifold/baseplate/baseplate.ts";
 
 export type Baseplate = Pick<
   BaseplateGeomProps,

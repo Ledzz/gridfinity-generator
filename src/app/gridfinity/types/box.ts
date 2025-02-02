@@ -1,4 +1,4 @@
-import { BoxGeomProps } from "../../../gridfinity/bin/box.ts";
+import { BoxGeomProps } from "../../../manifold/box/box.ts";
 
 export type Box = Pick<
   BoxGeomProps,

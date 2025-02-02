@@ -1,6 +1,6 @@
 import { Label } from "../gridfinity/types/label.ts";
 import { v4 as uuidv4 } from "uuid";
-import { DEFAULT_FONT_SIZE } from "../../gridfinity/bin/label.ts";
+import { DEFAULT_FONT_SIZE } from "../../manifold/box/label.ts";
 
 export const createLabel = (): Label => ({
   id: uuidv4(),

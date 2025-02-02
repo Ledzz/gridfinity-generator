@@ -1,6 +1,6 @@
 import { ManifoldToplevel, SimplePolygon } from "manifold-3d";
-import { DEFAULT_QUALITY } from "../gridfinity/constants.ts";
-import { range } from "../gridfinity/utils/range.ts";
+import { range } from "./utils/range.ts";
+import { DEFAULT_QUALITY } from "./constants.ts";
 
 export const sweepRounded = (
   wasm: ManifoldToplevel,

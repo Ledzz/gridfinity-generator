@@ -1,5 +1,5 @@
-import { DEFAULT_QUALITY } from "../gridfinity/constants.ts";
 import { ManifoldToplevel, Vec2 } from "manifold-3d";
+import { DEFAULT_QUALITY } from "./constants.ts";
 
 export const roundedRectangle = (
   wasm: ManifoldToplevel,
