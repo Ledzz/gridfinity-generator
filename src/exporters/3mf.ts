@@ -26,7 +26,7 @@ export function to3MF(meshes: Mesh[]) {
     ["metadata", { name: "Application" }, "JSCAD"],
   ];
   body.push(["metadata", { name: "CreationDate" }, new Date().toISOString()]);
-  body.push(translateResources([meshe));
+  body.push(translateResources([meshes]));
   body.push(translateBuild([meshes]));
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -72,10 +72,10 @@ function translateMaterials(meshes: Mesh[]) {
   return basematerials;
 }
 
-function translateObjects(meshes: Mesh[] ) {
+function translateObjects(meshes: Mesh[]) {
   const contents = [];
   meshes.forEach((object, i) => {
-    const options = {id : i};
+    const options = { id: i };
     contents.push(convertToObject(object, options));
   });
   return contents;
