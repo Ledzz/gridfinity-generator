@@ -23,6 +23,12 @@ import { EDIT_FORMS } from "./constants.ts";
 import { EditFormProps, Item } from "./app/gridfinity/types/item.ts";
 import { noEvents, PointerEvents } from "./utils/pointer-events.ts";
 import { OrbitHandles } from "@react-three/handle";
+import { toSTL } from "./exporters/stl.ts";
+import Module from "manifold-3d";
+import { RENDER } from "./app/gridfinity/items.ts";
+
+const wasm = await Module();
+wasm.setup();
 
 function App() {
   const {
@@ -36,18 +42,20 @@ function App() {
   );
   const saveStl = useCallback(() => {
     const save = async <T extends Item>(item: T) => {
-      // const data = await GridfinityGenWorker[item.type]({
-      //   ...item,
-      //   quality: 128,
-      // });
-      // const rawData = serialize({ binary: true }, data);
-      //
-      // const blob = new Blob([...rawData]);
-      // const url = URL.createObjectURL(blob);
-      // const a = document.createElement("a");
-      // a.href = url;
-      // a.download = "model.stl";
-      // a.click();
+      const mesh = (
+        await Promise.resolve(
+          RENDER[item.type](wasm, { ...item, quality: 128 }),
+        )
+      ).getMesh();
+
+      const data = await toSTL(mesh);
+
+      const blob = new Blob([data]);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "model.stl";
+      a.click();
     };
 
     if (selectedItem) {

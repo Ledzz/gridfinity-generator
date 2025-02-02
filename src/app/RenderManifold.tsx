@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Item } from "./gridfinity/types/item.ts";
 import { useAppStore } from "./appStore.ts";
-import { BufferAttribute, BufferGeometry } from "three";
+import { BufferGeometry } from "three";
 import Module, { Manifold, ManifoldToplevel } from "manifold-3d";
-import { Mesh } from "manifold-3d/manifold-encapsulated-types";
+import { toThreeGeometry } from "../exporters/threeGeometry.ts";
 
 const wasm = await Module();
 wasm.setup();
@@ -28,7 +28,7 @@ export const RenderManifold = <T extends Item>({
     (async () => {
       const mesh = // @ts-expect-error wtf
         (await Promise.resolve(render(wasm, memoizedProps))).getMesh();
-      const geometry = mesh2geometry(mesh);
+      const geometry = toThreeGeometry(mesh);
       setObj(geometry);
     })();
   }, [render, memoizedProps, type]);
@@ -47,16 +47,3 @@ export const RenderManifold = <T extends Item>({
   // </PivotHandles>
   null;
 };
-
-function mesh2geometry(mesh: Mesh): BufferGeometry {
-  const geometry = new BufferGeometry();
-  // Assign buffers
-  geometry.setAttribute(
-    "position",
-    new BufferAttribute(mesh.vertProperties, 3),
-  );
-  geometry.setIndex(new BufferAttribute(mesh.triVerts, 1));
-
-  geometry.computeVertexNormals();
-  return geometry;
-}
