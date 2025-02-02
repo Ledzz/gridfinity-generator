@@ -4,10 +4,11 @@ import {
   WALL_THICKNESS,
 } from "../../gridfinity/constants.ts";
 import { ManifoldToplevel, Vec2 } from "manifold-3d";
-import { BoxItemGeomProps } from "../../gridfinity/bin/box-item.ts";
 import { sweepRounded } from "../sweepRounded.ts";
 import { floor } from "./floor.ts";
 import { label } from "./label.ts";
+import { BoxItemGeomProps } from "./box-item.ts";
+import { wall } from "./wall.ts";
 
 export type BoxGeomProps = {
   width: number;
@@ -39,6 +40,14 @@ export const box = async (
     )
   ).filter(Boolean);
 
+  const walls = (
+    await Promise.all(
+      items
+        .filter((i) => i.type === "wall")
+        .map((w) => wall(wasm, w, { width, depth, height, quality })),
+    )
+  ).filter(Boolean);
+
   // TODO: Walls
   const baseHeight = 6;
   const h = height * 7;
@@ -56,6 +65,7 @@ export const box = async (
 
   return wasm.Manifold.union([
     ...labels,
+    ...walls,
     floor(wasm, { width, depth, quality, hasMagnetHoles }),
     sweepRounded(
       wasm,
