@@ -57,15 +57,17 @@ export const box = async ({
     [-WALL_THICKNESS, 0],
   ] as Vec2[];
 
-  return manifold.Manifold.compose([
+  return [
     ...labels,
     ...walls,
-    floor({ width, depth, quality, hasMagnetHoles }),
-    sweepRounded(
-      points,
-      [width * 42 - TOLERANCE, depth * 42 - TOLERANCE],
-      3.75,
-      quality,
-    ).translate([0, 0, baseHeight]),
-  ]);
+    manifold.Manifold.compose([
+      floor({ width, depth, quality, hasMagnetHoles }),
+      sweepRounded(
+        points,
+        [width * 42 - TOLERANCE, depth * 42 - TOLERANCE],
+        3.75,
+        quality,
+      ).translate([0, 0, baseHeight]),
+    ]),
+  ];
 };

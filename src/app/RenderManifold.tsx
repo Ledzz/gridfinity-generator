@@ -14,40 +14,41 @@ export const RenderManifold = <T extends Item>({
 }: Item & {
   onClick: () => void;
   type: T["type"];
-  render: (props: T) => Manifold | Promise<Manifold>;
+  render: (props: T) => Manifold[] | Promise<Manifold[]>;
 }) => {
-  const [obj, setObj] = useState<BufferGeometry | null>(null);
+  const [objects, setObjects] = useState<BufferGeometry[] | null>(null);
   const propsHash = JSON.stringify(props);
   const memoizedProps = useMemo(() => props, [propsHash]);
   const isWireframe = useAppStore((state) => state.isWireframe);
 
   useEffect(() => {
     (async () => {
-      const mesh = // @ts-expect-error wtf
-        (await Promise.resolve(render(memoizedProps))).getMesh();
-      const geometry = toThreeGeometry(mesh);
-      setObj(geometry);
+      // @ts-expect-error wtf?
+      const manifolds = await render(memoizedProps);
+      const meshes = manifolds.map((m) => m.getMesh());
+      setObjects(meshes.map(toThreeGeometry));
     })();
   }, [render, memoizedProps, type]);
 
-  return obj ? (
-    // <HandleTarget>
-    //   <PivotHandles
-    //     scale={false}
-    //     rotation={false as any}
-    //     apply={(state, target) => {
-    //       target.position.copy(state.current.position);
-    //       console.log(state.current.position);
-    //     }}
-    //   >
-    <mesh geometry={obj} onClick={onClick}>
-      <meshStandardMaterial
-        color={0x999999}
-        flatShading
-        wireframe={isWireframe}
-      />
-    </mesh>
-  ) : // </PivotHandles>
-  // </HandleTarget>
-  null;
+  return objects
+    ? // <HandleTarget>
+      //   <PivotHandles
+      //     scale={false}
+      //     rotation={false as any}
+      //     apply={(state, target) => {
+      //       target.position.copy(state.current.position);
+      //       console.log(state.current.position);
+      //     }}
+      //   >
+      objects.map((object, i) => (
+        <mesh key={i} geometry={object} onClick={onClick}>
+          <meshStandardMaterial
+            color={Math.random() * 0xaaaaaa}
+            flatShading
+            wireframe={isWireframe}
+          />
+        </mesh>
+      )) // </PivotHandles>
+    : // </HandleTarget>
+      null;
 };

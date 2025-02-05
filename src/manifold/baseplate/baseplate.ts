@@ -47,40 +47,44 @@ export const baseplate = ({
   const empty = Manifold.union([]);
   switch (style) {
     case "refined-lite": {
-      return Manifold.compose([
-        ...mapReduce2D(width, depth, (x, y) => {
-          const translate = [
-            SIZE * (x - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
-            SIZE * (y - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
-            0,
-          ] as Vec3;
-          return Manifold.compose([
-            extrudeWithChamfer(
-              { height: height + profileBaseHeight, chamfer: -0.6 },
-              CrossSection.square([SIZE, SIZE], true),
-            )
-              .subtract(
-                centerHole({
-                  width,
-                  depth,
-                  height,
-                  x,
-                  y,
-                  hasMagnetHoles,
-                }),
+      return [
+        Manifold.compose([
+          ...mapReduce2D(width, depth, (x, y) => {
+            const translate = [
+              SIZE *
+                (x - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
+              SIZE *
+                (y - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
+              0,
+            ] as Vec3;
+            return Manifold.compose([
+              extrudeWithChamfer(
+                { height: height + profileBaseHeight, chamfer: -0.6 },
+                CrossSection.square([SIZE, SIZE], true),
               )
-              // Hollow inside
-              .subtract(cachedHollowInside)
-              .subtract(
-                hasStackableConnectors
-                  ? connectorHoles({ width, depth, height, x, y })
-                  : empty,
-              )
-              .subtract(hasMagnetHoles ? cachedMagnetHoles : empty),
-            cachedProfile,
-          ]).translate(translate);
-        }),
-      ]);
+                .subtract(
+                  centerHole({
+                    width,
+                    depth,
+                    height,
+                    x,
+                    y,
+                    hasMagnetHoles,
+                  }),
+                )
+                // Hollow inside
+                .subtract(cachedHollowInside)
+                .subtract(
+                  hasStackableConnectors
+                    ? connectorHoles({ width, depth, height, x, y })
+                    : empty,
+                )
+                .subtract(hasMagnetHoles ? cachedMagnetHoles : empty),
+              cachedProfile,
+            ]).translate(translate);
+          }),
+        ]),
+      ];
     }
   }
 };

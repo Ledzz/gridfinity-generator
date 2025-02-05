@@ -39,11 +39,10 @@ function App() {
   );
   const saveStl = useCallback(() => {
     const save = async <T extends Item>(item: T) => {
-      const mesh = (
-        await Promise.resolve(RENDER[item.type]({ ...item, quality: 128 }))
-      ).getMesh();
+      const manifolds = await RENDER[item.type](item);
+      const meshes = manifolds.map((m) => m.getMesh());
 
-      const data = await toSTL(mesh);
+      const data = toSTL(meshes);
 
       const blob = new Blob([data]);
       const url = URL.createObjectURL(blob);
@@ -60,11 +59,10 @@ function App() {
   }, [selectedItem]);
   const save3MF = useCallback(() => {
     const save = async <T extends Item>(item: T) => {
-      const mesh = (
-        await Promise.resolve(RENDER[item.type]({ ...item, quality: 128 }))
-      ).getMesh();
+      const manifolds = await RENDER[item.type](item);
+      const meshes = manifolds.map((m) => m.getMesh());
 
-      const data = to3MF([mesh]);
+      const data = to3MF(meshes);
 
       const blob = new Blob(data, {
         type: "text/plain",
