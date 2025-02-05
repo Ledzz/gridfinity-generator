@@ -72,7 +72,7 @@ function App() {
         )
       ).getMesh();
 
-      const data = await to3MF(mesh);
+      const data = await to3MF([mesh]);
 
       const blob = new Blob(data, {
         type: "text/plain",

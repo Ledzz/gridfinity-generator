@@ -1,5 +1,5 @@
 import { Mesh } from "manifold-3d/manifold-encapsulated-types";
-import stringify from "onml/stringify";
+import { stringify } from "onml";
 import { strToU8, zipSync } from "fflate";
 
 const contenttype = `<?xml version="1.0" encoding="UTF-8" ?>
@@ -17,7 +17,7 @@ const rels = `<?xml version="1.0" encoding="UTF-8" ?>
 </Relationships>`;
 
 export function to3MF(meshes: Mesh[]) {
-  const body = [
+  const body: any[] = [
     "model",
     {
       unit: "millimeter",
@@ -26,8 +26,8 @@ export function to3MF(meshes: Mesh[]) {
     ["metadata", { name: "Application" }, "JSCAD"],
   ];
   body.push(["metadata", { name: "CreationDate" }, new Date().toISOString()]);
-  body.push(translateResources([meshes]));
-  body.push(translateBuild([meshes]));
+  body.push(translateResources(meshes));
+  body.push(translateBuild(meshes));
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 ${stringify(body, 2)}`;
@@ -58,12 +58,8 @@ function translateResources(meshes: Mesh[]) {
 function translateMaterials(meshes: Mesh[]) {
   let basematerials = ["basematerials", { id: "0" }];
 
-  const materials = [];
-  meshes.forEach((object, i) => {
-    // let srgb = colors.rgbToHex(options.defaultcolor).toUpperCase();
-    // if (object.color) {
-    //   srgb = colors.rgbToHex(object.color).toUpperCase();
-    // }
+  const materials: any[] = [];
+  meshes.forEach((_, i) => {
     const srgb = "FF0000"; // TODO
     materials.push(["base", { name: `mat${i}`, displaycolor: srgb }]);
   });
@@ -72,8 +68,8 @@ function translateMaterials(meshes: Mesh[]) {
   return basematerials;
 }
 
-function translateObjects(meshes: Mesh[]) {
-  const contents = [];
+function translateObjects(meshes: Mesh[]): any[] {
+  const contents: any[] = [];
   meshes.forEach((object, i) => {
     const options = { id: i };
     contents.push(convertToObject(object, options));
@@ -81,11 +77,11 @@ function translateObjects(meshes: Mesh[]) {
   return contents;
 }
 
-function translateBuild(meshes: Mesh[], options) {
+function translateBuild(meshes: Mesh[]) {
   let build = ["build", {}];
 
-  const items = [];
-  meshes.forEach((object, i) => {
+  const items: any[] = [];
+  meshes.forEach((_, i) => {
     items.push(["item", { objectid: `${i + 1}` }]);
   });
 
@@ -93,9 +89,9 @@ function translateBuild(meshes: Mesh[], options) {
   return build;
 }
 
-function convertToObject(mesh: Mesh, options) {
-  const name = mesh.name ? mesh.name : `Part ${options.id}`;
-  const contents = [
+function convertToObject(mesh: Mesh, options: { id: number }) {
+  const name = `Part ${options.id}`;
+  return [
     "object",
     {
       id: `${options.id + 1}`,
@@ -104,13 +100,12 @@ function convertToObject(mesh: Mesh, options) {
       pindex: `${options.id}`,
       name: name,
     },
-    convertToMesh(mesh, options),
+    convertToMesh(mesh),
   ];
-  return contents;
 }
 
-function convertToMesh(mesh: Mesh, options) {
-  const vertices = ["vertices", {}];
+function convertToMesh(mesh: Mesh) {
+  const vertices: any[] = ["vertices", {}];
 
   for (let i = 0; i < mesh.vertProperties.length; i += 3) {
     vertices.push([
@@ -123,7 +118,7 @@ function convertToMesh(mesh: Mesh, options) {
     ]);
   }
 
-  let polygons = ["triangles", {}];
+  const polygons: any[] = ["triangles", {}];
 
   for (let i = 0; i < mesh.triVerts.length; i += 3) {
     polygons.push([
@@ -136,6 +131,5 @@ function convertToMesh(mesh: Mesh, options) {
     ]);
   }
 
-  const contents = ["mesh", {}, vertices, polygons];
-  return contents;
+  return ["mesh", {}, vertices, polygons];
 }

@@ -38,7 +38,7 @@ export const RenderManifold = <T extends Item>({
     <HandleTarget>
       <PivotHandles
         scale={false}
-        rotation={false}
+        rotation={false as any}
         apply={(state, target) => {
           target.position.copy(state.current.position);
           console.log(state.current.position);
