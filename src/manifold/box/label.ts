@@ -42,7 +42,7 @@ export const label = async (
     size,
   }: Partial<LabelGeomProps>,
   box: Pick<BoxGeomProps, "width" | "height" | "depth" | "quality">,
-): Promise<Manifold | null> => {
+): Promise<Manifold[] | null> => {
   if (!position) {
     return null;
   }
@@ -75,22 +75,28 @@ export const label = async (
     .translate([labelWidth / 2, 0, -LABEL_DEPTH]);
 
   // TODO: Colors for text
+  const translateAndIntersect = (asdf: Manifold) =>
+    asdf
+      .translate([
+        p[0],
+        p[1] + LABEL_DEPTH,
+        box.height * 7 + baseHeight - LIP_HEIGHT,
+      ])
+      .intersect(boxInnerContent(box));
 
-  return crossSection
-    .extrude(TEXT_HEIGHT)
-    .rotate([180, 0, 0])
-    .translate([
-      -(max[0] + min[0]) / 2,
-      (max[1] + min[1]) / 2 - LABEL_DEPTH / 2 + (shouldRotate ? 1 : -1),
-      TEXT_HEIGHT,
-    ])
-    .add(body)
-    .translate([
-      p[0],
-      p[1] + LABEL_DEPTH,
-      box.height * 7 + baseHeight - LIP_HEIGHT,
-    ])
-    .intersect(boxInnerContent(box));
+  return [
+    translateAndIntersect(
+      crossSection
+        .extrude(TEXT_HEIGHT)
+        .rotate([180, 0, 0])
+        .translate([
+          -(max[0] + min[0]) / 2,
+          (max[1] + min[1]) / 2 - LABEL_DEPTH / 2 + (shouldRotate ? 1 : -1),
+          TEXT_HEIGHT,
+        ]),
+    ),
+    translateAndIntersect(body),
+  ];
 };
 
 function getPosition({

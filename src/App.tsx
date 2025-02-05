@@ -26,6 +26,7 @@ import { OrbitHandles } from "@react-three/handle";
 import { toSTL } from "./exporters/stl.ts";
 import { RENDER } from "./app/gridfinity/items.ts";
 import { to3MF } from "./exporters/3mf.ts";
+import { flatten } from "./manifold/utils/nestedArray.ts";
 
 function App() {
   const {
@@ -40,7 +41,7 @@ function App() {
   const saveStl = useCallback(() => {
     const save = async <T extends Item>(item: T) => {
       const manifolds = await RENDER[item.type](item);
-      const meshes = manifolds.map((m) => m.getMesh());
+      const meshes = flatten(manifolds).map((m) => m.getMesh());
 
       const data = toSTL(meshes);
 
@@ -60,7 +61,7 @@ function App() {
   const save3MF = useCallback(() => {
     const save = async <T extends Item>(item: T) => {
       const manifolds = await RENDER[item.type](item);
-      const meshes = manifolds.map((m) => m.getMesh());
+      const meshes = flatten(manifolds).map((m) => m.getMesh());
 
       const data = to3MF(meshes);
 
