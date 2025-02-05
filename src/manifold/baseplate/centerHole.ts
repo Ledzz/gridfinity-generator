@@ -1,33 +1,22 @@
-import { ManifoldToplevel, Vec2 } from "manifold-3d";
+import { Vec2 } from "manifold-3d";
 import { BaseplateGeomProps } from "./baseplate.ts";
+import { manifold } from "../manifoldModule.ts";
 
-export const centerHole = (
-  wasm: ManifoldToplevel,
-  {
-    width,
-    depth,
-    height,
-    x,
-    y,
-    hasMagnetHoles,
-  }: Pick<
-    BaseplateGeomProps,
-    "width" | "depth" | "height" | "hasMagnetHoles"
-  > & {
-    x: number;
-    y: number;
-  },
-) => {
+export const centerHole = ({
+  width,
+  depth,
+  height,
+  x,
+  y,
+  hasMagnetHoles,
+}: Pick<BaseplateGeomProps, "width" | "depth" | "height" | "hasMagnetHoles"> & {
+  x: number;
+  y: number;
+}) => {
   const points = getPoints({ x, y, width, depth, hasMagnetHoles });
-  const { CrossSection } = wasm;
+  const { CrossSection } = manifold;
   return new CrossSection(points).extrude(height);
 };
-// extrudeLinear(
-//   { height },
-//   polygon({
-//     points: getPoints({ x, y, width, depth, hasMagnetHoles }),
-//   }),
-// );
 
 function getPoints({
   x,

@@ -1,15 +1,15 @@
-import { ManifoldToplevel, SimplePolygon } from "manifold-3d";
+import { SimplePolygon } from "manifold-3d";
 import { range } from "./utils/range.ts";
 import { DEFAULT_QUALITY } from "./constants.ts";
+import { manifold } from "./manifoldModule.ts";
 
 export const sweepRounded = (
-  wasm: ManifoldToplevel,
   profile: SimplePolygon,
   size: number | [number, number],
   fillet: number,
   quality: number = DEFAULT_QUALITY,
 ) => {
-  const { CrossSection, Manifold } = wasm;
+  const { CrossSection, Manifold } = manifold;
   const width = Array.isArray(size) ? size[0] : size;
   const depth = Array.isArray(size) ? size[1] : size;
 

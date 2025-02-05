@@ -1,5 +1,6 @@
-import { ManifoldToplevel, Vec2 } from "manifold-3d";
+import { Vec2 } from "manifold-3d";
 import { SIZE } from "../constants.ts";
+import { manifold } from "../manifoldModule.ts";
 
 const connectorPoly = [
   [3, 0],
@@ -12,17 +13,14 @@ const connectorPoly = [
   [-3, 0],
 ] as Vec2[];
 
-const connectorHole = (
-  wasm: ManifoldToplevel,
-  {
-    index, // right, top, left, bottom
-    height,
-  }: {
-    index: number;
-    height: number;
-  },
-) => {
-  const { CrossSection } = wasm;
+const connectorHole = ({
+  index, // right, top, left, bottom
+  height,
+}: {
+  index: number;
+  height: number;
+}) => {
+  const { CrossSection } = manifold;
   return new CrossSection(connectorPoly)
     .extrude(height)
     .rotate([0, 0, 180 / 2])
@@ -30,22 +28,19 @@ const connectorHole = (
     .rotate([0, 0, (index * 180) / 2]);
 };
 
-export const connectorHoles = (
-  wasm: ManifoldToplevel,
-  {
-    x,
-    y,
-    width,
-    depth,
-    height,
-  }: {
-    x: number;
-    y: number;
-    width: number;
-    depth: number;
-    height: number;
-  },
-) => {
+export const connectorHoles = ({
+  x,
+  y,
+  width,
+  depth,
+  height,
+}: {
+  x: number;
+  y: number;
+  width: number;
+  depth: number;
+  height: number;
+}) => {
   const ca: number[] = [];
   if (x === 0) {
     ca.push(2);
@@ -59,7 +54,7 @@ export const connectorHoles = (
   if (y === depth - 1) {
     ca.push(1);
   }
-  return wasm.Manifold.compose(
-    ca.map((index) => connectorHole(wasm, { index, height })),
+  return manifold.Manifold.compose(
+    ca.map((index) => connectorHole({ index, height })),
   );
 };

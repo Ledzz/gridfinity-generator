@@ -1,9 +1,10 @@
-import { ManifoldToplevel, Vec2 } from "manifold-3d";
+import { Vec2 } from "manifold-3d";
 import { roundedRectangle } from "../roundedRectangle.ts";
 import { sweepRounded } from "../sweepRounded.ts";
 import { DEFAULT_QUALITY, FILLET, SIZE, TOLERANCE } from "../constants.ts";
 import { BoxGeomProps } from "./box.ts";
 import { mapReduce2D, range } from "../utils/range.ts";
+import { manifold } from "../manifoldModule.ts";
 
 const points = [
   [0, 0], // Innermost bottom point
@@ -14,16 +15,13 @@ const points = [
   [0, 5],
 ] as Vec2[];
 
-export function floor(
-  wasm: ManifoldToplevel,
-  {
-    width,
-    depth,
-    quality = DEFAULT_QUALITY,
-    hasMagnetHoles,
-  }: Pick<BoxGeomProps, "quality" | "width" | "depth" | "hasMagnetHoles">,
-) {
-  const { Manifold, CrossSection } = wasm;
+export function floor({
+  width,
+  depth,
+  quality = DEFAULT_QUALITY,
+  hasMagnetHoles,
+}: Pick<BoxGeomProps, "quality" | "width" | "depth" | "hasMagnetHoles">) {
+  const { Manifold, CrossSection } = manifold;
   const baseWidth = Math.max(...points.map((point) => point[0]));
   const baseHeight = Math.max(...points.map((point) => point[1]));
   const baseSize = SIZE - baseWidth * 2 - TOLERANCE;
@@ -55,13 +53,13 @@ export function floor(
       )
     : Manifold.union([]);
 
-  const cachedBase = roundedRectangle(wasm, {
+  const cachedBase = roundedRectangle({
     size: [baseSize, baseSize],
     radius: FILLET,
     quality,
   })
     .extrude(baseHeight)
-    .add(sweepRounded(wasm, points, 35.6, FILLET, quality))
+    .add(sweepRounded(points, 35.6, FILLET, quality))
     .subtract(magnetHoles);
 
   const bases = mapReduce2D(width, depth, (i, j) =>
@@ -74,7 +72,7 @@ export function floor(
 
   return Manifold.compose([
     ...bases,
-    roundedRectangle(wasm, {
+    roundedRectangle({
       size: [width * SIZE - TOLERANCE, depth * SIZE - TOLERANCE],
       radius: FILLET + baseWidth,
       quality,

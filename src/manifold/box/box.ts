@@ -1,10 +1,11 @@
-import { ManifoldToplevel, Vec2 } from "manifold-3d";
+import { Vec2 } from "manifold-3d";
 import { sweepRounded } from "../sweepRounded.ts";
 import { floor } from "./floor.ts";
 import { label } from "./label.ts";
 import { BoxItemGeomProps } from "./box-item.ts";
 import { wall } from "./wall.ts";
 import { DEFAULT_QUALITY, TOLERANCE, WALL_THICKNESS } from "../constants.ts";
+import { manifold } from "../manifoldModule.ts";
 
 export type BoxGeomProps = {
   width: number;
@@ -17,22 +18,19 @@ export type BoxGeomProps = {
   hasMagnetHoles: boolean;
 };
 
-export const box = async (
-  wasm: ManifoldToplevel,
-  {
-    width = 1,
-    depth = 1,
-    height = 1,
-    items = [],
-    quality = DEFAULT_QUALITY,
-    hasMagnetHoles = false,
-  }: Partial<BoxGeomProps> = {},
-) => {
+export const box = async ({
+  width = 1,
+  depth = 1,
+  height = 1,
+  items = [],
+  quality = DEFAULT_QUALITY,
+  hasMagnetHoles = false,
+}: Partial<BoxGeomProps> = {}) => {
   const labels = (
     await Promise.all(
       items
         .filter((i) => i.type === "label")
-        .map((l) => label(wasm, l, { width, depth, height, quality })),
+        .map((l) => label(l, { width, depth, height, quality })),
     )
   ).filter(Boolean);
 
@@ -40,7 +38,7 @@ export const box = async (
     await Promise.all(
       items
         .filter((i) => i.type === "wall")
-        .map((w) => wall(wasm, w, { width, depth, height, quality })),
+        .map((w) => wall(w, { width, depth, height, quality })),
     )
   ).filter(Boolean);
 
@@ -59,12 +57,11 @@ export const box = async (
     [-WALL_THICKNESS, 0],
   ] as Vec2[];
 
-  return wasm.Manifold.compose([
+  return manifold.Manifold.compose([
     ...labels,
     ...walls,
-    floor(wasm, { width, depth, quality, hasMagnetHoles }),
+    floor({ width, depth, quality, hasMagnetHoles }),
     sweepRounded(
-      wasm,
       points,
       [width * 42 - TOLERANCE, depth * 42 - TOLERANCE],
       3.75,

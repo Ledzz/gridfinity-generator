@@ -1,4 +1,4 @@
-import { ManifoldToplevel, Vec3 } from "manifold-3d";
+import { Vec3 } from "manifold-3d";
 import { profileBaseHeight, profileBaseWidth } from "./constants.ts";
 import { centerHole } from "./centerHole.ts";
 import { connectorHoles } from "./connectorHole.ts";
@@ -8,6 +8,7 @@ import { extrudeWithChamfer } from "../extrudeWithChamfer.ts";
 import { roundedRectangle } from "../roundedRectangle.ts";
 import { DEFAULT_QUALITY, SIZE } from "../constants.ts";
 import { mapReduce2D } from "../utils/range.ts";
+import { manifold } from "../manifoldModule.ts";
 
 export interface BaseplateGeomProps {
   style: "refined-lite";
@@ -21,25 +22,22 @@ export interface BaseplateGeomProps {
   quality: number;
 }
 
-export const baseplate = (
-  wasm: ManifoldToplevel,
-  {
-    style = "refined-lite",
-    height = 3,
-    hasMagnetHoles = false,
-    hasStackableConnectors = false,
-    width = 1,
-    depth = 1,
-    quality = DEFAULT_QUALITY,
-  }: Partial<BaseplateGeomProps> = {},
-) => {
-  const { Manifold, CrossSection } = wasm;
-  const cachedProfile = profile(wasm, { quality }).translate([0, 0, height]);
-  const cachedMagnetHoles = magnetHoles(wasm, {
+export const baseplate = ({
+  style = "refined-lite",
+  height = 3,
+  hasMagnetHoles = false,
+  hasStackableConnectors = false,
+  width = 1,
+  depth = 1,
+  quality = DEFAULT_QUALITY,
+}: Partial<BaseplateGeomProps> = {}) => {
+  const { Manifold, CrossSection } = manifold;
+  const cachedProfile = profile({ quality }).translate([0, 0, height]);
+  const cachedMagnetHoles = magnetHoles({
     baseWidth: profileBaseWidth,
     quality,
   });
-  const cachedHollowInside = roundedRectangle(wasm, {
+  const cachedHollowInside = roundedRectangle({
     quality,
     size: [SIZE, SIZE],
     radius: 1.15 + profileBaseWidth,
@@ -62,7 +60,7 @@ export const baseplate = (
               CrossSection.square([SIZE, SIZE], true),
             )
               .subtract(
-                centerHole(wasm, {
+                centerHole({
                   width,
                   depth,
                   height,
@@ -75,7 +73,7 @@ export const baseplate = (
               .subtract(cachedHollowInside)
               .subtract(
                 hasStackableConnectors
-                  ? connectorHoles(wasm, { width, depth, height, x, y })
+                  ? connectorHoles({ width, depth, height, x, y })
                   : empty,
               )
               .subtract(hasMagnetHoles ? cachedMagnetHoles : empty),

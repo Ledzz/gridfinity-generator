@@ -2,11 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Item } from "./gridfinity/types/item.ts";
 import { useAppStore } from "./appStore.ts";
 import { BufferGeometry } from "three";
-import Module, { Manifold, ManifoldToplevel } from "manifold-3d";
 import { toThreeGeometry } from "../exporters/threeGeometry.ts";
-
-const wasm = await Module();
-wasm.setup();
+import { Manifold } from "manifold-3d";
 
 // TODO: MB this shader? https://jsfiddle.net/prisoner849/kmau6591/
 export const RenderManifold = <T extends Item>({
@@ -17,7 +14,7 @@ export const RenderManifold = <T extends Item>({
 }: Item & {
   onClick: () => void;
   type: T["type"];
-  render: (wasm: ManifoldToplevel, props: T) => Manifold | Promise<Manifold>;
+  render: (props: T) => Manifold | Promise<Manifold>;
 }) => {
   const [obj, setObj] = useState<BufferGeometry | null>(null);
   const propsHash = JSON.stringify(props);
@@ -27,7 +24,7 @@ export const RenderManifold = <T extends Item>({
   useEffect(() => {
     (async () => {
       const mesh = // @ts-expect-error wtf
-        (await Promise.resolve(render(wasm, memoizedProps))).getMesh();
+        (await Promise.resolve(render(memoizedProps))).getMesh();
       const geometry = toThreeGeometry(mesh);
       setObj(geometry);
     })();

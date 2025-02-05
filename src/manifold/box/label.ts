@@ -1,8 +1,9 @@
-import { Manifold, ManifoldToplevel, Vec2 } from "manifold-3d";
+import { Manifold, Vec2 } from "manifold-3d";
 import { textToPolygons } from "./textToPolygons.ts";
 import { boxInnerContent } from "./boxInnerContent.ts";
 import { BoxGeomProps } from "./box.ts";
 import { baseHeight, LIP_HEIGHT, SIZE } from "../constants.ts";
+import { manifold } from "../manifoldModule.ts";
 
 export const DEFAULT_FONT_SIZE = 6;
 const TEXT_HEIGHT = 0.3;
@@ -34,7 +35,6 @@ const WALL_THICKNESS = 0.3;
 const TEXT_PADDING = 4;
 
 export const label = async (
-  wasm: ManifoldToplevel,
   {
     text,
     position,
@@ -46,7 +46,7 @@ export const label = async (
   if (!position) {
     return null;
   }
-  const { CrossSection } = wasm;
+  const { CrossSection } = manifold;
 
   const polygons = await textToPolygons(text ?? "", fontSize);
   const crossSection = CrossSection.ofPolygons(polygons);
@@ -90,7 +90,7 @@ export const label = async (
       p[1] + LABEL_DEPTH,
       box.height * 7 + baseHeight - LIP_HEIGHT,
     ])
-    .intersect(boxInnerContent(wasm, box));
+    .intersect(boxInnerContent(box));
 };
 
 function getPosition({

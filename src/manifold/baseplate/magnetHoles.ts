@@ -1,16 +1,16 @@
-import { ManifoldToplevel } from "manifold-3d";
 import { extrudeWithChamfer } from "../extrudeWithChamfer.ts";
 import { DEFAULT_QUALITY, SIZE } from "../constants.ts";
 import { range } from "../utils/range.ts";
+import { manifold } from "../manifoldModule.ts";
 
-export const magnetHoles = (
-  wasm: ManifoldToplevel,
-  {
-    baseWidth,
-    quality = DEFAULT_QUALITY,
-  }: { baseWidth: number; quality: number },
-) => {
-  const { Manifold, CrossSection } = wasm;
+export const magnetHoles = ({
+  baseWidth,
+  quality = DEFAULT_QUALITY,
+}: {
+  baseWidth: number;
+  quality: number;
+}) => {
+  const { Manifold, CrossSection } = manifold;
   return Manifold.compose(
     range(4).map((i) => {
       return extrudeWithChamfer(

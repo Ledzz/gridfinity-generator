@@ -24,12 +24,8 @@ import { EditFormProps, Item } from "./app/gridfinity/types/item.ts";
 import { noEvents, PointerEvents } from "./utils/pointer-events.ts";
 import { OrbitHandles } from "@react-three/handle";
 import { toSTL } from "./exporters/stl.ts";
-import Module from "manifold-3d";
 import { RENDER } from "./app/gridfinity/items.ts";
 import { to3MF } from "./exporters/3mf.ts";
-
-const wasm = await Module();
-wasm.setup();
 
 function App() {
   const {
@@ -44,9 +40,7 @@ function App() {
   const saveStl = useCallback(() => {
     const save = async <T extends Item>(item: T) => {
       const mesh = (
-        await Promise.resolve(
-          RENDER[item.type](wasm, { ...item, quality: 128 }),
-        )
+        await Promise.resolve(RENDER[item.type]({ ...item, quality: 128 }))
       ).getMesh();
 
       const data = await toSTL(mesh);
@@ -67,12 +61,10 @@ function App() {
   const save3MF = useCallback(() => {
     const save = async <T extends Item>(item: T) => {
       const mesh = (
-        await Promise.resolve(
-          RENDER[item.type](wasm, { ...item, quality: 128 }),
-        )
+        await Promise.resolve(RENDER[item.type]({ ...item, quality: 128 }))
       ).getMesh();
 
-      const data = await to3MF([mesh]);
+      const data = to3MF([mesh]);
 
       const blob = new Blob(data, {
         type: "text/plain",
