@@ -3,8 +3,10 @@ import { BoxGeomProps } from "./box.ts";
 import { boxInnerContent } from "./boxInnerContent.ts";
 import { baseHeight } from "../constants.ts";
 import { manifold } from "../manifoldModule.ts";
+import { addManifold } from "../mapping.ts";
 
 export type WallGeomProps = {
+  id: string;
   width: number;
   height: number;
   thickness: number;
@@ -17,11 +19,16 @@ export const wall = (
   w: WallGeomProps,
   box: Pick<BoxGeomProps, "width" | "depth" | "height" | "quality">,
 ) =>
-  manifold.Manifold.cube([w.width, w.thickness, w.height])
-    .translate([
-      w.position[0] - w.width / 2,
-      w.position[1] - w.thickness / 2,
-      baseHeight,
-    ])
-    .rotate([0, 0, w.rotation])
-    .intersect(boxInnerContent(box));
+  addManifold(
+    w.id,
+    manifold.Manifold.compose([
+      manifold.Manifold.cube([w.width, w.thickness, w.height])
+        .translate([
+          w.position[0] - w.width / 2,
+          w.position[1] - w.thickness / 2,
+          baseHeight,
+        ])
+        .rotate([0, 0, w.rotation])
+        .intersect(boxInnerContent(box)),
+    ]),
+  );
