@@ -9,6 +9,7 @@ export const BED_SIZES: Record<string, [number, number]> = {
 
 interface AppStore {
   selectedItemId: string | null;
+  selectedSubItemId: string | null;
   isWireframe: boolean;
   bedSize: [number, number] | null;
 }
@@ -17,6 +18,7 @@ export const useAppStore = create<AppStore>()(
   persist(
     () =>
       ({
+        selectedSubItemId: null,
         selectedItemId: null,
         isWireframe: false,
         bedSize: [256, 256],
