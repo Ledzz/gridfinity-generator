@@ -4,10 +4,12 @@ import { boxInnerContent } from "./boxInnerContent.ts";
 import { BoxGeomProps } from "./box.ts";
 import { baseHeight, LIP_HEIGHT, SIZE } from "../constants.ts";
 import { manifold } from "../manifoldModule.ts";
+import { ManifoldEntries } from "../mapping.ts";
 
 export const DEFAULT_FONT_SIZE = 6;
 const TEXT_HEIGHT = 0.3;
 export type LabelGeomProps = {
+  id: string;
   text: string;
   fontSize: number;
   position: LabelPosition;
@@ -36,6 +38,7 @@ const TEXT_PADDING = 4;
 
 export const label = async (
   {
+    id,
     text,
     position,
     fontSize = DEFAULT_FONT_SIZE,
@@ -74,9 +77,8 @@ export const label = async (
     .rotate([90, 0, -90])
     .translate([labelWidth / 2, 0, -LABEL_DEPTH]);
 
-  // TODO: Colors for text
-  const translateAndIntersect = (asdf: Manifold) =>
-    asdf
+  const translateAndIntersect = (m: Manifold) =>
+    m
       .translate([
         p[0],
         p[1] + LABEL_DEPTH,
@@ -84,7 +86,7 @@ export const label = async (
       ])
       .intersect(boxInnerContent(box));
 
-  return [
+  const ret = [
     translateAndIntersect(
       crossSection
         .extrude(TEXT_HEIGHT)
@@ -97,6 +99,12 @@ export const label = async (
     ),
     translateAndIntersect(body),
   ];
+
+  ret.forEach((m) => {
+    ManifoldEntries.push([id, m]);
+  });
+
+  return ret;
 };
 
 function getPosition({

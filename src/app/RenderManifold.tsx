@@ -33,6 +33,10 @@ export const RenderManifold = <T extends Item>({
     })();
   }, [render, memoizedProps, type]);
 
+  const handleClick = (object) => {
+    console.log(object);
+  };
+
   return objects
     ? // <HandleTarget>
       //   <PivotHandles
@@ -43,8 +47,9 @@ export const RenderManifold = <T extends Item>({
       //       console.log(state.current.position);
       //     }}
       //   >
+
       objects.map((object, i) => (
-        <mesh key={i} geometry={object} onClick={onClick}>
+        <mesh key={i} geometry={object} onClick={() => handleClick(object)}>
           <meshStandardMaterial
             color={0x666666}
             flatShading

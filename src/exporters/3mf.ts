@@ -1,6 +1,8 @@
 import { Mesh } from "manifold-3d/manifold-encapsulated-types";
 import { stringify } from "onml";
 import { strToU8, zipSync } from "fflate";
+import { flatten, RecursiveArray } from "../manifold/utils/nestedArray.ts";
+import { Manifold } from "manifold-3d";
 
 const contenttype = `<?xml version="1.0" encoding="UTF-8" ?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
@@ -16,7 +18,8 @@ const rels = `<?xml version="1.0" encoding="UTF-8" ?>
   </Relationship>
 </Relationships>`;
 
-export function to3MF(meshes: Mesh[]) {
+export function to3MF(manifolds: RecursiveArray<Manifold>) {
+  const meshes = flatten(manifolds).map((m) => m.getMesh());
   const body: any[] = [
     "model",
     {

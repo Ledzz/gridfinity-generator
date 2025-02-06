@@ -1,12 +1,15 @@
-import { Mesh } from "manifold-3d/manifold-encapsulated-types";
 import { toThreeGeometry } from "./threeGeometry.ts";
 import { Group, Mesh as ThreeMesh, MeshStandardMaterial } from "three";
 import { STLExporter } from "three-stdlib";
+import { Manifold } from "manifold-3d";
+import { flatten, RecursiveArray } from "../manifold/utils/nestedArray.ts";
 
 const exporter = new STLExporter();
 
-export function toSTL(meshes: Mesh[]) {
+export function toSTL(manifolds: RecursiveArray<Manifold>) {
   const group = new Group();
+  const meshes = flatten(manifolds).map((m) => m.getMesh());
+
   for (const mesh of meshes) {
     const geometry = toThreeGeometry(mesh);
     const threeMesh = new ThreeMesh(
