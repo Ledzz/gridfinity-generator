@@ -4,7 +4,7 @@ import { boxInnerContent } from "./boxInnerContent.ts";
 import { BoxGeomProps } from "./box.ts";
 import { baseHeight, LIP_HEIGHT, SIZE } from "../constants.ts";
 import { manifold } from "../manifoldModule.ts";
-import { addManifold } from "../mapping.ts";
+import { hashUUID } from "../utils/hashUUID.ts";
 
 export const DEFAULT_FONT_SIZE = 6;
 const TEXT_HEIGHT = 0.3;
@@ -86,22 +86,21 @@ export const label = async (
       ])
       .intersect(boxInnerContent(box));
 
-  return addManifold(
-    id,
-    manifold.Manifold.compose([
-      translateAndIntersect(
-        crossSection
-          .extrude(TEXT_HEIGHT)
-          .rotate([180, 0, 0])
-          .translate([
-            -(max[0] + min[0]) / 2,
-            (max[1] + min[1]) / 2 - LABEL_DEPTH / 2 + (shouldRotate ? 1 : -1),
-            TEXT_HEIGHT,
-          ]),
-      ),
-      translateAndIntersect(body),
-    ]),
-  );
+  return manifold.Manifold.compose([
+    translateAndIntersect(
+      crossSection
+        .extrude(TEXT_HEIGHT)
+        .rotate([180, 0, 0])
+        .translate([
+          -(max[0] + min[0]) / 2,
+          (max[1] + min[1]) / 2 - LABEL_DEPTH / 2 + (shouldRotate ? 1 : -1),
+          TEXT_HEIGHT,
+        ]),
+    ),
+    translateAndIntersect(body),
+  ]).setProperties(1, (newProp, position, oldProp) => {
+    newProp[0] = hashUUID(id);
+  });
 };
 
 function getPosition({

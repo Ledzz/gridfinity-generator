@@ -1,4 +1,4 @@
-import { toThreeGeometry } from "./threeGeometry.ts";
+import { toThreeMesh } from "./threeGeometry.ts";
 import { Group, Mesh as ThreeMesh, MeshStandardMaterial } from "three";
 import { STLExporter } from "three-stdlib";
 import { Manifold } from "manifold-3d";
@@ -11,7 +11,7 @@ export function toSTL(manifolds: RecursiveArray<Manifold>) {
   const meshes = flatten(manifolds).map((m) => m.getMesh());
 
   for (const mesh of meshes) {
-    const geometry = toThreeGeometry(mesh);
+    const geometry = toThreeMesh(mesh);
     const threeMesh = new ThreeMesh(
       geometry,
       new MeshStandardMaterial({
