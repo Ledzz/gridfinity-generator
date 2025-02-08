@@ -4,6 +4,6 @@ export type Box = Pick<
   BoxGeomProps,
   "width" | "height" | "depth" | "items" | "hasMagnetHoles"
 > & {
-  id: string;
+  id: number;
   type: "box";
 };

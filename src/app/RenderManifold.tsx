@@ -6,14 +6,13 @@ import { toThreeMesh } from "../exporters/threeGeometry.ts";
 import { Manifold } from "manifold-3d";
 import { flatten, RecursiveArray } from "../manifold/utils/nestedArray.ts";
 import { HandleTarget, PivotHandles } from "@react-three/handle";
-import { hashUUID } from "../manifold/utils/hashUUID.ts";
 
-const toggleSelect = (id: string, subId: string) => {
+const toggleSelect = (id: number, subId?: number) => {
   useAppStore.setState((s) => {
     const selectedItemId = s.selectedItemId === id ? null : id;
     return {
       selectedItemId,
-      selectedSubItemId: selectedItemId ? subId : null,
+      selectedSubItemId: selectedItemId ? (subId ?? null) : null,
     };
   });
 };
@@ -45,12 +44,14 @@ export const RenderManifold = <T extends Item>({
   }, [render, memoizedProps, type]);
 
   const handleClick = (e: PointerEvent) => {
-    // toggleSelect(props.id, itemId);
     const itemId = e.target.userData.id;
-    if (itemId) {
-      console.log(props.id, itemId);
-      toggleSelect(props.id, itemId);
+
+    if (!itemId) {
+      toggleSelect(props.id);
+      return;
     }
+
+    toggleSelect(props.id, itemId);
   };
 
   return objects
@@ -89,9 +90,7 @@ function RenderSingleManifold({ manifold, ...props }) {
   if (!mesh) {
     return null;
   }
-  console.log(selectedSubItemId);
-  return selectedSubItemId &&
-    hashUUID(selectedSubItemId) === mesh.userData.id ? (
+  return selectedSubItemId && selectedSubItemId === mesh.userData.id ? (
     <HandleTarget>
       <PivotHandles
         scale={false}

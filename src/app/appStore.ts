@@ -8,8 +8,8 @@ export const BED_SIZES: Record<string, [number, number]> = {
 };
 
 interface AppStore {
-  selectedItemId: string | null;
-  selectedSubItemId: string | null;
+  selectedItemId: number | null;
+  selectedSubItemId: number | null;
   isWireframe: boolean;
   bedSize: [number, number] | null;
 }

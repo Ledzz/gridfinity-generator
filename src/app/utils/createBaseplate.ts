@@ -1,8 +1,8 @@
 import { Baseplate } from "../gridfinity/types/baseplate.ts";
-import { v4 as uuidv4 } from "uuid";
+import { getId } from "./getId.ts";
 
 export const createBaseplate = (): Baseplate => ({
-  id: uuidv4(),
+  id: getId(),
   type: "baseplate",
   width: 1,
   depth: 1,

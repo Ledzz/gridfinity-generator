@@ -4,7 +4,6 @@ import { boxInnerContent } from "./boxInnerContent.ts";
 import { BoxGeomProps } from "./box.ts";
 import { baseHeight, LIP_HEIGHT, SIZE } from "../constants.ts";
 import { manifold } from "../manifoldModule.ts";
-import { hashUUID } from "../utils/hashUUID.ts";
 
 export const DEFAULT_FONT_SIZE = 6;
 const TEXT_HEIGHT = 0.3;
@@ -99,7 +98,7 @@ export const label = async (
     ),
     translateAndIntersect(body),
   ]).setProperties(1, (newProp, position, oldProp) => {
-    newProp[0] = hashUUID(id);
+    newProp[0] = id;
   });
 };
 

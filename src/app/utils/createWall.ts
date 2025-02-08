@@ -1,11 +1,11 @@
-import { v4 as uuidv4 } from "uuid";
 import { Wall } from "../gridfinity/types/wall.ts";
 import { Box } from "../gridfinity/types/box.ts";
 import { LIP_HEIGHT, SIZE } from "../../manifold/constants.ts";
+import { getId } from "./getId.ts";
 
 export const createWall = (box: Box): Wall => {
   return {
-    id: uuidv4(),
+    id: getId(),
     type: "wall",
     width: box.width * SIZE,
     height: box.height * 7 - LIP_HEIGHT - 0.3,

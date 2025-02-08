@@ -50,7 +50,7 @@ export function toThreeMesh(manifold: Manifold): ThreeMesh {
   // console.log(position, quaternion, scale);
   // geometry.applyMatrix4(matrix);
   // const position =
-  if (mesh.numProp === 4) {
+  if (mesh.numProp > 3) {
     threeMesh.userData.id = mesh.vertProperties[3];
   }
   return threeMesh;

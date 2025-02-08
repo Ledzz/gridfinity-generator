@@ -1,5 +1,5 @@
 export type Ledge = {
-  id: string;
+  id: number;
   width: number;
   height: number;
   depth: number;

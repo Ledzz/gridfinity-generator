@@ -4,6 +4,6 @@ export type Baseplate = Pick<
   BaseplateGeomProps,
   "width" | "depth" | "hasMagnetHoles" | "hasStackableConnectors"
 > & {
-  id: string;
+  id: number;
   type: "baseplate";
 };

@@ -1,5 +1,5 @@
 export type Scoop = {
-  id: string;
+  id: number;
   width: number;
   height: number;
   depth: number;
