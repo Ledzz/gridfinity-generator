@@ -4,6 +4,7 @@ import { boxInnerContent } from "./boxInnerContent.ts";
 import { BoxGeomProps } from "./box.ts";
 import { baseHeight, LIP_HEIGHT, SIZE } from "../constants.ts";
 import { manifold } from "../manifoldModule.ts";
+import { RecursiveArray } from "../utils/nestedArray.ts";
 
 export const DEFAULT_FONT_SIZE = 6;
 const TEXT_HEIGHT = 0.3;
@@ -36,15 +37,9 @@ const WALL_THICKNESS = 0.3;
 const TEXT_PADDING = 4;
 
 export const label = async (
-  {
-    id,
-    text,
-    position,
-    fontSize = DEFAULT_FONT_SIZE,
-    size,
-  }: Partial<LabelGeomProps>,
+  { id, text, position, fontSize = DEFAULT_FONT_SIZE, size }: LabelGeomProps,
   box: Pick<BoxGeomProps, "width" | "height" | "depth" | "quality">,
-): Promise<Manifold[] | null> => {
+): Promise<RecursiveArray<Manifold> | null> => {
   if (!position) {
     return null;
   }

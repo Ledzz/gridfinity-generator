@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { useWorldStore } from "./worldStore.ts";
-import { RenderManifold } from "./RenderManifold.tsx";
+import { RenderManifolds } from "./RenderManifolds.tsx";
 import { RENDER } from "./gridfinity/items.ts";
 
 export const World: FC = () => {
@@ -9,7 +9,7 @@ export const World: FC = () => {
   return (
     <>
       {items.map((item) => (
-        <RenderManifold key={item.id} render={RENDER[item.type]} {...item} />
+        <RenderManifolds key={item.id} render={RENDER[item.type]} {...item} />
       ))}
     </>
   );

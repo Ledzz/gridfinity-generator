@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Item } from "./gridfinity/types/item.ts";
 import { useAppStore } from "./appStore.ts";
-import { BufferGeometry, Mesh } from "three";
+import { Group, Mesh } from "three";
 import { toThreeMesh } from "../exporters/threeGeometry.ts";
 import { Manifold } from "manifold-3d";
 import { flatten, RecursiveArray } from "../manifold/utils/nestedArray.ts";
 import { PivotHandles } from "@react-three/handle";
+import { GroupProps } from "@react-three/fiber";
+import { PointerEvent } from "@pmndrs/pointer-events";
 
 const toggleSelect = (id: number, subId?: number) => {
   useAppStore.setState((s) => {
@@ -18,19 +20,17 @@ const toggleSelect = (id: number, subId?: number) => {
 };
 
 // TODO: MB this shader? https://jsfiddle.net/prisoner849/kmau6591/
-export const RenderManifold = <T extends Item>({
-  onClick,
+export const RenderManifolds = <T extends Item>({
   type,
   render,
   ...props
 }: Item & {
-  onClick: () => void;
   type: T["type"];
   render: (
     props: T,
   ) => RecursiveArray<Manifold> | Promise<RecursiveArray<Manifold>>;
 }) => {
-  const [objects, setObjects] = useState<BufferGeometry[] | null>(null);
+  const [objects, setObjects] = useState<Manifold[] | null>(null);
   const propsHash = JSON.stringify(props);
   const memoizedProps = useMemo(() => props, [propsHash]);
 
@@ -38,8 +38,7 @@ export const RenderManifold = <T extends Item>({
     (async () => {
       // @ts-expect-error wtf?
       const manifolds = await render(memoizedProps);
-      const objects = flatten(manifolds);
-      setObjects(objects);
+      setObjects(flatten(manifolds));
     })();
   }, [render, memoizedProps, type]);
 
@@ -55,31 +54,23 @@ export const RenderManifold = <T extends Item>({
   };
 
   return objects
-    ? // <HandleTarget>
-      //   <PivotHandles
-      //     scale={false}
-      //     rotation={false as any}
-      //     apply={(state, target) => {
-      //       target.position.copy(state.current.position);
-      //       console.log(state.current.position);
-      //     }}
-      //   >
-
-      objects.map((manifold, i) => (
-        <RenderSingleManifold
+    ? objects.map((manifold, i) => (
+        <RenderManifold
           key={i}
           manifold={manifold}
-          onClick={handleClick}
+          onClick={handleClick as any}
         />
-      )) // </PivotHandles>
-    : // </HandleTarget>
-      null;
+      ))
+    : null;
 };
 
-function RenderSingleManifold({ manifold, ...props }) {
+function RenderManifold({
+  manifold,
+  ...props
+}: GroupProps & { manifold: Manifold }) {
   const [mesh, setMesh] = useState<Mesh | null>(null);
   const selectedSubItemId = useAppStore((state) => state.selectedSubItemId);
-  const [pivotHandles, setPivotHandles] = useState<any>(null);
+  const [pivotHandles, setPivotHandles] = useState<Group | null>(null);
   // const isWireframe = useAppStore((state) => state.isWireframe);
 
   useEffect(() => {

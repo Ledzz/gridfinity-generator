@@ -37,16 +37,6 @@ export function toThreeMesh(manifold: Manifold): ThreeMesh {
   });
   const threeMesh = new ThreeMesh(geometry, material);
   threeMesh.position.copy(tmp);
-  // console.log(bounds);
-  // console.log(mesh.numRun);
-  // const matrix = new Matrix4(...mesh.transform(1));
-  // const position = new Vector3();
-  // const quaternion = new Quaternion();
-  // const scale = new Vector3();
-  // matrix.decompose(position, quaternion, scale);
-  // console.log(position, quaternion, scale);
-  // geometry.applyMatrix4(matrix);
-  // const position =
   if (mesh.numProp > 3) {
     threeMesh.userData.id = mesh.vertProperties[3];
     threeMesh.userData.position = tmp.clone();
