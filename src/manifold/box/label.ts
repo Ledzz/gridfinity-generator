@@ -8,7 +8,7 @@ import { manifold } from "../manifoldModule.ts";
 export const DEFAULT_FONT_SIZE = 6;
 const TEXT_HEIGHT = 0.3;
 export type LabelGeomProps = {
-  id: string;
+  id: number;
   text: string;
   fontSize: number;
   position: LabelPosition;
@@ -97,7 +97,7 @@ export const label = async (
         ]),
     ),
     translateAndIntersect(body),
-  ]).setProperties(1, (newProp, position, oldProp) => {
+  ]).setProperties(1, (newProp) => {
     newProp[0] = id;
   });
 };
