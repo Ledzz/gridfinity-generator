@@ -110,7 +110,7 @@ function convertToObject(mesh: Mesh, options: { id: number }) {
 function convertToMesh(mesh: Mesh) {
   const vertices: any[] = ["vertices", {}];
 
-  for (let i = 0; i < mesh.vertProperties.length; i += 3) {
+  for (let i = 0; i < mesh.vertProperties.length; i += mesh.numProp) {
     vertices.push([
       "vertex",
       {
