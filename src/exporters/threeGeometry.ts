@@ -8,7 +8,14 @@ import {
 } from "three";
 import { Manifold } from "manifold-3d";
 
-export function toThreeMesh(manifold: Manifold): ThreeMesh {
+/**
+ * @param manifold
+ * @param offsetPosition True if need to offset geometry and mesh positions
+ */
+export function toThreeMesh(
+  manifold: Manifold,
+  offsetPosition = false,
+): ThreeMesh {
   const mesh = manifold.getMesh();
   const geometry = new BufferGeometry();
   geometry.setAttribute(
@@ -30,13 +37,18 @@ export function toThreeMesh(manifold: Manifold): ThreeMesh {
     bounds.expandByPoint(tmp);
   }
   bounds.getCenter(tmp);
-  geometry.translate(-tmp.x, -tmp.y, -tmp.z);
+  if (offsetPosition) {
+    geometry.translate(-tmp.x, -tmp.y, -tmp.z);
+  }
   const material = new MeshStandardMaterial({
     color: 0x6666666,
     flatShading: true,
   });
   const threeMesh = new ThreeMesh(geometry, material);
-  threeMesh.position.copy(tmp);
+  if (offsetPosition) {
+    threeMesh.position.copy(tmp);
+  }
+
   if (mesh.numProp > 3) {
     threeMesh.userData.id = mesh.vertProperties[3];
     threeMesh.userData.position = tmp.clone();

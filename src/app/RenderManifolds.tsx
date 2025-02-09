@@ -74,7 +74,7 @@ function RenderManifold({
   // const isWireframe = useAppStore((state) => state.isWireframe);
 
   useEffect(() => {
-    const threeMesh = toThreeMesh(manifold);
+    const threeMesh = toThreeMesh(manifold, true);
 
     setMesh(threeMesh);
   }, [manifold]);
