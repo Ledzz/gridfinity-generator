@@ -27,10 +27,7 @@ export function toThreeMesh(manifold: Manifold): ThreeMesh {
       mesh.vertProperties[i + 1],
       mesh.vertProperties[i + 2],
     );
-    bounds.expandByPoint(
-      tmp,
-      //     mesh.vertProperties.slice(i, i + 3) as [number, number, number],
-    );
+    bounds.expandByPoint(tmp);
   }
   bounds.getCenter(tmp);
   geometry.translate(-tmp.x, -tmp.y, -tmp.z);
@@ -52,6 +49,7 @@ export function toThreeMesh(manifold: Manifold): ThreeMesh {
   // const position =
   if (mesh.numProp > 3) {
     threeMesh.userData.id = mesh.vertProperties[3];
+    threeMesh.userData.position = tmp.clone();
   }
   return threeMesh;
 }

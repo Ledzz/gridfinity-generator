@@ -5,7 +5,7 @@ import { BufferGeometry, Mesh } from "three";
 import { toThreeMesh } from "../exporters/threeGeometry.ts";
 import { Manifold } from "manifold-3d";
 import { flatten, RecursiveArray } from "../manifold/utils/nestedArray.ts";
-import { HandleTarget, PivotHandles } from "@react-three/handle";
+import { PivotHandles } from "@react-three/handle";
 
 const toggleSelect = (id: number, subId?: number) => {
   useAppStore.setState((s) => {
@@ -79,6 +79,7 @@ export const RenderManifold = <T extends Item>({
 function RenderSingleManifold({ manifold, ...props }) {
   const [mesh, setMesh] = useState<Mesh | null>(null);
   const selectedSubItemId = useAppStore((state) => state.selectedSubItemId);
+  const [pivotHandles, setPivotHandles] = useState<any>(null);
   // const isWireframe = useAppStore((state) => state.isWireframe);
 
   useEffect(() => {
@@ -87,22 +88,28 @@ function RenderSingleManifold({ manifold, ...props }) {
     setMesh(threeMesh);
   }, [manifold]);
 
+  useEffect(() => {
+    if (pivotHandles) {
+      pivotHandles.position.copy(mesh?.userData.position);
+      mesh?.position.set(0, 0, 0);
+    }
+  }, [mesh?.position, mesh?.userData.position, pivotHandles]);
+
   if (!mesh) {
     return null;
   }
   return selectedSubItemId && selectedSubItemId === mesh.userData.id ? (
-    <HandleTarget>
-      <PivotHandles
-        scale={false}
-        rotation={false as any}
-        apply={(state, target) => {
-          target.position.copy(state.current.position);
-          console.log(state.current.position);
-        }}
-      >
-        <primitive object={mesh} {...props} />
-      </PivotHandles>
-    </HandleTarget>
+    <PivotHandles
+      ref={setPivotHandles}
+      scale={false}
+      rotation={false as any}
+      apply={(state, target) => {
+        target.position.copy(state.current.position);
+        console.log(state.current.position);
+      }}
+    >
+      <primitive object={mesh} {...props} />
+    </PivotHandles>
   ) : (
     <primitive object={mesh} {...props} />
   );
