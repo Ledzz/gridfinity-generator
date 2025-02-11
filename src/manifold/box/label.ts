@@ -38,14 +38,14 @@ const TEXT_PADDING = 4;
 
 export const label = async (
   { id, text, position, fontSize = DEFAULT_FONT_SIZE, size }: LabelGeomProps,
-  box: Pick<BoxGeomProps, "width" | "height" | "depth" | "quality">,
+  box: Pick<BoxGeomProps, "width" | "height" | "depth" | "quality" | "font">,
 ): Promise<RecursiveArray<Manifold> | null> => {
   if (!position) {
     return null;
   }
   const { CrossSection } = manifold;
 
-  const polygons = await textToPolygons(text ?? "", fontSize);
+  const polygons = await textToPolygons(box.font, text ?? "", fontSize);
   const crossSection = CrossSection.ofPolygons(polygons);
   const { min, max } = crossSection.bounds();
 

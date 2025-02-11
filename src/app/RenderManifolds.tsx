@@ -32,7 +32,14 @@ export const RenderManifolds = <T extends Item>({
 }) => {
   const [objects, setObjects] = useState<Manifold[] | null>(null);
   const propsHash = JSON.stringify(props);
-  const memoizedProps = useMemo(() => props, [propsHash]);
+  const font = useAppStore((state) => state.font);
+  const memoizedProps = useMemo(
+    () => ({
+      ...props,
+      font,
+    }),
+    [font, propsHash],
+  );
 
   useEffect(() => {
     (async () => {

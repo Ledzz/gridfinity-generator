@@ -6,7 +6,7 @@ import { FC, Suspense, useCallback } from "react";
 import { World } from "./app/World.tsx";
 import { createBox } from "./app/utils/createBox.ts";
 import { createBaseplate } from "./app/utils/createBaseplate.ts";
-import { BED_SIZES, useAppStore } from "./app/appStore.ts";
+import { BED_SIZES, FONTS, useAppStore } from "./app/appStore.ts";
 import {
   Button,
   Checkbox,
@@ -53,7 +53,7 @@ function App() {
     };
 
     if (selectedItem) {
-      save(selectedItem);
+      save({ ...selectedItem, font: useAppStore.getState().font });
     }
   }, [selectedItem]);
   const save3MF = useCallback(() => {
@@ -74,7 +74,7 @@ function App() {
     };
 
     if (selectedItem) {
-      save(selectedItem);
+      save({ ...selectedItem, font: useAppStore.getState().font });
     }
   }, [selectedItem]);
   const addBox = useCallback(() => {
@@ -91,6 +91,8 @@ function App() {
     ? (EDIT_FORMS[selectedItem.type] as FC<EditFormProps<typeof selectedItem>>)
     : null;
   const bedSize = useAppStore((s) => s.bedSize);
+  const font = useAppStore((s) => s.font);
+
   return (
     <>
       <Layout
@@ -117,6 +119,19 @@ function App() {
           >
             Wireframe
           </Checkbox>
+          <div>Font</div>
+          <Select
+            value={font}
+            options={FONTS.map((v) => ({
+              value: v.path,
+              label: v.name,
+            }))}
+            onChange={(v: string) => {
+              useAppStore.setState({
+                font: v,
+              });
+            }}
+          />
           <div>Bed size</div>
           <Select
             options={Object.keys(BED_SIZES).map((v) => ({
@@ -128,7 +143,7 @@ function App() {
                 bedSize: BED_SIZES[v],
               });
             }}
-          ></Select>
+          />
           <InputNumber
             min={1}
             value={bedSize?.[0]}

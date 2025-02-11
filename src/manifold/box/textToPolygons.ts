@@ -2,11 +2,12 @@ import { Polygons, SimplePolygon } from "manifold-3d";
 import { load } from "opentype.js";
 
 export const textToPolygons = (
+  font: string,
   text: string,
   fontSize: number,
 ): Promise<Polygons> =>
   new Promise((resolve) => {
-    load("fonts/arial.ttf")
+    load(font)
       .then((f) => {
         const path = f.getPath(text, 0, 0, fontSize);
         const polygons: Polygons = [];

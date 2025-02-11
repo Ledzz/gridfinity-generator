@@ -16,6 +16,7 @@ export type BoxGeomProps = {
   profileFillet: number;
   quality: number;
   hasMagnetHoles: boolean;
+  font: string;
 };
 
 export const box = async ({
@@ -25,12 +26,13 @@ export const box = async ({
   items = [],
   quality = DEFAULT_QUALITY,
   hasMagnetHoles = false,
+  font = "fonts/arial.ttf",
 }: Partial<BoxGeomProps> = {}) => {
   const labels = (
     await Promise.all(
       items
         .filter((i) => i.type === "label")
-        .map((l) => label(l, { width, depth, height, quality })),
+        .map((l) => label(l, { width, depth, height, quality, font })),
     )
   ).filter(Boolean);
 
