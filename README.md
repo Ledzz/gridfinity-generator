@@ -55,7 +55,7 @@
 - [x] Pretty names for saved STLs
 - [x] Wireframe
 - [x] Bed size
-- [ ] Font selection
+- [x] Font selection
 - [ ] Undo/redo
 
 ## Other TODO
