@@ -1,10 +1,8 @@
-import { Vec3 } from "manifold-3d";
 import { profileBaseHeight, profileBaseWidth } from "./constants.ts";
 import { centerHole } from "./centerHole.ts";
 import { connectorHoles } from "./connectorHole.ts";
 import { magnetHoles } from "./magnetHoles.ts";
 import { profile } from "./profile.ts";
-import { extrudeWithChamfer } from "../extrudeWithChamfer.ts";
 import { roundedRectangle } from "../roundedRectangle.ts";
 import { DEFAULT_QUALITY, SIZE } from "../constants.ts";
 import { mapReduce2D } from "../utils/range.ts";
@@ -49,19 +47,11 @@ export const baseplate = ({
     case "refined-lite": {
       return [
         Manifold.compose([
-          ...mapReduce2D(width, depth, (x, y) => {
-            const translate = [
-              SIZE *
-                (x - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
-              SIZE *
-                (y - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
-              0,
-            ] as Vec3;
-            return Manifold.compose([
-              extrudeWithChamfer(
-                { height: height + profileBaseHeight, chamfer: -0.6 },
-                CrossSection.square([SIZE, SIZE], true),
-              )
+          ...mapReduce2D(width, depth, (x, y) =>
+            Manifold.compose([
+              // Base
+              CrossSection.square([SIZE, SIZE], true)
+                .extrude(height + profileBaseHeight)
                 .subtract(
                   centerHole({
                     width,
@@ -81,8 +71,14 @@ export const baseplate = ({
                 )
                 .subtract(hasMagnetHoles ? cachedMagnetHoles : empty),
               cachedProfile,
-            ]).translate(translate);
-          }),
+            ]).translate([
+              SIZE *
+                (x - (width % 2 === 0 ? width / 2 - 0.5 : width / 2 - 0.5)),
+              SIZE *
+                (y - (depth % 2 === 0 ? depth / 2 - 0.5 : depth / 2 - 0.5)),
+              0,
+            ]),
+          ),
         ]),
       ];
     }
