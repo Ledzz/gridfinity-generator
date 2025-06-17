@@ -28,8 +28,8 @@ function getPoints({
   x: number;
   y: number;
 }): Array<Vec2> {
-  const halfSquareSize = 17.4 / 2;
-  const add = 9.45;
+  const halfSquareSize = 9;
+  const add = 9.85;
 
   return [
     ...(hasMagnetHoles
