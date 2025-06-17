@@ -26,6 +26,7 @@ import { OrbitHandles } from "@react-three/handle";
 import { toSTL } from "./exporters/stl.ts";
 import { RENDER } from "./app/gridfinity/items.ts";
 import { to3MF } from "./exporters/3mf.ts";
+import { createBaseplateExtend } from "./app/utils/createBaseplateExtend.ts";
 
 function App() {
   const {
@@ -85,6 +86,11 @@ function App() {
   const addBaseplate = useCallback(() => {
     useWorldStore.setState((s) => ({
       items: [...s.items, createBaseplate()],
+    }));
+  }, []);
+  const addBaseplateExtend = useCallback(() => {
+    useWorldStore.setState((s) => ({
+      items: [...s.items, createBaseplateExtend()],
     }));
   }, []);
   const EditComponent = selectedItem
@@ -193,6 +199,7 @@ function App() {
 
             <Button onClick={addBox}>add box</Button>
             <Button onClick={addBaseplate}>add baseplate</Button>
+            <Button onClick={addBaseplateExtend}>add baseplate extend</Button>
           </Flex>
         </Sider>
         <Content>

@@ -1,17 +1,6 @@
-import { Vec2 } from "manifold-3d";
 import { SIZE } from "../constants.ts";
 import { manifold } from "../manifoldModule.ts";
-
-const connectorPoly = [
-  [3, 0],
-  [3, 3],
-  [7, 6],
-  [7, 9],
-  [-7, 9],
-  [-7, 6],
-  [-3, 3],
-  [-3, 0],
-] as Vec2[];
+import { connectorPoly } from "../connectorPoly.ts";
 
 const connectorHole = ({
   index, // right, top, left, bottom
